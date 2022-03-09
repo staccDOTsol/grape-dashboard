@@ -10,7 +10,7 @@ import { useWallet } from '@solana/wallet-adapter-react';
 import { useSnackbar } from 'notistack';
 import { ServersView, SettingsView, PortfolioView, GovernanceView } from "../";
 
-function ConnectedWalletComponet(props) {
+function ConnectedWalletComponent(props) {
   return (
     <React.Fragment>
       <ServersView /> 
@@ -39,7 +39,7 @@ const RenderDashboardComponents = (props) => {
   //if (publicKey){
       switch(isConnected) {
       case isWallet: // display only if verified pk in wallet
-        return <React.Fragment><BasicComponent /><ConnectedWalletComponet /></React.Fragment>
+        return <React.Fragment><BasicComponent /><ConnectedWalletComponent /></React.Fragment>
       default:
         return <BasicComponent />
       }
