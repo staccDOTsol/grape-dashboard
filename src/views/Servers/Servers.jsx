@@ -272,8 +272,6 @@ export const ServersView = (props) => {
     setPageT2(0);
   };
 
-  const isConnected = session && session.isConnected;
-
   const register = async (serverId) => {
     //console.log("SESSION: "+JSON.stringify(session))
     //console.log("ServerId: "+JSON.stringify(serverId))
@@ -284,19 +282,6 @@ export const ServersView = (props) => {
     setTab(0);
   };
 
-  /*
-  const requestSearch = (searchedVal) => {
-    const filteredRows = originalRows.filter((row) => {
-      return row.name.toLowerCase().includes(searchedVal.toLowerCase());
-    });
-    setRows(filteredRows);
-  };
-
-  const cancelSearch = () => {
-    setSearched("");
-    requestSearch(searched);
-  };
-  */
   const unregister = async (serverId, index) => {
     let response = await UserServer.unregister(session, serverId);
     if (response) {
