@@ -14,12 +14,6 @@ import{
 import CopyIcon from '@mui/icons-material/FileCopy';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 
-import { WalletAdapterNetwork, WalletError, WalletNotConnectedError } from '@solana/wallet-adapter-base';
-import { Connection, Keypair, SystemProgram, Transaction, clusterApiUrl } from '@solana/web3.js';
-
-import bs58 from 'bs58';
-import { sign } from 'tweetnacl';
-
 import { useSnackbar } from 'notistack';
 import { useSession } from "../../contexts/session";
 import DisconnectIcon from '@mui/icons-material/LinkOff';
@@ -32,7 +26,6 @@ import { WalletConnectButton } from './WalletConnectButton';
 import { WalletDialogButton } from './WalletDialogButton';
 
 import { WalletIcon } from './WalletIcon';
-import { isCompositeComponent } from 'react-dom/test-utils';
 
 const StyledMenu = styled(Menu)(({ theme }) => ({
     '& .MuiList-root': {

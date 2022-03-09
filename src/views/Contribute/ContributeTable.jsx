@@ -303,7 +303,7 @@ export const ContributeTableView = (props) => {
     
     return (
         <React.Fragment>
-            <div style={{width: 'auto', overflowX: 'scroll'}}>
+            <>
                 <TableContainer>
                     <StyledTable sx={{ minWidth: 500 }} size="small" aria-label="Portfolio Table">
                         <TableHead>
@@ -356,7 +356,7 @@ export const ContributeTableView = (props) => {
                         </TableFooter>
                     </StyledTable>
                 </TableContainer>
-            </div>
+            </>
         </React.Fragment>
     );
 };

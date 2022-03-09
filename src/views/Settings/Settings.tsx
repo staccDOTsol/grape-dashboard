@@ -207,7 +207,7 @@ export const SettingsView = (props:any) => {
                     </Tabs>
                   </Box>
 
-                  {tab === 0 && <div>
+                  {tab === 0 && 
                     <TableContainer>
                       <StyledTable aria-label="simple table" size="small">
                         <TableHead>
@@ -244,9 +244,8 @@ export const SettingsView = (props:any) => {
                         </TableBody>
                       </StyledTable>
                     </TableContainer>
-                  </div>}
-
-                  {tab === 1 && <div>
+                  }
+                  {tab === 1 && 
                     <TableContainer>
                       <StyledTable aria-label="simple table">
                         <TableHead>
@@ -285,7 +284,7 @@ export const SettingsView = (props:any) => {
                         </TableBody>
                       </StyledTable>
                     </TableContainer>
-                  </div>}
+                  }
                 </React.Fragment>
           </Box>
         </Paper>

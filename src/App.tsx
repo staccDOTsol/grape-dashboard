@@ -222,7 +222,7 @@ function DashboardContent() {
 
 export const NotFound = () => {
   return (
-    <div style={{ height: "100%", overflow: "auto" }}>
+    <>
       <Paper className="grape-paper-background">
         <Grid 
           className="grape-paper" 
@@ -239,7 +239,7 @@ export const NotFound = () => {
           </Grid>
         </Grid>
       </Paper>
-  </div>
+  </>
   )
 }
 

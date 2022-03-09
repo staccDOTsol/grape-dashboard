@@ -67,7 +67,7 @@ export const HomeView = (props) => {
   }, [session, publicKey]);
   
   return (
-            <div style={{ height: "100%", overflow: "auto" }}>
+            <>
               {wallet ? 
                 <Grid container spacing={3}>
                 <RenderDashboardComponents
@@ -94,6 +94,6 @@ export const HomeView = (props) => {
                   </Grid>
                 </Paper>
               </Grid>}
-            </div>
+            </>
   );
 }

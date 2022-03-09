@@ -25,17 +25,6 @@ import FirstPageIcon from '@mui/icons-material/FirstPage';
 import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 import LastPageIcon from '@mui/icons-material/LastPage';
-import HelpIcon from '@mui/icons-material/Help';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import OpenInNewIcon from '@mui/icons-material/OpenInNew';
-import TableSortLabel from '@mui/material/TableSortLabel';
-import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
-import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
-
-import SendToken from '../SendToken/SendToken';
-import TopHolders from '../TopHolders/TopHolders';
-import { MakeLinkableAddress, ValidateAddress } from '../../components/Tools/WalletAddress'; // global key handling
 import { PretifyCommaNumber } from '../../components/Tools/PretifyCommaNumber';
 
 const StyledTable = styled(Table)(({ theme }) => ({
@@ -182,29 +171,6 @@ const FarmIcon = (props) => {
    );
 };
 
-const TokenIcon = (props) => {
-    const {tokenInfo, mint} = props;
-    const tokenLogo = tokenInfo && tokenInfo.logoURI;
-    const tokenName = tokenInfo && tokenInfo.name;
-
-    return (
-        <Grid container direction="row" alignItems="center">
-            <Grid item>
-                {tokenLogo ? 
-                    <Avatar component={Paper} 
-                        elevation={4}
-                        alt="Token" 
-                        src={tokenLogo}
-                        sx={{ width: 28, height: 28, bgcolor: "#222" }}
-                    /> : <HelpIcon />}
-            </Grid>
-            <Grid item sx={{ ml: 1 }}>
-                {tokenName || (mint && trimAddress(mint)) || ''}
-            </Grid>
-        </Grid>
-    );
-};
-
 const TokenFixPrice = (props) => {
     const { tokenFormatValue, defaultFixed } = props;
     try{
@@ -223,89 +189,6 @@ const TokenFixPrice = (props) => {
     } catch(e) {
         return tokenFormatValue;
     }
-}
-
-function PortfolioRow(props) {
-    const { token, index } = props;
-    const [open, setOpen] = React.useState(false);
-    
-    return (
-        <React.Fragment>
-            <TableRow key={index} sx={{ '& > *': { borderBottom: 'unset' }}}>
-                <TableCell align="middle" sx={{borderBottom:"none"}}>
-                    <IconButton
-                        aria-label="expand row"
-                        size="small"
-                        onClick={() => setOpen(!open)}
-                    >
-                        {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-                    </IconButton>
-                </TableCell>
-                <TableCell align="left" sx={{borderBottom:"none"}}>
-                    <TokenIcon tokenInfo={token.tokenInfo} mint={token.mint} />
-                </TableCell>
-                <TableCell align="right" sx={{borderBottom:"none"}}><TokenFixPrice tokenFormatValue={token.balance} defaultFixed={3} /></TableCell>
-                <TableCell align="right" sx={{borderBottom:"none"}}>
-                    {token.usd_24h_change ?
-                        <>
-                        {token.usd_24h_change < 0 ?
-                            <>
-                                <Typography variant="caption" sx={{color:"#f00"}}>{token.usd_24h_change.toFixed(2)}% <ArrowDownwardIcon fontSize="0.75rem" /></Typography> <Typography variant="caption" sx={{color:"#aaaaaa"}}>$</Typography><TokenFixPrice tokenFormatValue={token.price} defaultFixed={2} />
-                            </>
-                        :
-                            <>
-                                <Typography variant="caption" sx={{color:"#aaaaaa"}}>{token.usd_24h_change.toFixed(2)}% <ArrowUpwardIcon fontSize="0.75rem" /></Typography> <Typography variant="caption" sx={{color:"#aaaaaa"}}>$</Typography><TokenFixPrice tokenFormatValue={token.price} defaultFixed={2} />
-                            </>
-                        }
-                        </>
-                    :
-                        <>
-                                <Typography variant="caption" sx={{color:"#aaaaaa"}}>$</Typography><TokenFixPrice tokenFormatValue={token.price} defaultFixed={2} />
-                        </>
-                    }
-                </TableCell>
-                <TableCell align="right" sx={{borderBottom:"none"}}><Typography variant="caption" sx={{color:"#aaaaaa"}}>$</Typography><TokenFixPrice tokenFormatValue={token.value} defaultFixed={2} /></TableCell>
-                <TableCell>
-                    <SendToken mint={token.mint} name={token.tokenInfo.name} logoURI={token.tokenInfo.logoURI} balance={token.balance} conversionrate={token.value/token.balance} showTokenName={false} />
-                </TableCell>
-            </TableRow>
-            <TableRow>
-                <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={5} align="center">
-                    <Collapse in={open} timeout="auto" unmountOnExit>
-                        <Box sx={{ margin: 1 }}>
-                            {/*
-                            <Typography variant="h6" gutterBottom component="div">
-                                Address
-                            </Typography>
-                            */}
-                            <Grid container spacing={2}>
-                                <Grid item xs={12}>
-                                    <TopHolders mint={token.mint} name={token.tokenInfo.name} logoURI={token.tokenInfo.logoURI} balance={token.balance}/>
-                                </Grid>
-                                <Grid item xs={12}>
-                                    <MakeLinkableAddress addr={token.mint} trim={0} hasextlink={true} hascopy={true} fontsize={12} />
-                                </Grid>
-                            </Grid>
-
-                            
-
-                            {/*
-                            <Table size="small" aria-label="purchases">
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell><Typography fontSize="12px">
-                                            <MakeLinkableAddress addr={token.mint} trim={0} hasextlink={true} hascopy={true} fontsize={12} />
-                                        </Typography></TableCell>
-                                    </TableRow>
-                                </TableHead>
-                            </Table>
-                            */}
-                        </Box>
-                    </Collapse>
-                </TableCell>
-            </TableRow>
-        </React.Fragment>
-    );
 }
 
 export const FarmsTableView = (props) => {
@@ -342,26 +225,17 @@ export const FarmsTableView = (props) => {
 
     return (
         <React.Fragment>
-            <div style={{width: 'auto', overflowX: 'scroll'}}>
-                <TableContainer>
-                    <StyledTable sx={{ minWidth: 500 }} size="small" aria-label="Portfolio Table">
+            
+                <TableContainer component={Paper}>
+                    <StyledTable sx={{ minWidth: 500 }} size="small" aria-label="Farms Table">
                         <TableHead>
-                            {props.isFarm ?
+                            {props.isFarm &&
                                 <TableRow>
                                     <TableCell><Typography variant="caption">Platform</Typography></TableCell>
                                     <TableCell><Typography variant="caption">Asset</Typography></TableCell>
                                     <TableCell align="right"><Typography variant="caption">Staked LP</Typography></TableCell>
                                     <TableCell align="right"><Typography variant="caption">APR</Typography></TableCell>
                                     <TableCell align="right"><Typography variant="caption">Value</Typography></TableCell>
-                                </TableRow>
-                            :
-                                <TableRow>
-                                    <TableCell sx={{width:"1%"}} />
-                                    <TableCell><Typography variant="caption">Asset</Typography></TableCell>
-                                    <TableCell align="right"><Typography variant="caption">Balance</Typography></TableCell>
-                                    <TableCell align="right"><Typography variant="caption">Price</Typography></TableCell> 
-                                    <TableCell align="right"><Typography variant="caption">Value</Typography></TableCell>
-                                    <TableCell></TableCell>
                                 </TableRow>
                             }
                         </TableHead>
@@ -370,7 +244,7 @@ export const FarmsTableView = (props) => {
                                 ? balances.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                 : balances
                             ).map((token, index) => {
-                                return props.isFarm ? 
+                                return props.isFarm && 
                                     <React.Fragment>
                                         <TableRow>
                                             <TableCell style={{ verticalAlign: 'middle' }}>
@@ -384,8 +258,6 @@ export const FarmsTableView = (props) => {
                                             <TableCell align="right"><Typography variant="caption" sx={{color:"#aaaaaa"}}>$</Typography><TokenFixPrice tokenFormatValue={token.value} defaultFixed={2} /></TableCell>
                                         </TableRow> 
                                     </React.Fragment>
-                                    : 
-                                    <PortfolioRow token={token} index={index} />
                             })}
                             {emptyRows > 0 && (
                                 <TableRow style={{ height: 53 * emptyRows }}>
@@ -396,27 +268,27 @@ export const FarmsTableView = (props) => {
                         <TableFooter>
                         <TableRow>
                             <TablePagination
-                            rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
-                            colSpan={portfolioTableCols}
-                            count={balances.length}
-                            rowsPerPage={rowsPerPage}
-                            page={page}
-                            SelectProps={{
-                                inputProps: {
-                                'aria-label': 'rows per page',
-                                },
-                                native: true,
-                            }}
-                            //onChangePage={handleChangePage}
-                            onPageChange={handleChangePage}
-                            onRowsPerPageChange={handleChangeRowsPerPage}
-                            ActionsComponent={TablePaginationActions}
+                                rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
+                                colSpan={portfolioTableCols}
+                                count={balances.length}
+                                rowsPerPage={rowsPerPage}
+                                page={page}
+                                SelectProps={{
+                                    inputProps: {
+                                    'aria-label': 'rows per page',
+                                    },
+                                    native: true,
+                                }}
+                                //onChangePage={handleChangePage}
+                                onPageChange={handleChangePage}
+                                onRowsPerPageChange={handleChangeRowsPerPage}
+                                ActionsComponent={TablePaginationActions}
                             />
                         </TableRow>
                         </TableFooter>
                     </StyledTable>
                 </TableContainer>
-            </div>
+                
         </React.Fragment>
     );
 };

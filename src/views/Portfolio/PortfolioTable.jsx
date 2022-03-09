@@ -303,9 +303,8 @@ export const PortfolioTableView = (props) => {
 
     return (
         <React.Fragment>
-            <div style={{width: 'auto', overflowX: 'scroll'}}>
-                <TableContainer>
-                    <StyledTable sx={{ minWidth: 500 }} size="small" aria-label="Portfolio Table">
+                <TableContainer component={Paper}>
+                    <Table sx={{ minWidth: 500 }} size="small" aria-label="Portfolio Table">
                         <TableHead>
                             {!props.isFarm &&
                                 <TableRow>
@@ -329,7 +328,7 @@ export const PortfolioTableView = (props) => {
                             })}
                             {emptyRows > 0 && (
                                 <TableRow style={{ height: 53 * emptyRows }}>
-                                <TableCell colSpan={4} />
+                                    <TableCell colSpan={4} />
                                 </TableRow>
                             )}
                         </TableBody>
@@ -354,9 +353,8 @@ export const PortfolioTableView = (props) => {
                             />
                         </TableRow>
                         </TableFooter>
-                    </StyledTable>
+                    </Table>
                 </TableContainer>
-            </div>
         </React.Fragment>
     );
 };
