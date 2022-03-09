@@ -89,50 +89,7 @@ export function Header(props: any) {
     //const currPath = location?.pathname ?? "";
     const { enqueueSnackbar } = useSnackbar();
 
-    const routes = [
-        { name: "Home", path: "/" },
-        // { name: "Servers", path: "/servers" },
-
-        // { name: "Settings", path: "/settings" }
-    ]
-    
-    /*
-    const toggleDrawer = () => {
-        //setOpenDrawer(!open);
-        open = !open;//setOpen(!open);
-    };
-    */
-
     const isConnected = session && session.isConnected;
-
-    /*
-    async function connect() {
-        let wallet = new Wallet();
-        wallet.onChange = (wallet) => onWalletConnect(wallet);
-        await wallet.connect();
-    }
-
-    async function connectPhantom() {
-        let wallet = new PhantomWallet();
-        wallet.onChange = (wallet: any) => onWalletConnect(wallet);
-        await wallet.connect();
-    }
-    
-    async function connectSolflare() {
-        let wallet = new SolflareWallet();
-        wallet.onChange = () => onWalletConnect(wallet);
-        await wallet.connect();
-    }
-    
-    async function onWalletConnect(wallet: any){
-        if(wallet){
-            let session = await wallet.signMessage('$GRAPE');
-            if(session){
-                setSession(session);
-            }
-        }
-    }
-    */
 
     async function disconnect() {
         setSession(null);
@@ -153,22 +110,6 @@ export function Header(props: any) {
     };
 
     const handleWalletConnectClickOpen = (type: string, callback: any) => {
-        /*
-        switch(type) {
-            case "sollet":
-                connect();
-                break;
-            case "phantom":
-                connectPhantom();
-                break;
-            case "solflare":
-                connectSolflare();
-                break;
-            default:
-                break;
-        }
-        */
-       
         callback && callback();
     };
 
@@ -226,22 +167,6 @@ export function Header(props: any) {
                 background: 'none'
             }}
             >
-
-            {/*    
-            <IconButton
-                size="large"
-                edge="start"
-                color="inherit"
-                aria-label="menu"
-                onClick={props.toggleDrawer}
-                sx={{
-                marginRight: '36px',
-                ...(open && { display: 'none' }),
-                }}
-            >
-                <MenuIcon />
-            </IconButton>
-            */}
             
             <Box display='flex' flexGrow={1}>
                 <Typography
@@ -258,8 +183,6 @@ export function Header(props: any) {
                 <Tooltip title={`Collection`}><IconButton component="a" href='https://grape.art' target="_blank"><PhotoOutlinedIcon/></IconButton></Tooltip>
                 <Tooltip title={`Partners`}><IconButton component={NavLink} color="inherit" to="/partners"><InsertChartOutlinedIcon/></IconButton></Tooltip>
                 <Tooltip title={`News`}><IconButton component={NavLink} color="inherit" to="/news"><RssFeedIcon/></IconButton></Tooltip>
-                
-                {/*<Tooltip title={`Unlisted Offers`}><IconButton color="inherit" href="/unlistedoffers"><LocalOfferIcon /></IconButton></Tooltip>*/}
             </Box>
             <div>
 

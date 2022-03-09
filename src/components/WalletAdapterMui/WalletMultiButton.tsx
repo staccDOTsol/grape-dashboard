@@ -171,26 +171,6 @@ export const WalletMultiButton: FC<ButtonProps> = ({
                 transitionDuration={250}
                 keepMounted
             >
-                {/*
-                <MenuItem onClick={() => setAnchor(undefined)}>
-                    
-                    <Button
-                        color={color}
-                        variant={variant}
-                        //startIcon={<WalletIcon wallet={wallet} />}
-                        className={styles.root}
-                        onClick={(event) => {
-                            setAnchor(undefined);
-                            enqueueSnackbar({'Success': 'copied'}, { variant: 'success' });
-                            enqueueSnackbar('Copied address', { variant: 'success'} );
-                        }}
-                        fullWidth
-                        {...props}
-                    >
-                        {session.publicKey}
-                    </Button>
-                </MenuItem>
-                */}
                 <Collapse in={!!anchor}>
                     <MenuItem
                         onClick={async () => {
