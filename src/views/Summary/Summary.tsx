@@ -60,7 +60,7 @@ export default function Summary(props: any) {
         {title} <small>{subtitle}</small>
         </Grid>
         <Grid item>
-          <Typography component="p" variant="h4" justifyContent="center" >
+          <Typography variant="h4" justifyContent="center" >
             {props.children}
           </Typography>
           {showtimestamp &&
@@ -91,14 +91,6 @@ export default function Summary(props: any) {
           }
           </>
         }
-      
-        <div>
-          {/*
-          <Link color="primary" href="#" onClick={preventDefault}>
-            View balance
-          </Link>
-          */}
-        </div>
       </Grid>
     </React.Fragment>
   );

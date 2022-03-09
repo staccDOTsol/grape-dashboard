@@ -40,6 +40,7 @@ import TopHolders from '../TopHolders/TopHolders';
 import TransactionHistory from '../TransactionHistory/TransactionHistory';
 import { MakeLinkableAddress, ValidateAddress } from '../../components/Tools/WalletAddress'; // global key handling
 import { PretifyCommaNumber } from '../../components/Tools/PretifyCommaNumber';
+import { ConstructionOutlined } from '@mui/icons-material';
 
 const StyledTable = styled(Table)(({ theme }) => ({
     '& .MuiTableCell-root': {
@@ -172,99 +173,89 @@ function PortfolioRow(props) {
     
     return (
         <React.Fragment>
-            <TableRow key={index} sx={{ '& > *': { borderBottom: 'unset' }}}>
-                <TableCell align="middle" sx={{borderBottom:"none"}}>
-                    <IconButton
-                        aria-label="expand row"
-                        size="small"
-                        onClick={() => setOpen(!open)}
-                    >
-                        {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-                    </IconButton>
-                </TableCell>
-                <TableCell align="left" sx={{borderBottom:"none"}}>
-                    <TokenIcon tokenInfo={token.tokenInfo} mint={token.mint} />
-                </TableCell>
-                <TableCell align="right" sx={{borderBottom:"none"}}><TokenFixPrice tokenFormatValue={token.balance} defaultFixed={3} /></TableCell>
-                <TableCell align="right" sx={{borderBottom:"none", flexWrap:"nowrap!important"}}>
-                    {token.usd_24h_change ?
-                        <>
-                        {token.usd_24h_change < 0 ?
-                            <Typography variant="caption" sx={{color:"#f00"}}>
-                                <Grid container direction="row" alignItems="center" sx={{ flexWrap:"nowrap!important" }}>
-                                    <Grid item>
-                                        {token.usd_24h_change.toFixed(2)}%
+            <React.Fragment>
+                <TableRow key={index}>
+                    <TableCell align="middle" sx={{borderBottom:"none"}}>
+                        <IconButton
+                            aria-label="expand row"
+                            size="small"
+                            onClick={() => setOpen(!open)}
+                        >
+                            {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+                        </IconButton>
+                    </TableCell>
+                    <TableCell align="left" sx={{borderBottom:"none"}}>
+                        <TokenIcon tokenInfo={token.tokenInfo} mint={token.mint} />
+                    </TableCell>
+                    <TableCell align="right" sx={{borderBottom:"none"}}><TokenFixPrice tokenFormatValue={token.balance} defaultFixed={3} /></TableCell>
+                    <TableCell align="right" sx={{borderBottom:"none", flexWrap:"nowrap!important"}}>
+                        {token.usd_24h_change ?
+                            <>
+                            {token.usd_24h_change < 0 ?
+                                <Typography variant="caption" sx={{color:"#f00"}}>
+                                    <Grid container direction="row" alignItems="center" sx={{ flexWrap:"nowrap!important" }}>
+                                        <Grid item>
+                                            {token.usd_24h_change.toFixed(2)}%
+                                        </Grid>
+                                        <Grid item>
+                                            <ArrowDownwardIcon fontSize="0.75rem" />
+                                        </Grid>
                                     </Grid>
-                                    <Grid item>
-                                        <ArrowDownwardIcon fontSize="0.75rem" />
+                                </Typography>
+                            :
+                                <Typography variant="caption" sx={{color:"#aaaaaa"}}>
+                                    <Grid container direction="row" alignItems="center" sx={{ flexWrap:"nowrap!important" }}>
+                                        <Grid item>
+                                            {token.usd_24h_change.toFixed(2)}%
+                                        </Grid>
+                                        <Grid item>
+                                            <ArrowUpwardIcon fontSize="0.75rem" />
+                                        </Grid>
                                     </Grid>
-                                </Grid>
-                            </Typography>
+                                </Typography>
+                            }
+                            </>
                         :
-                            <Typography variant="caption" sx={{color:"#aaaaaa"}}>
-                                <Grid container direction="row" alignItems="center" sx={{ flexWrap:"nowrap!important" }}>
-                                    <Grid item>
-                                        {token.usd_24h_change.toFixed(2)}%
-                                    </Grid>
-                                    <Grid item>
-                                        <ArrowUpwardIcon fontSize="0.75rem" />
-                                    </Grid>
-                                </Grid>
-                            </Typography>
+                            <>
+                                -
+                            </>
                         }
-                        </>
-                    :
-                        <>
-                            -
-                        </>
-                    }
-                </TableCell>
-                <TableCell align="right" sx={{borderBottom:"none"}}>
-                    <Typography variant="caption" sx={{color:"#aaaaaa"}}>$</Typography><TokenFixPrice tokenFormatValue={token.price} defaultFixed={2} />
-                </TableCell>
-                <TableCell align="right" sx={{borderBottom:"none"}}><Typography variant="caption" sx={{color:"#aaaaaa"}}>$</Typography><TokenFixPrice tokenFormatValue={token.value} defaultFixed={2} /></TableCell>
-                <TableCell>
-                    <SendToken mint={token.mint} name={token.tokenInfo?.name} logoURI={token.tokenInfo?.logoURI} balance={token.balance} conversionrate={token.value/token.balance} showTokenName={false} sendType={0} />
-                </TableCell>
-            </TableRow>
-            <TableRow>
-                <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={7} align="center">
-                    <Collapse in={open} timeout="auto" unmountOnExit>
-                        <Box sx={{ margin: 1 }}>
-                            {/*
-                            <Typography variant="h6" gutterBottom component="div">
-                                Address
-                            </Typography>
-                            */}
-                            <Grid container spacing={2}>
-                                <Grid item xs={12}>
-                                    <TopHolders mint={token.mint} name={token.tokenInfo?.name} logoURI={token.tokenInfo?.logoURI} balance={token.balance}/>
-                                    {token.address &&
-                                    <TransactionHistory address={token.address} mint={token.mint} mintdecimals={token.mintdecimals} name={token.tokenInfo?.name} logoURI={token.tokenInfo?.logoURI} balance={token.balance}/>
-                                    }
+                    </TableCell>
+                    <TableCell align="right" sx={{borderBottom:"none"}}>
+                        <Typography variant="caption" sx={{color:"#aaaaaa"}}>$</Typography><TokenFixPrice tokenFormatValue={token.price} defaultFixed={2} />
+                    </TableCell>
+                    <TableCell align="right" sx={{borderBottom:"none"}}><Typography variant="caption" sx={{color:"#aaaaaa"}}>$</Typography><TokenFixPrice tokenFormatValue={token.value} defaultFixed={2} /></TableCell>
+                    <TableCell sx={{borderBottom:"none"}}>
+                        <SendToken mint={token.mint} name={token.tokenInfo?.name} logoURI={token.tokenInfo?.logoURI} balance={token.balance} conversionrate={token.value/token.balance} showTokenName={false} sendType={0} />
+                    </TableCell>
+                </TableRow>
+            </React.Fragment>
+            <React.Fragment>
+                <TableRow key={`r-${index}`}>
+                    <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={7} align="center">
+                        <Collapse in={open} timeout="auto" unmountOnExit>
+                            <Box sx={{ margin: 1 }}>
+                                {/*
+                                <Typography variant="h6" gutterBottom component="div">
+                                    Address
+                                </Typography>
+                                */}
+                                <Grid container spacing={2}>
+                                    <Grid item xs={12}>
+                                        <TopHolders mint={token.mint} name={token.tokenInfo?.name} logoURI={token.tokenInfo?.logoURI} balance={token.balance}/>
+                                        {token.address &&
+                                        <TransactionHistory address={token.address} mint={token.mint} mintdecimals={token.mintdecimals} name={token.tokenInfo?.name} logoURI={token.tokenInfo?.logoURI} balance={token.balance}/>
+                                        }
+                                    </Grid>
+                                    <Grid item xs={12}>
+                                        <MakeLinkableAddress addr={token.mint} trim={0} hasextlink={true} hascopy={true} fontsize={12} />
+                                    </Grid>
                                 </Grid>
-                                <Grid item xs={12}>
-                                    <MakeLinkableAddress addr={token.mint} trim={0} hasextlink={true} hascopy={true} fontsize={12} />
-                                </Grid>
-                            </Grid>
-
-                            
-
-                            {/*
-                            <Table size="small" aria-label="purchases">
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell><Typography fontSize="12px">
-                                            <MakeLinkableAddress addr={token.mint} trim={0} hasextlink={true} hascopy={true} fontsize={12} />
-                                        </Typography></TableCell>
-                                    </TableRow>
-                                </TableHead>
-                            </Table>
-                            */}
-                        </Box>
-                    </Collapse>
-                </TableCell>
-            </TableRow>
+                            </Box>
+                        </Collapse>
+                    </TableCell>
+                </TableRow>
+            </React.Fragment>
         </React.Fragment>
     );
 }

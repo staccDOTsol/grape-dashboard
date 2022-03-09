@@ -131,41 +131,40 @@ export function GovernanceView(props: any) {
                                     </Box>
                                 </Box>
                                 
-                                <div style={{width:'auto', overflowX: 'scroll'}}>
-                                    <TableContainer>
-                                        <StyledTable sx={{ minWidth: 500 }} size="small" aria-label="Portfolio Table">
-                                            <TableHead>
-                                                <TableRow>
-                                                    <TableCell><Typography variant="caption">Realm</Typography></TableCell>
-                                                    <TableCell align="right"><Typography variant="caption">Votes</Typography></TableCell>
-                                                    <TableCell></TableCell>
-                                                </TableRow>
-                                            </TableHead>
-                                            <TableBody>
-                                                <TableRow>
-                                                    <TableCell style={{ verticalAlign: 'middle' }}>
-                                                        <Grid container direction="row" alignItems="center" sx={{ }}>
-                                                            <Grid item>
-                                                                <Avatar 
-                                                                    component={Paper} 
-                                                                    elevation={4}
-                                                                    alt="Token" 
-                                                                    src={'https://lh3.googleusercontent.com/y7Wsemw9UVBc9dtjtRfVilnS1cgpDt356PPAjne5NvMXIwWz9_x7WKMPH99teyv8vXDmpZinsJdgiFQ16_OAda1dNcsUxlpw9DyMkUk=s0'}
-                                                                    sx={{ width: 28, height: 28, bgcolor: "#222" }}
-                                                                />
-                                                            </Grid>
-                                                            <Grid item sx={{ ml: 1 }}>
-                                                                    {'Grape Votes'}
-                                                            </Grid>
+                                <TableContainer>
+                                    <StyledTable sx={{ minWidth: 500 }} size="small" aria-label="Portfolio Table">
+                                        <TableHead>
+                                            <TableRow>
+                                                <TableCell><Typography variant="caption">Realm</Typography></TableCell>
+                                                <TableCell align="right"><Typography variant="caption">Votes</Typography></TableCell>
+                                                <TableCell></TableCell>
+                                            </TableRow>
+                                        </TableHead>
+                                        <TableBody>
+                                            <TableRow>
+                                                <TableCell style={{ verticalAlign: 'middle' }}>
+                                                    <Grid container direction="row" alignItems="center" sx={{ }}>
+                                                        <Grid item>
+                                                            <Avatar 
+                                                                component={Paper} 
+                                                                elevation={4}
+                                                                alt="Token" 
+                                                                src={'https://lh3.googleusercontent.com/y7Wsemw9UVBc9dtjtRfVilnS1cgpDt356PPAjne5NvMXIwWz9_x7WKMPH99teyv8vXDmpZinsJdgiFQ16_OAda1dNcsUxlpw9DyMkUk=s0'}
+                                                                sx={{ width: 28, height: 28, bgcolor: "#222" }}
+                                                            />
                                                         </Grid>
-                                                    </TableCell>
-                                                    <TableCell align="right">{(parseInt(tokenOwnerRecords.account.governingTokenDepositAmount, 10))/1000000}</TableCell>
-                                                    <TableCell align="right"><Button href='https://realms.today/dao/GRAPE' target='_blank'><HowToVoteIcon /></Button></TableCell>
-                                                </TableRow> 
-                                            </TableBody>
-                                        </StyledTable>
-                                    </TableContainer>
-                                </div>
+                                                        <Grid item sx={{ ml: 1 }}>
+                                                                {'Grape Votes'}
+                                                        </Grid>
+                                                    </Grid>
+                                                </TableCell>
+                                                <TableCell align="right">{(parseInt(tokenOwnerRecords.account.governingTokenDepositAmount, 10))/1000000}</TableCell>
+                                                <TableCell align="right"><Button href='https://realms.today/dao/GRAPE' target='_blank'><HowToVoteIcon /></Button></TableCell>
+                                            </TableRow> 
+                                        </TableBody>
+                                    </StyledTable>
+                                </TableContainer>
+                                
                             </Box>
                         </Paper>
                     </Grid>
