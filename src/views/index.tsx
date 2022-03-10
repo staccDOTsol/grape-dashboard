@@ -12,3 +12,4 @@ export { MembershipView } from "./Membership/Membership";
 export { GovernanceView } from "./Governance/Governance";
 export { PaymentsView } from "./Payments/Payments";
 //export { SwapComponent } from "./Swap/SwapComponent";
+export { MeanfiView } from "./Meanfi/Meanfi";

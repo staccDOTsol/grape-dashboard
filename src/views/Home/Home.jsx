@@ -8,7 +8,7 @@ import Typography from '@mui/material/Typography';
 import { useWallet } from '@solana/wallet-adapter-react';
 
 import { useSnackbar } from 'notistack';
-import { ServersView, SettingsView, PortfolioView, GovernanceView } from "../";
+import { ServersView, SettingsView, PortfolioView, GovernanceView, MeanfiView } from "../";
 
 function ConnectedWalletComponent(props) {
   return (
@@ -24,6 +24,7 @@ function BasicComponent(props) {
     <React.Fragment>
       <PortfolioView />
       <GovernanceView />
+      <MeanfiView />
     </React.Fragment>
   );
 }
