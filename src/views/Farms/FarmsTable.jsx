@@ -226,7 +226,7 @@ export const FarmsTableView = (props) => {
     return (
         <React.Fragment>
             
-                <TableContainer component={Paper}>
+                <TableContainer component={Paper} sx={{background:'none'}}>
                     <StyledTable sx={{ minWidth: 500 }} size="small" aria-label="Farms Table">
                         <TableHead>
                             {props.isFarm &&

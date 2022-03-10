@@ -294,7 +294,7 @@ export const PortfolioTableView = (props) => {
 
     return (
         <React.Fragment>
-                <TableContainer component={Paper}>
+                <TableContainer component={Paper} sx={{background:'none'}}>
                     <Table sx={{ minWidth: 500 }} size="small" aria-label="Portfolio Table">
                         <TableHead>
                             {!props.isFarm &&

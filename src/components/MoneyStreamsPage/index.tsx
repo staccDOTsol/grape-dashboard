@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { ClickAwayListener, Paper, Slide } from "@mui/material";
+import { ClickAwayListener, Box, Grid, Paper, Slide } from "@mui/material";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { TokenInfo } from "@solana/spl-token-registry";
 import { delay, formatAmount, getFormattedNumberToLocale, getTransactionStatusForLogs, isValidAddress, makeInteger, maxTrailingZeroes, shortenAddress } from "../../views/Meanfi/helpers/ui";
@@ -594,33 +594,39 @@ function MoneyStreamsPage() {
     return (
         <>
             <ClickAwayListener onClickAway={handleClickOutside}>
-                <div className="money-streams-widget-wrapper">
-                    <MoneyStreamsAccountsTable
-                        setSelectedMoneyStream={setSelectedMoneyStream}
-                        refreshMoneyStreams={() => refreshStreamList(true)}
-                    />
-                    <div className={selectedStream && detailsPanelOpen ? 'meanfi-sliding-panel open' : 'meanfi-sliding-panel'}>
-                        <Slide direction="left" in={detailsPanelOpen}>
-                            <Paper elevation={5} className={`grape-paper ${getDetailsPanelBackgroundClass(selectedStream)}`}>
-                                <MoneyStreamDetailsPane
-                                    isOpen={detailsPanelOpen}
-                                    onCloseDetaisPane={() => closeDetailsPanel()}
-                                    onLoadMoreActivity={() => getMoreActivities()}
-                                    onRequestWithdraw={() => showWithdrawModal()}
+                <Grid item xs={12} md={12} lg={12}>
+                    <Paper className="grape-paper-background">
+                        <Box className="grape-paper">
+                            <div className="money-streams-widget-wrapper">
+                                <MoneyStreamsAccountsTable
+                                    setSelectedMoneyStream={setSelectedMoneyStream}
+                                    refreshMoneyStreams={() => refreshStreamList(true)}
                                 />
-                            </Paper>
-                        </Slide>
-                    </div>
-                    <MoneyStreamWithdrawModal
-                        startUpData={lastStreamDetail}
-                        transactionFees={transactionFees}
-                        isVisible={isWithdrawModalVisible}
-                        mspClient={msp}
-                        isBusy={isBusy}
-                        handleOk={onAcceptWithdraw}
-                        handleClose={closeWithdrawModal}
-                    />
-                </div>
+                                <div className={selectedStream && detailsPanelOpen ? 'meanfi-sliding-panel open' : 'meanfi-sliding-panel'}>
+                                    <Slide direction="left" in={detailsPanelOpen}>
+                                        <Paper elevation={5} className={`grape-paper ${getDetailsPanelBackgroundClass(selectedStream)}`}>
+                                            <MoneyStreamDetailsPane
+                                                isOpen={detailsPanelOpen}
+                                                onCloseDetaisPane={() => closeDetailsPanel()}
+                                                onLoadMoreActivity={() => getMoreActivities()}
+                                                onRequestWithdraw={() => showWithdrawModal()}
+                                            />
+                                        </Paper>
+                                    </Slide>
+                                </div>
+                                <MoneyStreamWithdrawModal
+                                    startUpData={lastStreamDetail}
+                                    transactionFees={transactionFees}
+                                    isVisible={isWithdrawModalVisible}
+                                    mspClient={msp}
+                                    isBusy={isBusy}
+                                    handleOk={onAcceptWithdraw}
+                                    handleClose={closeWithdrawModal}
+                                />
+                            </div>
+                        </Box>
+                    </Paper>
+                </Grid>
             </ClickAwayListener>
         </>
     );

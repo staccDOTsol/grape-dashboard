@@ -2099,7 +2099,7 @@
     prop-types "^15.7.2"
     react-is "^17.0.2"
 
-"@mean-dao/msp@^0.5":
+"@mean-dao/msp@^0.5.5":
   version "0.5.5"
   resolved "https://registry.yarnpkg.com/@mean-dao/msp/-/msp-0.5.5.tgz#ce9bcfdf9ee63cfc9eb1d0010d4e7c9933fcd53c"
   integrity sha512-+9gprunyhKo1Mp0cFKJFUHnAFEPvjmS0Yh4pTc34uVuv8o5FKgg8NMlzyGiyvPSyyXqiGQvk70MlhHkqkBfgLQ==

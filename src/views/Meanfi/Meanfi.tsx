@@ -49,7 +49,6 @@ const MeanfiUiView = (props: any) => {
         )
     } else {
         if (publicKey && tokenList) {
-
             return (
                 <>
                     <SnackbarUtilsConfigurator />

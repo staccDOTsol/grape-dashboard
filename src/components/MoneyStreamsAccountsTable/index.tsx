@@ -185,250 +185,244 @@ function MoneyStreamsAccountsTable(props: MoneyStreamsAccountsTableProps) {
 
     return (
         <React.Fragment>
-            <Grid item xs={12} md={12} lg={12}>
-                <Paper className="grape-paper-background">
-                    <Box className="grape-paper">
-                        {/* Heading */}
-                        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                            <Box
-                                className="grape-dashboard-component-header"
-                                sx={{ m: 0, position: "relative" }}>
-                                <Typography
-                                    gutterBottom
-                                    variant="h6"
-                                    component="div"
-                                    sx={{ m: 0, position: "relative" }}>
-                                    MONEY STREAMS
-                                </Typography>
-                            </Box>
-                            <Box sx={{ mr: 1 }}>
-                                <IconButton
-                                    color="primary"
-                                    aria-label="Refresh Stream List"
-                                    component="span"
-                                    disabled={loadingStreams || loadingStreamActivity}
-                                    onClick={props.refreshMoneyStreams}>
-                                    <AutorenewOutlinedIcon />
-                                </IconButton>
-                            </Box>
-                        </Box>
-
-                        <Paper elevation={0} className={`money-streams-widget-content ${loadingStreams ? 'click-disabled' : ''}`} sx={{ width: '100%', overflow: 'hidden' }}>
-                            <TableContainer sx={{ maxHeight: 660, backgroundColor: 'inherit' }}>
-                                <Table stickyHeader aria-label="Money Streams" sx={{ backgroundColor: 'inherit' }}>
-                                    <TableHead sx={{ backgroundColor: 'inherit' }}>
-                                        <TableRow sx={{ backgroundColor: 'inherit' }}>
-                                            <TableCell sx={{ minWidth: '180px', backgroundColor: 'inherit' }}>
-                                                <Typography variant="caption">Platform</Typography>
-                                            </TableCell>
-                                            <TableCell sx={{ minWidth: '100px', backgroundColor: 'inherit' }}>
-                                                <Typography variant="caption">Asset</Typography>
-                                            </TableCell>
-                                            <TableCell align="right" sx={{ minWidth: '158px', backgroundColor: 'inherit' }}>
-                                                <Typography variant="caption" sx={{ marginRight: '30px' }}>Status</Typography>
-                                            </TableCell>
-                                            <TableCell align="right" sx={{ minWidth: '146px', backgroundColor: 'inherit' }}>
-                                                <Typography variant="caption">Funds left</Typography>
-                                            </TableCell>
-                                            <TableCell align="right" sx={{ minWidth: '146px', backgroundColor: 'inherit' }}>
-                                                <Typography variant="caption">Payment Rate</Typography>
-                                            </TableCell>
-                                            <TableCell align="right" sx={{ minWidth: '146px', backgroundColor: 'inherit' }}>
-                                                <Typography variant="caption">Available Funds</Typography>
-                                            </TableCell>
-                                            <TableCell sx={{ backgroundColor: 'inherit' }}></TableCell>
-                                        </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                        {streamList && streamList.length > 0 ? (
-                                            <>
-                                                {streamList.map((item: Stream, index: number) => {
-                                                    const fromItemIndex = page * rowsPerPage;
-                                                    const toItemIndex = fromItemIndex + rowsPerPage;
-                                                    if (index < fromItemIndex || index >= toItemIndex) { return null; }
-                                                    const associatedToken = item.associatedToken ? getTokenByMintAddress(item.associatedToken as string) : undefined;
-                                                    return (
-                                                        <TableRow key={`${index}`} id={`${item.id}`}>
-                                                            {/* Platform */}
-                                                            <TableCell style={{ verticalAlign: "middle" }}>
-                                                                <Grid container direction="row" alignItems="center" sx={{}} wrap="nowrap">
-                                                                    <Grid item>
-                                                                        {meanToken ? (
-                                                                            <Avatar
-                                                                                component={Paper}
-                                                                                elevation={4}
-                                                                                alt="Token"
-                                                                                src={meanToken.logoURI}
-                                                                                sx={{ width: 28, height: 28, bgcolor: "#222" }}
-                                                                            />
-                                                                        ) : (
-                                                                            <IconMeanfi style={{display: "flex", width: 24, height: 24, alignItems: "center"}} />
-                                                                        )}
-                                                                    </Grid>
-                                                                    <Grid item xs zeroMinWidth sx={{ ml: 1 }}>
-                                                                        <Typography noWrap>{getStreamDescription(item)}</Typography>
-                                                                    </Grid>
-                                                                </Grid>
-                                                            </TableCell>
-                                                            {/* Asset */}
-                                                            <TableCell style={{ verticalAlign: "middle" }}>
-                                                                <Grid container direction="row" alignItems="center" sx={{}} wrap="nowrap">
-                                                                    <Grid item>
-                                                                        {associatedToken && associatedToken.logoURI ? (
-                                                                            <Avatar
-                                                                                component={Paper}
-                                                                                elevation={4}
-                                                                                alt={associatedToken.name}
-                                                                                src={associatedToken.logoURI}
-                                                                                sx={{ width: 28, height: 28, bgcolor: "#222" }}
-                                                                            />
-                                                                        ) : (
-                                                                            <Box sx={{ height: 28 }}>
-                                                                                <Jazzicon
-                                                                                    diameter={28}
-                                                                                    seed={parseInt(bs58.decode(item.associatedToken as string).toString("hex").slice(5, 15), 16)} />
-                                                                            </Box>
-                                                                        )}
-                                                                    </Grid>
-                                                                    <Grid item sx={{ ml: 1 }}>
-                                                                        {getTokenSymbolByAddress(item.associatedToken as string)}
-                                                                    </Grid>
-                                                                </Grid>
-                                                            </TableCell>
-                                                            {/* Status */}
-                                                            <TableCell align="right" valign="middle">
-                                                                <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end' }}>
-                                                                    <Box sx={{ display: 'flex', flexDirection: 'column', textAlign: 'right', alignItems: 'flex-end', justifyContent: 'center' }}>
-                                                                        <Box className="pill medium">{getStreamStatus(item)}</Box>
-                                                                    </Box>
-                                                                    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', pl: 1 }}>
-                                                                        {isInboundStream(item) ? (
-                                                                            <ArrowDownwardOutlinedIcon fontSize="small" className="stream-type-incoming" />
-                                                                        ) : (
-                                                                            <ArrowUpwardOutlinedIcon fontSize="small" className="stream-type-outgoing" />
-                                                                        )}
-                                                                    </Box>
-                                                                </Box>
-                                                            </TableCell>
-                                                            {/* Funds left */}
-                                                            <TableCell align="right">
-                                                                {
-                                                                    formatThousands(
-                                                                        makeDecimal(
-                                                                            new BN(item.fundsLeftInStream),
-                                                                            associatedToken ? associatedToken.decimals : 6
-                                                                        ),
-                                                                        associatedToken ? associatedToken.decimals : 6
-                                                                    )
-                                                                }
-                                                            </TableCell>
-                                                            {/* Payment Rate */}
-                                                            <TableCell align="right">
-                                                                {
-                                                                    formatThousands(
-                                                                        makeDecimal(
-                                                                            new BN(item.rateAmount),
-                                                                            associatedToken ? associatedToken.decimals : 6
-                                                                        ),
-                                                                        associatedToken ? associatedToken.decimals : 6
-                                                                    )
-                                                                }
-                                                                {getIntervalFromSeconds(item.rateIntervalInSeconds as number, true)}
-                                                            </TableCell>
-                                                            {/* Available Funds */}
-                                                            <TableCell align="right">
-                                                                {
-                                                                    formatThousands(
-                                                                        makeDecimal(
-                                                                            new BN(item.withdrawableAmount),
-                                                                            associatedToken ? associatedToken.decimals : 6
-                                                                        ),
-                                                                        associatedToken ? associatedToken.decimals : 6
-                                                                    )
-                                                                }
-                                                            </TableCell>
-                                                            {/* Details CTA */}
-                                                            <TableCell align="right">
-                                                                <IconButton
-                                                                    color="primary"
-                                                                    aria-label="Open Stream Details"
-                                                                    component="span"
-                                                                    onClick={() => props.setSelectedMoneyStream(item)}>
-                                                                    <ArrowCircleRightOutlined />
-                                                                </IconButton>
-                                                            </TableCell>
-                                                        </TableRow>
-                                                    );
-                                                })}
-                                            </>
-                                        ) : (
-                                            <TableRow style={{ height: 53 }}>
-                                                <TableCell colSpan={7} sx={{ borderBottom: 'none' }}>
-                                                    {
-                                                        streamList === undefined && loadingStreams
-                                                            ? 'Loading your streams'
-                                                            : 'You have no streams'
-                                                    }
-                                                </TableCell>
-                                            </TableRow>
-                                        )}
-                                    </TableBody>
-
-                                </Table>
-                            </TableContainer>
-                            {streamList && streamList.length > 0 && (
-                                <>
-                                    <TablePagination
-                                        rowsPerPageOptions={[5, 10, 25, { label: 'All', value: streamList.length }]}
-                                        component="div"
-                                        count={streamList.length}
-                                        rowsPerPage={rowsPerPage}
-                                        page={page}
-                                        SelectProps={{
-                                            inputProps: {
-                                            'aria-label': 'rows per page',
-                                            },
-                                            native: true,
-                                        }}
-                                        onPageChange={handleChangePage}
-                                        onRowsPerPageChange={handleChangeRowsPerPage}
-                                        ActionsComponent={TablePaginationActions}
-                                        />
-                                </>
-                            )}
-                        </Paper>
-
-                        {loadingStreams && (
-                            <>
-                                {streamList !== undefined && (
-                                    <Box
-                                        className="meanfi-panel-blurry"
-                                        sx={{
-                                            position: 'absolute',
-                                            top: 0,
-                                            left: 0,
-                                            width: '100%',
-                                            height: '100%',
-                                            zIndex: 2
-                                        }}
-                                    />
-                                )}
-                                <CircularProgress
-                                    size={24}
-                                    sx={{
-                                        position: 'absolute',
-                                        top: '50%',
-                                        left: '50%',
-                                        marginTop: '-12px',
-                                        marginLeft: '-12px',
-                                        zIndex: 3
-                                    }}
-                                />
-                            </>
-                        )}
+                {/* Heading */}
+                <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <Box
+                        className="grape-dashboard-component-header"
+                        sx={{ m: 0, position: "relative" }}>
+                        <Typography
+                            gutterBottom
+                            variant="h6"
+                            component="div"
+                            sx={{ m: 0, position: "relative" }}>
+                            MONEY STREAMS
+                        </Typography>
                     </Box>
+                    <Box sx={{ mr: 1 }}>
+                        <IconButton
+                            color="primary"
+                            aria-label="Refresh Stream List"
+                            component="span"
+                            disabled={loadingStreams || loadingStreamActivity}
+                            onClick={props.refreshMoneyStreams}>
+                            <AutorenewOutlinedIcon />
+                        </IconButton>
+                    </Box>
+                </Box>
+
+                <Paper elevation={0} className={`money-streams-widget-content ${loadingStreams ? 'click-disabled' : ''}`} sx={{ width: '100%', overflow: 'hidden' }}>
+                    <TableContainer sx={{ maxHeight: 660, backgroundColor: 'inherit' }}>
+                        <Table stickyHeader aria-label="Money Streams" sx={{ backgroundColor: 'inherit' }}>
+                            <TableHead sx={{ backgroundColor: 'inherit' }}>
+                                <TableRow sx={{ backgroundColor: 'inherit' }}>
+                                    <TableCell sx={{ minWidth: '180px', backgroundColor: 'inherit' }}>
+                                        <Typography variant="caption">Platform</Typography>
+                                    </TableCell>
+                                    <TableCell sx={{ minWidth: '100px', backgroundColor: 'inherit' }}>
+                                        <Typography variant="caption">Asset</Typography>
+                                    </TableCell>
+                                    <TableCell align="right" sx={{ minWidth: '158px', backgroundColor: 'inherit' }}>
+                                        <Typography variant="caption" sx={{ marginRight: '30px' }}>Status</Typography>
+                                    </TableCell>
+                                    <TableCell align="right" sx={{ minWidth: '146px', backgroundColor: 'inherit' }}>
+                                        <Typography variant="caption">Funds left</Typography>
+                                    </TableCell>
+                                    <TableCell align="right" sx={{ minWidth: '146px', backgroundColor: 'inherit' }}>
+                                        <Typography variant="caption">Payment Rate</Typography>
+                                    </TableCell>
+                                    <TableCell align="right" sx={{ minWidth: '146px', backgroundColor: 'inherit' }}>
+                                        <Typography variant="caption">Available Funds</Typography>
+                                    </TableCell>
+                                    <TableCell sx={{ backgroundColor: 'inherit' }}></TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {streamList && streamList.length > 0 ? (
+                                    <>
+                                        {streamList.map((item: Stream, index: number) => {
+                                            const fromItemIndex = page * rowsPerPage;
+                                            const toItemIndex = fromItemIndex + rowsPerPage;
+                                            if (index < fromItemIndex || index >= toItemIndex) { return null; }
+                                            const associatedToken = item.associatedToken ? getTokenByMintAddress(item.associatedToken as string) : undefined;
+                                            return (
+                                                <TableRow key={`${index}`} id={`${item.id}`}>
+                                                    {/* Platform */}
+                                                    <TableCell style={{ verticalAlign: "middle" }}>
+                                                        <Grid container direction="row" alignItems="center" sx={{}} wrap="nowrap">
+                                                            <Grid item>
+                                                                {meanToken ? (
+                                                                    <Avatar
+                                                                        component={Paper}
+                                                                        elevation={4}
+                                                                        alt="Token"
+                                                                        src={meanToken.logoURI}
+                                                                        sx={{ width: 28, height: 28, bgcolor: "#222" }}
+                                                                    />
+                                                                ) : (
+                                                                    <IconMeanfi style={{display: "flex", width: 24, height: 24, alignItems: "center"}} />
+                                                                )}
+                                                            </Grid>
+                                                            <Grid item xs zeroMinWidth sx={{ ml: 1 }}>
+                                                                <Typography noWrap>{getStreamDescription(item)}</Typography>
+                                                            </Grid>
+                                                        </Grid>
+                                                    </TableCell>
+                                                    {/* Asset */}
+                                                    <TableCell style={{ verticalAlign: "middle" }}>
+                                                        <Grid container direction="row" alignItems="center" sx={{}} wrap="nowrap">
+                                                            <Grid item>
+                                                                {associatedToken && associatedToken.logoURI ? (
+                                                                    <Avatar
+                                                                        component={Paper}
+                                                                        elevation={4}
+                                                                        alt={associatedToken.name}
+                                                                        src={associatedToken.logoURI}
+                                                                        sx={{ width: 28, height: 28, bgcolor: "#222" }}
+                                                                    />
+                                                                ) : (
+                                                                    <Box sx={{ height: 28 }}>
+                                                                        <Jazzicon
+                                                                            diameter={28}
+                                                                            seed={parseInt(bs58.decode(item.associatedToken as string).toString("hex").slice(5, 15), 16)} />
+                                                                    </Box>
+                                                                )}
+                                                            </Grid>
+                                                            <Grid item sx={{ ml: 1 }}>
+                                                                {getTokenSymbolByAddress(item.associatedToken as string)}
+                                                            </Grid>
+                                                        </Grid>
+                                                    </TableCell>
+                                                    {/* Status */}
+                                                    <TableCell align="right" valign="middle">
+                                                        <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end' }}>
+                                                            <Box sx={{ display: 'flex', flexDirection: 'column', textAlign: 'right', alignItems: 'flex-end', justifyContent: 'center' }}>
+                                                                <Box className="pill medium">{getStreamStatus(item)}</Box>
+                                                            </Box>
+                                                            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', pl: 1 }}>
+                                                                {isInboundStream(item) ? (
+                                                                    <ArrowDownwardOutlinedIcon fontSize="small" className="stream-type-incoming" />
+                                                                ) : (
+                                                                    <ArrowUpwardOutlinedIcon fontSize="small" className="stream-type-outgoing" />
+                                                                )}
+                                                            </Box>
+                                                        </Box>
+                                                    </TableCell>
+                                                    {/* Funds left */}
+                                                    <TableCell align="right">
+                                                        {
+                                                            formatThousands(
+                                                                makeDecimal(
+                                                                    new BN(item.fundsLeftInStream),
+                                                                    associatedToken ? associatedToken.decimals : 6
+                                                                ),
+                                                                associatedToken ? associatedToken.decimals : 6
+                                                            )
+                                                        }
+                                                    </TableCell>
+                                                    {/* Payment Rate */}
+                                                    <TableCell align="right">
+                                                        {
+                                                            formatThousands(
+                                                                makeDecimal(
+                                                                    new BN(item.rateAmount),
+                                                                    associatedToken ? associatedToken.decimals : 6
+                                                                ),
+                                                                associatedToken ? associatedToken.decimals : 6
+                                                            )
+                                                        }
+                                                        {getIntervalFromSeconds(item.rateIntervalInSeconds as number, true)}
+                                                    </TableCell>
+                                                    {/* Available Funds */}
+                                                    <TableCell align="right">
+                                                        {
+                                                            formatThousands(
+                                                                makeDecimal(
+                                                                    new BN(item.withdrawableAmount),
+                                                                    associatedToken ? associatedToken.decimals : 6
+                                                                ),
+                                                                associatedToken ? associatedToken.decimals : 6
+                                                            )
+                                                        }
+                                                    </TableCell>
+                                                    {/* Details CTA */}
+                                                    <TableCell align="right">
+                                                        <IconButton
+                                                            color="primary"
+                                                            aria-label="Open Stream Details"
+                                                            component="span"
+                                                            onClick={() => props.setSelectedMoneyStream(item)}>
+                                                            <ArrowCircleRightOutlined />
+                                                        </IconButton>
+                                                    </TableCell>
+                                                </TableRow>
+                                            );
+                                        })}
+                                    </>
+                                ) : (
+                                    <TableRow style={{ height: 53 }}>
+                                        <TableCell colSpan={7} sx={{ borderBottom: 'none' }}>
+                                            {
+                                                streamList === undefined && loadingStreams
+                                                    ? 'Loading your streams'
+                                                    : 'You have no streams'
+                                            }
+                                        </TableCell>
+                                    </TableRow>
+                                )}
+                            </TableBody>
+
+                        </Table>
+                    </TableContainer>
+                    {streamList && streamList.length > 0 && (
+                        <>
+                            <TablePagination
+                                rowsPerPageOptions={[5, 10, 25, { label: 'All', value: streamList.length }]}
+                                component="div"
+                                count={streamList.length}
+                                rowsPerPage={rowsPerPage}
+                                page={page}
+                                SelectProps={{
+                                    inputProps: {
+                                    'aria-label': 'rows per page',
+                                    },
+                                    native: true,
+                                }}
+                                onPageChange={handleChangePage}
+                                onRowsPerPageChange={handleChangeRowsPerPage}
+                                ActionsComponent={TablePaginationActions}
+                                />
+                        </>
+                    )}
                 </Paper>
-            </Grid>
+
+                {loadingStreams && (
+                    <>
+                        {streamList !== undefined && (
+                            <Box
+                                className="meanfi-panel-blurry"
+                                sx={{
+                                    position: 'absolute',
+                                    top: 0,
+                                    left: 0,
+                                    width: '100%',
+                                    height: '100%',
+                                    zIndex: 2
+                                }}
+                            />
+                        )}
+                        <CircularProgress
+                            size={24}
+                            sx={{
+                                position: 'absolute',
+                                top: '50%',
+                                left: '50%',
+                                marginTop: '-12px',
+                                marginLeft: '-12px',
+                                zIndex: 3
+                            }}
+                        />
+                    </>
+                )}
         </React.Fragment>
     );
 }
