@@ -48,7 +48,7 @@ const MeanfiUiView = (props: any) => {
             </React.Fragment>
         )
     } else {
-        if (publicKey && tokenList) {
+        {if (publicKey && tokenList) {
             return (
                 <>
                     <SnackbarUtilsConfigurator />
@@ -56,22 +56,18 @@ const MeanfiUiView = (props: any) => {
                 </>
             );
 
-        } else {
+        } else {}
             return (
                 <React.Fragment>
-                    <Paper className="grape-paper-background">
-                        <Grid
-                            container
-                            className="grape-paper"
-                            alignItems="center"
-                            justifyContent="center">
-                            <Grid item>
+                    <Grid item xs={12} md={12} lg={12}>
+                        <Paper className="grape-paper-background">
+                            <Box className="grape-paper">
                                 <Typography variant="h5">
                                     {'Nothing loaded...'}
                                 </Typography>
-                            </Grid>
-                        </Grid>
-                    </Paper>
+                            </Box>
+                        </Paper>
+                    </Grid>
                 </React.Fragment>
             );
         }
