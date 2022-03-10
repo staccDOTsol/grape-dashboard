@@ -40,48 +40,48 @@ export function GovernanceView(props: any) {
     const getGovernance = async () => {
         if (!loading){
             setLoading(true);
-            
-            const programId = new PublicKey('GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw');
-            
-            /*
-            const loadedRealms = await getRealms(rpcEndpoint, programId);
-            setRealms(loadedRealms);
-            let loadedRealmsArray = new Array();
-            Object.keys(loadedRealms).forEach(function(key) {
-                loadedRealmsArray.push(loadedRealms[key]);
-            });
-            setRealmsArray(loadedRealmsArray);
-            
-            console.log("Realms: "+JSON.stringify(loadedRealms));
-            */
-            
-            //const loadedRecords = await getVoteRecordsByVoter(programId, rpcEndpoint, publicKey)
-            //setVoteRecords(loadedRecords);
+            try{
+                const programId = new PublicKey('GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw');
+                
+                /*
+                const loadedRealms = await getRealms(rpcEndpoint, programId);
+                setRealms(loadedRealms);
+                let loadedRealmsArray = new Array();
+                Object.keys(loadedRealms).forEach(function(key) {
+                    loadedRealmsArray.push(loadedRealms[key]);
+                });
+                setRealmsArray(loadedRealmsArray);
+                
+                console.log("Realms: "+JSON.stringify(loadedRealms));
+                */
+                
+                //const loadedRecords = await getVoteRecordsByVoter(programId, rpcEndpoint, publicKey)
+                //setVoteRecords(loadedRecords);
 
-            // statically referencing this for now
-            // we will dynamically get this using the above call - loadedRealmsArray
-            
-            const realmId = new PublicKey('By2sVGZXwfQq6rAiAM3rNPJ9iQfb5e2QhnF4YjJ4Bip'); // Grape RealmId
-            const governingTokenMint = new PublicKey('8upjSpvjcdpuzhfR1zriwg5NXkwDruejqNE9WNbPRtyA'); // Grape Mint
-            const governingTokenOwner = publicKey;
+                // statically referencing this for now
+                // we will dynamically get this using the above call - loadedRealmsArray
+                
+                const realmId = new PublicKey('By2sVGZXwfQq6rAiAM3rNPJ9iQfb5e2QhnF4YjJ4Bip'); // Grape RealmId
+                const governingTokenMint = new PublicKey('8upjSpvjcdpuzhfR1zriwg5NXkwDruejqNE9WNbPRtyA'); // Grape Mint
+                const governingTokenOwner = publicKey;
 
-            const ownerRecords = await getTokenOwnerRecordForRealm(
-                connection, 
-                programId,
-                realmId,
-                governingTokenMint,
-                governingTokenOwner
-            );
-            setOwnerRecords(ownerRecords);
+                const ownerRecords = await getTokenOwnerRecordForRealm(
+                    connection, 
+                    programId,
+                    realmId,
+                    governingTokenMint,
+                    governingTokenOwner
+                );
+                setOwnerRecords(ownerRecords);
 
-            const ownerRecordsAll = await getGovernanceAccounts(
-                connection, 
-                programId, 
-                TokenOwnerRecord, [
-                    pubkeyFilter(1 + 32 + 32, governingTokenOwner)!,
-                ]);
-            
-
+                const ownerRecordsAll = await getGovernanceAccounts(
+                    connection, 
+                    programId, 
+                    TokenOwnerRecord, [
+                        pubkeyFilter(1 + 32 + 32, governingTokenOwner)!,
+                    ]);
+                
+            }catch(e){console.log("ERR: "+e)}
             //console.log("Realms: "+JSON.stringify(ownerRecordsAll));
 
             setLoading(false);
