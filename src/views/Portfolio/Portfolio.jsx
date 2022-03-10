@@ -645,31 +645,39 @@ export const PortfolioView = () => {
               }}
             >
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <Box class="grape-dashboard-component-header" sx={{ m: 0, position: 'relative' }}>
-                  <Typography gutterBottom variant="h6" component="div" sx={{ m: 0, position: 'relative'}}>
-                    PORTFOLIO
-                  </Typography>
-                </Box>
-                <Box sx={{ m: 0, position: 'relative' }}>
-                <Typography gutterBottom variant="h6" component="div" sx={{ ml: 1, position: 'relative'}}>
-                  <Button size="small" variant="text" value="Refresh" onClick={getBalances} disabled={loading}>
-                    <CachedIcon sx={{fontSize:16}} />
-                  </Button>
-                  {loading && (
-                    <CircularProgress 
-                      size={18} 
-                      color="inherit"
-                      sx={{
-                        position: 'absolute',
-                        top: '50%',
-                        left: '50%',
-                        marginTop: '-8px',
-                        marginLeft: '-9px',
-                      }}/>
-                  )}
-                  </Typography>
-                      
-                </Box>
+                <Grid
+                  container
+                  direction="row"
+                >
+                  <Grid item>
+                    <Box class="grape-dashboard-component-header" sx={{ m: 0, position: 'relative' }}>
+                      <Typography gutterBottom variant="h6" component="div" sx={{ m: 0, position: 'relative'}}>
+                        PORTFOLIO
+                      </Typography>
+                    </Box>
+                  </Grid>
+                  <Grid item>
+                      <Box sx={{ ml: 1, position: 'relative' }}>
+                        <Typography component="div" variant="caption">
+                          <Button sx={{borderRadius:'24px',p:0.5,minWidth:0}} size="small" variant="text" value="Refresh" onClick={getBalances} disabled={loading}>
+                            <CachedIcon />
+                          </Button>
+                          {loading && (
+                            <CircularProgress 
+                              size={24} 
+                              color="inherit"
+                              sx={{
+                                position: 'absolute',
+                                top: '50%',
+                                left: '50%',
+                                marginTop: '-12px',
+                                marginLeft: '-12px',
+                              }}/>
+                          )}
+                          </Typography>
+                        </Box>
+                    </Grid> 
+                  </Grid>
               </Box>
               <PortfolioTable balances={portfolioPositions.portfolio}/>
             </Box>
