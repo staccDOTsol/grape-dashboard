@@ -211,9 +211,9 @@ function MoneyStreamsPage() {
 
     const onWithdrawFundsTransactionFinished = useCallback(async () => {
         setIsBusy(false);
+        await delay(300);
         closeWithdrawModal();
         resetTransactionStatus();
-        await delay(300);
         snackNotifications.success('Withdraw transaction successfully completed');
         refreshTokenBalance();
         closeDetailsPanel();
@@ -226,9 +226,7 @@ function MoneyStreamsPage() {
     ]);
 
     const onWithdrawFundsTransactionFailed = useCallback(() => {
-        console.info('Turning off isBusy...');
         setIsBusy(false);
-        console.info('Launching the snackbar...');
         snackNotifications.warning('Withdraw transaction could not complete. Pleasy try again.');
     }, []);
 
