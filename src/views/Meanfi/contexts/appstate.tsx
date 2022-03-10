@@ -1,6 +1,6 @@
 import React, { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import { TransactionStatus } from "../models/enums";
-import { LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.js";
+import { Connection, LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.js";
 import { useAccountsContext } from "./accounts";
 import { TokenInfo, TokenListProvider } from "@solana/spl-token-registry";
 import { TransactionStatusInfo } from "../models/transactions";
@@ -12,6 +12,7 @@ import { MSP, Stream, StreamActivity } from "@mean-dao/msp";
 import { initialSummary, StreamsSummary } from "../models/streams";
 import { getPrices } from "../helpers/api";
 import { shortenAddress } from "../helpers/ui";
+import { GRAPE_RPC_ENDPOINT, FREE_RPC_ENDPOINT } from "../../../components/Tools/constants";
 
 export interface AppStateProviderProps {
   children: ReactNode;
@@ -65,7 +66,7 @@ interface AppStateConfig {
 
 const contextDefaultValues: AppStateConfig = {
   network: WalletAdapterNetwork.Devnet,
-  endpoint: '',
+  endpoint: FREE_RPC_ENDPOINT,
   detailsPanelOpen: false,
   tokenList: [],
   selectedToken: undefined,
@@ -116,7 +117,7 @@ const AppStateProvider: React.FC<AppStateProviderProps> = (props) => {
   // Parent contexts
   const { connection } = useConnection();
   const network = props.network;
-  const endpoint = props.endpoint;
+  const endpoint = FREE_RPC_ENDPOINT; //props.endpoint;
   const { publicKey, connected } = useWallet();
   const accounts = useAccountsContext();
   const [streamProgramAddress, setStreamProgramAddress] = useState('');

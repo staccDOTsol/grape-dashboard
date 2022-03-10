@@ -57,19 +57,7 @@ const MeanfiUiView = (props: any) => {
             );
 
         } else {}
-            return (
-                <React.Fragment>
-                    <Grid item xs={12} md={12} lg={12}>
-                        <Paper className="grape-paper-background">
-                            <Box className="grape-paper">
-                                <Typography variant="h5">
-                                    {'Nothing loaded...'}
-                                </Typography>
-                            </Box>
-                        </Paper>
-                    </Grid>
-                </React.Fragment>
-            );
+            return (<></>);
         }
 
     }
