@@ -596,7 +596,7 @@ function MoneyStreamsPage() {
             <ClickAwayListener onClickAway={handleClickOutside}>
                 <Grid item xs={12} md={12} lg={12}>
                     <Paper className="grape-paper-background">
-                        <Box className="grape-paper">
+                        <Box className="grape-paper" p={0}>
                             <div className="money-streams-widget-wrapper">
                                 <MoneyStreamsAccountsTable
                                     setSelectedMoneyStream={setSelectedMoneyStream}

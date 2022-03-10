@@ -161,6 +161,7 @@ export function Header(props: any) {
     return (
 
         <Toolbar
+            className="grape-dashboard-header"
             color="inherit"
             sx={{
                 pr: '24px', // keep right padding when drawer closed

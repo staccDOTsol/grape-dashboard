@@ -35,6 +35,7 @@ import {PublicKey} from '@solana/web3.js';
 import { PretifyCommaNumber } from '../../components/Tools/PretifyCommaNumber';
 import { GRAPE_RPC_ENDPOINT } from '../../components/Tools/constants';
 
+import CachedIcon from '@mui/icons-material/Cached';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
@@ -652,7 +653,7 @@ export const PortfolioView = () => {
                 <Box sx={{ m: 0, position: 'relative' }}>
                 <Typography gutterBottom variant="h6" component="div" sx={{ ml: 1, position: 'relative'}}>
                   <Button size="small" variant="text" value="Refresh" onClick={getBalances} disabled={loading}>
-                    <RefreshIcon sx={{fontSize:16}} />
+                    <CachedIcon sx={{fontSize:16}} />
                   </Button>
                   {loading && (
                     <CircularProgress 

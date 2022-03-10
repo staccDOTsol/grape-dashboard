@@ -48,28 +48,15 @@ const MeanfiUiView = (props: any) => {
             </React.Fragment>
         )
     } else {
-        {if (publicKey && tokenList) {
+        if (publicKey && tokenList) {
             return (
                 <>
                     <SnackbarUtilsConfigurator />
                     <MoneyStreamsPage />
                 </>
             );
-
-        } else {}
-            return (
-                <React.Fragment>
-                    <Grid item xs={12} md={12} lg={12}>
-                        <Paper className="grape-paper-background">
-                            <Box className="grape-paper">
-                                <Typography variant="h5">
-                                    {'Nothing loaded...'}
-                                </Typography>
-                            </Box>
-                        </Paper>
-                    </Grid>
-                </React.Fragment>
-            );
+        } else {
+            return (<></>);
         }
 
     }

@@ -88,6 +88,7 @@ export function GovernanceView(props: any) {
         } else{
 
         }
+        setLoading(false);
     }
     
     React.useEffect(() => { 
