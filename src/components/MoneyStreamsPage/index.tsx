@@ -526,25 +526,15 @@ function MoneyStreamsPage() {
                 publicKey
             );
 
-            const newList: Array<Stream> = [];
-            // Get an updated version for each stream in the list
-            if (updatedStreams && updatedStreams.length) {
-                let freshStream: Stream;
-                for (const stream of updatedStreams) {
-                    freshStream = await msp.refreshStream(stream);
-                    if (freshStream) {
-                        newList.push(freshStream);
-                        if (streamDetail && streamDetail.id === stream.id) {
-                            setStreamDetail(freshStream);
-                        }
-                    }
-                }
+            if (streamDetail) {
+                const freshStream = await msp.refreshStream(streamDetail);
+                setStreamDetail(freshStream);
             }
 
             // Finally update the combined list
-            if (newList.length) {
+            if (updatedStreams.length) {
                 setStreamList(
-                    newList.sort((a, b) =>
+                    updatedStreams.sort((a, b) =>
                         a.createdBlockTime < b.createdBlockTime ? 1 : -1
                     )
                 );
@@ -553,7 +543,7 @@ function MoneyStreamsPage() {
 
         const timeout = setTimeout(() => {
             refreshStreams();
-        }, 1000);
+        }, 3000);
 
         return () => {
             clearTimeout(timeout);
