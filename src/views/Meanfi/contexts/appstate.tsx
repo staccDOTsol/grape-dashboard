@@ -1,4 +1,4 @@
-import React, { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
+import React, { ReactNode, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { TransactionStatus } from "../models/enums";
 import { Connection, LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.js";
 import { useAccountsContext } from "./accounts";
@@ -6,13 +6,13 @@ import { TokenInfo, TokenListProvider } from "@solana/spl-token-registry";
 import { TransactionStatusInfo } from "../models/transactions";
 import { BANNED_TOKENS, MONEY_STREAMING_PROGRAM_ADDRESS, PRICE_REFRESH_TIMEOUT, STREAMS_REFRESH_TIMEOUT } from "../constants";
 import { findATokenAddress, getChainIdByClusterName } from "../helpers/common";
-import { useConnection, useWallet } from "@solana/wallet-adapter-react";
+import { useWallet } from "@solana/wallet-adapter-react";
 import { WalletAdapterNetwork } from "@solana/wallet-adapter-base";
 import { MSP, Stream, StreamActivity } from "@mean-dao/msp";
 import { initialSummary, StreamsSummary } from "../models/streams";
 import { getPrices } from "../helpers/api";
 import { shortenAddress } from "../helpers/ui";
-import { GRAPE_RPC_ENDPOINT, FREE_RPC_ENDPOINT } from "../../../components/Tools/constants";
+import { FREE_RPC_ENDPOINT } from "../../../components/Tools/constants";
 
 export interface AppStateProviderProps {
   children: ReactNode;
@@ -21,6 +21,7 @@ export interface AppStateProviderProps {
 }
 
 interface AppStateConfig {
+  connection: Connection;
   network: WalletAdapterNetwork;
   endpoint: string;
   detailsPanelOpen: boolean;
@@ -65,6 +66,7 @@ interface AppStateConfig {
 }
 
 const contextDefaultValues: AppStateConfig = {
+  connection: null,
   network: WalletAdapterNetwork.Devnet,
   endpoint: FREE_RPC_ENDPOINT,
   detailsPanelOpen: false,
@@ -115,7 +117,6 @@ export const AppStateContext = React.createContext<AppStateConfig>(contextDefaul
 
 const AppStateProvider: React.FC<AppStateProviderProps> = (props) => {
   // Parent contexts
-  const { connection } = useConnection();
   const network = props.network;
   const endpoint = FREE_RPC_ENDPOINT; //props.endpoint;
   const { publicKey, connected } = useWallet();
@@ -127,9 +128,14 @@ const AppStateProvider: React.FC<AppStateProviderProps> = (props) => {
     setStreamProgramAddress(streamProgramAddressFromConfig);
   }
 
+  const connection = useMemo(() => new Connection(endpoint, "confirmed"), [endpoint]);
+
   // Create and cache Money Streaming Program instance
   const msp = useMemo(() => {
     if (publicKey) {
+      console.log('endpoint:', endpoint);
+      console.log('network:', network);
+      console.log('connection.getVersion():', connection.getVersion());
       console.log('MSP instance from appState');
       return new MSP(
         endpoint,
@@ -138,8 +144,10 @@ const AppStateProvider: React.FC<AppStateProviderProps> = (props) => {
       );
     }
   }, [
-    publicKey,
+    network,
     endpoint,
+    publicKey,
+    connection,
     streamProgramAddressFromConfig
   ]);
 
@@ -515,6 +523,7 @@ const AppStateProvider: React.FC<AppStateProviderProps> = (props) => {
       value={{
         network,
         endpoint,
+        connection,
         detailsPanelOpen,
         tokenList,
         selectedToken,
@@ -559,5 +568,14 @@ const AppStateProvider: React.FC<AppStateProviderProps> = (props) => {
     </AppStateContext.Provider>
   );
 };
+
+export function useMeanFiConnection() {
+  const context = useContext(AppStateContext);
+  return {
+    connection: context.connection,
+    endpoint: context.endpoint,
+    network: context.network
+  };
+}
 
 export default AppStateProvider;

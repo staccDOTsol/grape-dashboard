@@ -21,12 +21,12 @@ function MoneyStreamsPage() {
     // Import all of the data for meanfi here
     // Pass to my child components from here
 
-    const { connection } = useConnection();
     const { account } = useNativeAccount();
     const { wallet, publicKey, connected, disconnecting, sendTransaction } = useWallet();
     const {
         endpoint,
         tokenList,
+        connection,
         streamList,
         streamDetail,
         selectedToken,

@@ -4,8 +4,9 @@ import { AccountLayout, u64, MintInfo, MintLayout } from "@solana/spl-token";
 import { TokenAccount } from "../models/account";
 import { EventEmitter } from "../helpers/eventEmitter";
 import { programIds, WRAPPED_SOL_MINT } from "../helpers/ids";
-import { useConnection, useWallet } from "@solana/wallet-adapter-react";
+import { useWallet } from "@solana/wallet-adapter-react";
 import { chunks } from "../helpers/common";
+import { useMeanFiConnection } from "./appstate";
 
 const AccountsContext = React.createContext<any>(null);
 
@@ -255,7 +256,7 @@ function wrapNativeAccount(
 }
 
 const UseNativeAccount = () => {
-  const connection = useConnection();
+  const { connection } = useMeanFiConnection();
   const { wallet, publicKey } = useWallet();
   const [nativeAccount, setNativeAccount] = useState<AccountInfo<Buffer>>();
 
@@ -282,7 +283,7 @@ const UseNativeAccount = () => {
       return;
     }
 
-    connection.connection.getAccountInfo(publicKey).then((acc) => {
+    connection.getAccountInfo(publicKey).then((acc) => {
       if (acc) {
         updateCache(acc);
         setNativeAccount(acc);
@@ -294,7 +295,7 @@ const UseNativeAccount = () => {
     .catch(error => {
       throw(error);
     });
-    const listener = connection.connection.onAccountChange(publicKey, (acc) => {
+    const listener = connection.onAccountChange(publicKey, (acc) => {
       if (acc) {
         updateCache(acc);
         setNativeAccount(acc);
@@ -303,7 +304,7 @@ const UseNativeAccount = () => {
 
     return () => {
       if (listener) {
-        connection.connection.removeAccountChangeListener(listener);
+        connection.removeAccountChangeListener(listener);
       }
     };
   }, [
@@ -344,7 +345,7 @@ const precacheUserTokenAccounts = async (
 };
 
 export function AccountsProvider({ children = null as any }) {
-  const connection = useConnection();
+  const { connection } = useMeanFiConnection();
   const { publicKey, wallet, connected } = useWallet();
   const [tokenAccounts, setTokenAccounts] = useState<TokenAccount[]>([]);
   const [userAccounts, setUserAccounts] = useState<TokenAccount[]>([]);
@@ -377,7 +378,7 @@ export function AccountsProvider({ children = null as any }) {
       if (args.isNew) {
         let id = args.id;
         let deserialize = args.parser;
-        const listenerId = connection.connection.onAccountChange(new PublicKey(id), (info) => {
+        const listenerId = connection.onAccountChange(new PublicKey(id), (info) => {
           cache.add(id, info, deserialize);
         });
         subs.push(listenerId);
@@ -385,7 +386,7 @@ export function AccountsProvider({ children = null as any }) {
     });
 
     return () => {
-      subs.forEach((id) => connection.connection.removeAccountChangeListener(id));
+      subs.forEach((id) => connection.removeAccountChangeListener(id));
     };
   }, [connection]);
 
@@ -393,11 +394,11 @@ export function AccountsProvider({ children = null as any }) {
     if (!connection || !publicKey) {
       setTokenAccounts([]);
     } else {
-      precacheUserTokenAccounts(connection.connection, publicKey).then(() => {
+      precacheUserTokenAccounts(connection, publicKey).then(() => {
         setTokenAccounts(selectUserAccounts());
       });
 
-      const tokenSubID = connection.connection.onProgramAccountChange(
+      const tokenSubID = connection.onProgramAccountChange(
         programIds().token,
         (info) => {
           const id = (info.accountId as unknown) as string;
@@ -414,7 +415,7 @@ export function AccountsProvider({ children = null as any }) {
       );
 
       return () => {
-        connection.connection.removeProgramAccountChangeListener(tokenSubID);
+        connection.removeProgramAccountChangeListener(tokenSubID);
       };
     }
   }, [connection, connected, publicKey, selectUserAccounts]);
@@ -496,7 +497,7 @@ const getMultipleAccountsCore = async (
 };
 
 export function useMint(key?: string | PublicKey) {
-  const connection = useConnection();
+  const { connection } = useMeanFiConnection();
   const [mint, setMint] = useState<MintInfo>();
   
   const id = typeof key === "string" ? key : key?.toBase58();
@@ -507,7 +508,7 @@ export function useMint(key?: string | PublicKey) {
     }
 
     cache
-      .query(connection.connection, id, MintParser)
+      .query(connection, id, MintParser)
       .then((acc) => setMint(acc.info as any))
       .catch((err) => console.error(err));
 
@@ -515,7 +516,7 @@ export function useMint(key?: string | PublicKey) {
       const event = e;
       if (event.id === id) {
         cache
-          .query(connection.connection, id, MintParser)
+          .query(connection, id, MintParser)
           .then((mint) => setMint(mint.info as any));
       }
     });
@@ -541,7 +542,7 @@ export const useAccountByMint = (mint: string) => {
 };
 
 export function useAccount(pubKey?: PublicKey) {
-  const connection = useConnection();
+  const { connection } = useMeanFiConnection();
   const [account, setAccount] = useState<TokenAccount>();
 
   const key = pubKey?.toBase58();
@@ -553,7 +554,7 @@ export function useAccount(pubKey?: PublicKey) {
         }
 
         const acc = await cache
-          .query(connection.connection, key, TokenAccountParser)
+          .query(connection, key, TokenAccountParser)
           .catch((err) => console.error(err));
         if (acc) {
           setAccount(acc);

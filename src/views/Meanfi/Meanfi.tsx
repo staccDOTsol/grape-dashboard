@@ -74,9 +74,7 @@ export function MeanfiView(props: any) {
     const endpoint = DEDICATED_FREE_FAST_RPC;
 
     return (
-        <AppStateProvider
-            network={props.network || network}
-            endpoint={props.endpoint || endpoint}>
+        <AppStateProvider network={network} endpoint={endpoint}>
             <AccountsProvider>
                 <MeanfiUiView />
             </AccountsProvider>

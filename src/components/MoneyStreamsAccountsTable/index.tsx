@@ -186,7 +186,7 @@ function MoneyStreamsAccountsTable(props: MoneyStreamsAccountsTableProps) {
     return (
         <React.Fragment>
                 {/* Heading */}
-                <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: '8px' }}>
                     <Box
                         className="grape-dashboard-component-header"
                         sx={{ m: 0, position: "relative" }}>
