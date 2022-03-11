@@ -526,6 +526,22 @@ function MoneyStreamsPage() {
                 publicKey
             );
 
+            // update state from the SDK results
+            if (updatedStreams){
+                setStreamList(updatedStreams);
+            }
+
+            if (streamDetail){
+                const freshStream = await msp.refreshStream(streamDetail);
+                setStreamDetail(freshStream);
+            }
+            
+            /*
+            const updatedStreams = await msp.refreshStreams(
+                (streamList as Stream[]) || [],
+                publicKey
+            );
+
             if (streamDetail) {
                 const freshStream = await msp.refreshStream(streamDetail);
                 setStreamDetail(freshStream);
@@ -539,6 +555,7 @@ function MoneyStreamsPage() {
                     )
                 );
             }
+            */
         };
 
         const timeout = setTimeout(() => {

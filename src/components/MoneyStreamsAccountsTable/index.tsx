@@ -266,7 +266,7 @@ function MoneyStreamsAccountsTable(props: MoneyStreamsAccountsTableProps) {
                                                                 )}
                                                             </Grid>
                                                             <Grid item xs zeroMinWidth sx={{ ml: 1 }}>
-                                                                <Typography noWrap>{getStreamDescription(item)}</Typography>
+                                                                <Typography variant="caption" noWrap>{getStreamDescription(item)}</Typography>
                                                             </Grid>
                                                         </Grid>
                                                     </TableCell>
