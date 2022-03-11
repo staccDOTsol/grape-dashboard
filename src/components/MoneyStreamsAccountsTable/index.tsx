@@ -237,13 +237,16 @@ function MoneyStreamsAccountsTable(props: MoneyStreamsAccountsTableProps) {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {streamList && streamList.length > 0 ? (
+                                {streamList && streamList.length > 0 ? 
+                                    
+                                (
                                     <>
-                                        {streamList.map((item: Stream, index: number) => {
+                                        {streamList.sort((a, b) => b.fundsLeftInStream - a.fundsLeftInStream).map((item: Stream, index: number) => {
                                             const fromItemIndex = page * rowsPerPage;
                                             const toItemIndex = fromItemIndex + rowsPerPage;
                                             if (index < fromItemIndex || index >= toItemIndex) { return null; }
                                             const associatedToken = item.associatedToken ? getTokenByMintAddress(item.associatedToken as string) : undefined;
+                                            
                                             return (
                                                 <TableRow key={`${index}`} id={`${item.id}`}>
                                                     {/* Platform */}
