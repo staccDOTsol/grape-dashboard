@@ -33,6 +33,7 @@ import {
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 
 import { GRAPE_RPC_ENDPOINT, FREE_RPC_ENDPOINT } from '../../components/Tools/constants';
+import { RegexTextField } from '../../components/Tools/RegexTextField';
 import { MakeLinkableAddress, ValidateAddress } from '../../components/Tools/WalletAddress'; // global key handling
 import { useSnackbar } from 'notistack';
 
@@ -424,30 +425,25 @@ export default function OrcaSwap(props: any) {
                                             </FormControl>
                                         </Grid>
                                         <Grid item xs={6}>
-                                            <TextField 
+                                            <RegexTextField
+                                                regex={/[^0-9]+\.?[^0-9]/gi}
+                                                autoFocus
+                                                autoComplete='off'
+                                                margin="dense"
                                                 id="swap-token-amount" 
-                                                inputRef={input => input && input.focus()}
-                                                fullWidth 
-                                                placeholder="0.00" 
-                                                autoComplete="off"
+                                                type="text"
+                                                fullWidth
                                                 variant="outlined"
-                                                //value={parseFloat((userTokenBalanceInput).toString().replace(/^0|[1-9]+/, ''))}
-                                                value={userTokenBalanceInput}
-                                                type="number"
-                                                onChange={(e) => {
-                                                    // here add an additional check if valid number
-                                                    // let regex = 
-                                                    // regex.text(e.target.value){
-                                                    setTokensToSwap(e.target.value)
-                                                    setTokenBalanceInput(+e.target.value)
-                                                    // }
-                                                }}
-                                                InputProps={{
-                                                    inputProps: {
-                                                        step: 0.000000001,
-                                                        style: {
-                                                            textAlign:'right'
-                                                        }
+                                                value={userTokenBalanceInput || 0}
+                                                onChange={(e: any) => {
+                                                    let val = e.target.value.replace(/^0+/, '');
+                                                    setTokensToSwap(val)
+                                                    setTokenBalanceInput(val)
+                                                    }
+                                                }
+                                                inputProps={{
+                                                    style: { 
+                                                        textAlign:'right', 
                                                     }
                                                 }}
                                             />

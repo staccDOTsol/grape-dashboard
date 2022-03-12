@@ -27,6 +27,8 @@ import HelpIcon from '@mui/icons-material/Help';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
+import { GRAPE_RPC_ENDPOINT } from '../../components/Tools/constants';
+import { RegexTextField } from '../../components/Tools/RegexTextField';
 
 const StyledTable = styled(Table)(({ theme }) => ({
   '& .MuiTableCell-root': {
@@ -110,8 +112,7 @@ export default function TopHolders(props: any) {
         "id":1,
       };
   
-      const response = await fetch("https://free.rpcpool.com", {
-      //const response = await fetch("https://solana-api.projectserum.com/", {
+      const response = await fetch(GRAPE_RPC_ENDPOINT, {
         method: "POST",
         body: JSON.stringify(body),
         headers: { "Content-Type": "application/json" },
@@ -134,8 +135,7 @@ export default function TopHolders(props: any) {
         "id":2,
       };
   
-      const response = await fetch("https://free.rpcpool.com", {
-      //const response = await fetch("https://solana-api.projectserum.com/", {
+      const response = await fetch("GRAPE_RPC_ENDPOINT", {
         method: "POST",
         body: JSON.stringify(body),
         headers: { "Content-Type": "application/json" },

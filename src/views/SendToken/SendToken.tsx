@@ -6,6 +6,7 @@ import { Token, TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID } from "@solana/sp
 
 import { GRAPE_RPC_ENDPOINT, FREE_RPC_ENDPOINT } from '../../components/Tools/constants';
 import { GRAPE_TREASURY } from '../../components/Tools/constants';
+import { RegexTextField } from '../../components/Tools/RegexTextField';
 
 import { styled } from '@mui/material/styles';
 
@@ -89,7 +90,7 @@ const BootstrapDialogTitle = (props: DialogTitleProps) => {
 
 export default function SendToken(props: any) {
     const [open, setOpen] = React.useState(false);
-    const [amounttosend, setTokensToSend] = React.useState(null);
+    const [amounttosend, setTokensToSend] = React.useState(0);
     const [showTokenName, setShowTokenName] = React.useState(props.showTokenName);
     const [toaddress, setToAddress] = React.useState(null);
     const [userTokenBalanceInput, setTokenBalanceInput] = React.useState(0);
@@ -391,29 +392,26 @@ export default function SendToken(props: any) {
                             </Grid>
                             </Grid>
                             <Grid item xs={8}>
-                                <TextField 
+                                <RegexTextField
+                                    regex={/[^0-9]+\.?[^0-9]/gi}
+                                    autoFocus
+                                    autoComplete='off'
+                                    margin="dense"
                                     id="send-token-amount" 
-                                    fullWidth 
-                                    placeholder="0.00" 
-                                    variant="standard" 
-                                    autoComplete="off"
-                                    //value={(userTokenBalanceInput).toString().replace(/^0+/, '')}
-                                    value={userTokenBalanceInput}
-                                    type="number"
-                                    onChange={(e) => {
-                                        // here add an additional check if valid number
-                                        // let regex = 
-                                        // regex.text(e.target.value){
-                                        setTokensToSend(e.target.value)
-                                        setTokenBalanceInput(+e.target.value)
-                                        // }
-                                    }}
-                                    InputProps={{
-                                        inputProps: {
-                                            step: 0.000000001,
-                                            style: {
-                                                textAlign:'right'
-                                            }
+                                    type="text"
+                                    fullWidth
+                                    variant="standard"
+                                    value={userTokenBalanceInput || 0}
+                                    onChange={(e: any) => {
+                                        let val = e.target.value.replace(/^0+/, '');
+                                        setTokensToSend(val)
+                                        setTokenBalanceInput(val)
+                                        }
+                                    }
+                                    inputProps={{
+                                        style: { 
+                                            textAlign:'right', 
+                                            fontSize: '24px'
                                         }
                                     }}
                                 />
@@ -449,11 +447,15 @@ export default function SendToken(props: any) {
                                 <Typography
                                     variant="caption"
                                 >
-                                    {convertedAmountValue &&
-                                    <>
-                                    ~ ${convertedAmountValue.toFixed(2)}
-                                    </>
-                                    }
+                                    {convertedAmountValue ?
+                                        <>
+                                        {+convertedAmountValue > 0 &&
+                                            <>
+                                            ~ ${convertedAmountValue.toFixed(2)}
+                                            </>
+                                        }
+                                        </>
+                                    :<></>}
                                 </Typography>
                             </Grid>
                             
@@ -464,7 +466,7 @@ export default function SendToken(props: any) {
                                         <TextField 
                                             id="send-to-address" 
                                             fullWidth 
-                                            placeholder="Enter any Solana address" 
+                                            placeholder="Enter a Solana address" 
                                             label="To address" 
                                             variant="standard"
                                             autoComplete="off"
@@ -593,7 +595,8 @@ export default function SendToken(props: any) {
                         variant="outlined" 
                         title="Send"
                         disabled={
-                            (userTokenBalanceInput > balance) || (userTokenBalanceInput <= 0)}
+                            (userTokenBalanceInput > +balance) || (userTokenBalanceInput <= 0)
+                        }
                         sx={{
                             margin:1
                         }}>
