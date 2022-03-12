@@ -6,8 +6,6 @@ import {
     Grid,
     Typography,
     Collapse,
-    Button,
-    Divider,
     Table,
     TableBody,
     TableCell,
@@ -173,9 +171,8 @@ function PortfolioRow(props) {
     
     return (
         <React.Fragment>
-            <React.Fragment>
-                <TableRow key={index}>
-                    <TableCell align="middle" sx={{borderBottom:"none"}}>
+                <TableRow key={index} sx={{borderBottom:"none"}}>
+                    <TableCell align="middle">
                         <IconButton
                             aria-label="expand row"
                             size="small"
@@ -184,11 +181,11 @@ function PortfolioRow(props) {
                             {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
                         </IconButton>
                     </TableCell>
-                    <TableCell align="left" sx={{borderBottom:"none"}}>
+                    <TableCell align="left">
                         <TokenIcon tokenInfo={token.tokenInfo} mint={token.mint} />
                     </TableCell>
-                    <TableCell align="right" sx={{borderBottom:"none"}}><TokenFixPrice tokenFormatValue={token.balance} defaultFixed={3} /></TableCell>
-                    <TableCell align="right" sx={{borderBottom:"none", flexWrap:"nowrap!important"}}>
+                    <TableCell align="right" ><TokenFixPrice tokenFormatValue={token.balance} defaultFixed={3} /></TableCell>
+                    <TableCell align="right" sx={{flexWrap:"nowrap!important"}}>
                         {token.usd_24h_change ?
                             <>
                             {token.usd_24h_change < 0 ?
@@ -221,16 +218,15 @@ function PortfolioRow(props) {
                             </>
                         }
                     </TableCell>
-                    <TableCell align="right" sx={{borderBottom:"none"}}>
+                    <TableCell align="right">
                         <Typography variant="caption" sx={{color:"#aaaaaa"}}>$</Typography><TokenFixPrice tokenFormatValue={token.price} defaultFixed={2} />
                     </TableCell>
-                    <TableCell align="right" sx={{borderBottom:"none"}}><Typography variant="caption" sx={{color:"#aaaaaa"}}>$</Typography><TokenFixPrice tokenFormatValue={token.value} defaultFixed={2} /></TableCell>
-                    <TableCell sx={{borderBottom:"none"}}>
+                    <TableCell align="right"><Typography variant="caption" sx={{color:"#aaaaaa"}}>$</Typography><TokenFixPrice tokenFormatValue={token.value} defaultFixed={2} /></TableCell>
+                    <TableCell>
                         <SendToken mint={token.mint} name={token.tokenInfo?.name} logoURI={token.tokenInfo?.logoURI} balance={token.balance} conversionrate={token.value/token.balance} showTokenName={false} sendType={0} />
                     </TableCell>
                 </TableRow>
-            </React.Fragment>
-            <React.Fragment>
+
                 <TableRow key={`r-${index}`}>
                     <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={7} align="center">
                         <Collapse in={open} timeout="auto" unmountOnExit>
@@ -255,7 +251,6 @@ function PortfolioRow(props) {
                         </Collapse>
                     </TableCell>
                 </TableRow>
-            </React.Fragment>
         </React.Fragment>
     );
 }
@@ -282,48 +277,38 @@ export const PortfolioTableView = (props) => {
     :
         portfolioTableCols = 7;
 
-    // When we have rewards add
-    //
-    //<TableCell align="center">LP</TableCell>
-    //<TableCell align="center">Value</TableCell>
-    //<TableCell align="right">Pending</TableCell>
-
-    //<TableCell align="right">{token.lpprice && `$${token.lpprice.toFixed(4)}`}</TableCell>
-    //<TableCell align="right">{token.value && `$${token.value.toFixed(6)}`}</TableCell>
-    //<TableCell align="right">{token.pendingReward}</TableCell>
-
     return (
         <React.Fragment>
-                <TableContainer component={Paper} sx={{background:'none'}}>
-                    <Table sx={{ minWidth: 500 }} size="small" aria-label="Portfolio Table">
-                        <TableHead>
-                            {!props.isFarm &&
-                                <TableRow>
-                                    <TableCell sx={{width:"1%"}} />
-                                    <TableCell><Typography variant="caption">Asset</Typography></TableCell>
-                                    <TableCell align="right"><Typography variant="caption">Balance</Typography></TableCell>
-                                    <TableCell align="right"></TableCell>
-                                    <TableCell align="right"><Typography variant="caption">Price</Typography></TableCell> 
-                                    <TableCell align="right"><Typography variant="caption">Value</Typography></TableCell>
-                                    <TableCell></TableCell>
-                                </TableRow>
-                            }
-                        </TableHead>
-                        <TableBody>
-                            {(rowsPerPage > 0
-                                ? balances.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                : balances
-                            ).map((token, index) => {
-                                return !props.isFarm &&
-                                    <PortfolioRow token={token} index={index} />
-                            })}
-                            {emptyRows > 0 && (
-                                <TableRow style={{ height: 53 * emptyRows }}>
-                                    <TableCell colSpan={4} />
-                                </TableRow>
-                            )}
-                        </TableBody>
-                        <TableFooter>
+            <TableContainer component={Paper} sx={{background:'none'}}>
+                <StyledTable sx={{ minWidth: 500 }} size="small" aria-label="Portfolio Table">
+                    <TableHead>
+                        {!props.isFarm &&
+                            <TableRow>
+                                <TableCell sx={{width:"1%"}} />
+                                <TableCell><Typography variant="caption">Asset</Typography></TableCell>
+                                <TableCell align="right"><Typography variant="caption">Balance</Typography></TableCell>
+                                <TableCell align="right"></TableCell>
+                                <TableCell align="right"><Typography variant="caption">Price</Typography></TableCell> 
+                                <TableCell align="right"><Typography variant="caption">Value</Typography></TableCell>
+                                <TableCell></TableCell>
+                            </TableRow>
+                        }
+                    </TableHead>
+                    <TableBody>
+                        {(rowsPerPage > 0
+                            ? balances.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                            : balances
+                        ).map((token, index) => {
+                            return !props.isFarm &&
+                                <PortfolioRow token={token} index={index} />
+                        })}
+                        {emptyRows > 0 && (
+                            <TableRow style={{ height: 53 * emptyRows }}>
+                                <TableCell colSpan={4} />
+                            </TableRow>
+                        )}
+                    </TableBody>
+                    <TableFooter>
                         <TableRow>
                             <TablePagination
                             rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
@@ -337,15 +322,14 @@ export const PortfolioTableView = (props) => {
                                 },
                                 native: true,
                             }}
-                            //onChangePage={handleChangePage}
                             onPageChange={handleChangePage}
                             onRowsPerPageChange={handleChangeRowsPerPage}
                             ActionsComponent={TablePaginationActions}
                             />
                         </TableRow>
-                        </TableFooter>
-                    </Table>
-                </TableContainer>
+                    </TableFooter>
+                </StyledTable>
+            </TableContainer>
         </React.Fragment>
     );
 };

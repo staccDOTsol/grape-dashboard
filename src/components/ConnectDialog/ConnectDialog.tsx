@@ -426,8 +426,6 @@ export default function ConnectDialog(props: any) {
   const { isConnected, menuId, handleProfileMenuOpen, handleClickOpen, buttonText, nakedWallet, userId, discordId, token, login } = props;
   const [open, setOpen] = React.useState(false);
   const { session, setSession } = useSession();
-  //const [providers, setProviders] = React.useState(['Sollet', 'Sollet Extension', 'Phantom', 'Solflare']);
-  //const [anchorEl, setAnchorEl] = React.useState(null);
   
   function trimAddress(addr: string) {
     let start = addr.substring(0, 5);
@@ -506,10 +504,6 @@ export default function ConnectDialog(props: any) {
   const handleClose = () => {
     setOpen(false);
   };
-  /*
-  const handleClickOpen = () => {
-    setOpen(true);
-  };*/
   
   const wallet_connect_body = (
     <React.Fragment>

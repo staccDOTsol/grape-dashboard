@@ -34,6 +34,30 @@ class User {
             console.log(err);
         }
     }
+
+    static async removeUser(session: Session, serverId: string){
+        try {
+            if (!session) throw new Error('Invalid session');
+
+            const userId = session.userId;
+            const publicKey = session.publicKey;
+
+            const response = await fetch(`${GRAPE_APP_API_URL}/user/${publicKey}/unregister`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    userId,
+                    publicKey,
+                })
+            });
+            
+            return true;
+        } catch (err) {
+            console.log(err);
+        }
+    }
 }
 
 export default User;

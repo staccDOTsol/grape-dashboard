@@ -636,147 +636,145 @@ export const PortfolioView = () => {
   
   return (
       <React.Fragment>
-        <Grid item xs={12} md={8} lg={9}>
-          <Paper class="grape-paper-background">
-            <Box
-              class="grape-paper"
-              sx={{
-                //minHeight: 240,
-              }}
-            >
-              <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <Grid
-                  container
-                  direction="row"
-                >
-                  <Grid item>
+        
+          <Grid item xs={12} md={8} lg={9}>
+              <Paper class="grape-paper-background">
+                <Box class="grape-paper">
+                  <Box sx={{ display: 'flex', alignItems: 'left' }}>
                     <Box class="grape-dashboard-component-header" sx={{ m: 0, position: 'relative' }}>
-                      <Typography gutterBottom variant="h6" component="div" sx={{ m: 0, position: 'relative'}}>
-                        PORTFOLIO
-                      </Typography>
+                      <Grid
+                        container
+                        direction="row"
+                      >
+                        <Grid item>
+                          <Box class="grape-dashboard-component-header" sx={{ m: 0, position: 'relative' }}>
+                            <Typography gutterBottom variant="h6" component="div" sx={{ m: 0, position: 'relative'}}>
+                              PORTFOLIO
+                            </Typography>
+                          </Box>
+                        </Grid>
+                        <Grid item>
+                            <Box sx={{ ml: 1, position: 'relative' }}>
+                              <Typography component="div" variant="caption">
+                                <Button sx={{borderRadius:'24px',p:0.5,minWidth:0}} size="small" variant="text" value="Refresh" onClick={getBalances} disabled={loading}>
+                                  <CachedIcon />
+                                </Button>
+                                {loading && (
+                                  <CircularProgress 
+                                    size={24} 
+                                    color="inherit"
+                                    sx={{
+                                      position: 'absolute',
+                                      top: '50%',
+                                      left: '50%',
+                                      marginTop: '-12px',
+                                      marginLeft: '-12px',
+                                    }}/>
+                                )}
+                                </Typography>
+                              </Box>
+                          </Grid> 
+                        </Grid>
+                      </Box>
                     </Box>
-                  </Grid>
-                  <Grid item>
-                      <Box sx={{ ml: 1, position: 'relative' }}>
-                        <Typography component="div" variant="caption">
-                          <Button sx={{borderRadius:'24px',p:0.5,minWidth:0}} size="small" variant="text" value="Refresh" onClick={getBalances} disabled={loading}>
-                            <CachedIcon />
-                          </Button>
-                          {loading && (
-                            <CircularProgress 
-                              size={24} 
-                              color="inherit"
-                              sx={{
-                                position: 'absolute',
-                                top: '50%',
-                                left: '50%',
-                                marginTop: '-12px',
-                                marginLeft: '-12px',
-                              }}/>
-                          )}
-                          </Typography>
-                        </Box>
-                    </Grid> 
-                  </Grid>
-              </Box>
-              <PortfolioTable balances={portfolioPositions.portfolio}/>
-            </Box>
-          </Paper>
-        </Grid>
-        
-        <Grid item xs={12} md={4} lg={3}>
-          <Paper class="grape-paper-background">
-            <Box
-              class="grape-paper"
-            >
-            
-            <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-              <Tabs value={value} onChange={handleTabChange} aria-label="basic tabs example">
-                <Tab icon={<GrapeIcon />} aria-label="Grape" {...a11yProps(0)} />
-                <Tab icon={<SolIcon />} aria-label="Solana" {...a11yProps(1)} />
-              </Tabs>
-            </Box>
-            <TabPanel value={value} index={0}>
-              <Summary title="TICKER" token={'grape'} subtitle={<GrapeIcon fontSize='12px' />} showtimestamp={true} tstamp={tstamp} calltoaction="" hasrefresh={true} swaptoken={'grape'} portfolioPositions={portfolioPositions} tokenMap={tokenMap}>
-                <Grid container direction="row" alignItems="center" justifyContent="center">
-                  <Grid item>
-                    $<PretifyCommaNumber number={parseFloat(grapeTicker.grapeTokenReference).toFixed(3)} />
-                  </Grid>
-                </Grid>
-              </Summary>
-            </TabPanel>
-            <TabPanel value={value} index={1}>
-              <Summary title="TICKER" token={'sol'} subtitle={<SolCurrencyIcon fontSize='12px' />} showtimestamp={true} tstamp={tstamp} calltoaction="" hasrefresh={true}>
-                <Grid container direction="row" alignItems="center" justifyContent="center">
-                  <Grid item>
-                    $<PretifyCommaNumber number={parseFloat(solTicker.solTokenReference).toFixed(2)} />
-                  </Grid>
-                </Grid>
-              </Summary>
-            </TabPanel>
-        
-              {(+portfolioTotal > 0) && 
-                <React.Fragment>
-                  <Divider sx={{mt:2}} />
-                  <Box sx={{mt:2}}>
-                    <Summary title="WALLET" subtitle="SUMMARY" showtimestamp={false} calltoaction="" hasrefresh={false}>
-                      $<PretifyCommaNumber number={portfolioTotal.toFixed(2)} />
-                      {portfolioChange < 0 ?
-                        <>
-                          <Typography variant="subtitle2" sx={{ flex: 1, color:"#f00", textAlign:"center"}}>
-                              <Tooltip title={`24h change $${portfolioChange.toFixed(2)}`}> 
-                                <Chip color="error" deleteIcon={<ArrowDownwardIcon />} onDelete={handleDeleteChange} label={`${portfolioPercentageChange.toFixed(2)}%`} size="small" variant="outlined"/>
-                              </Tooltip>
-                          </Typography>
-                        </>
-                      :
-                        <>
-                          <Typography color="text.secondary" variant="subtitle2" sx={{ flex: 1, textAlign:"center" }}>
-                            <Tooltip title={`24h change $${portfolioChange.toFixed(2)}`}>  
-                              <Chip color="success" deleteIcon={<ArrowUpwardIcon />} onDelete={handleDeleteChange} label={`${portfolioPercentageChange.toFixed(2)}%`} size="small" variant="outlined"/>
-                            </Tooltip>
-                          </Typography>
-                        </>
-                      }
-                    </Summary>
-                    
-                  </Box>
-                  <Summary title="" subtitle="" showtimestamp={false} calltoaction="" hasrefresh={false}>
-                      {(portfolioPositions.collectibles && portfolioPositions.collectibles.length > 0) &&
-                          <Grid item sx={{textAlign:"center"}}>
-                              <Button
-                                component="a" href={`https://grape.art/profile?pkey=${session?.publicKey}`} target="_blank"
-                                variant="outlined" 
-                                title="View Collection"
-                                size="small"
-                                >
-                                
-                                {(hasProfilePicture && profilePictureUrl) ?
-                                  <Avatar sx={{ width: 24, height: 24, mr:1 }} alt="Profile" src={profilePictureUrl} />
-                                :
-                                  <AccountCircleIcon sx={{mr:1}}/>
-                                }
-                                
-                                {portfolioPositions.collectibles.length} {portfolioPositions.collectibles.length > 1 ? 'Collectibles' : 'Collectible'}
-                              </Button>
-                            
-                          </Grid>
-                        }
-                    </Summary>
-                </React.Fragment>
-              }
-                {/* (balances.staked && balances.staked.length) &&*/}
-
-              { /*(stakedTotal > 0) &&
-                <Box sx={{mt:2}}>
-                  <Summary title="STAKED" subtitle="SUMMARY" showtimestamp={false} calltoaction="" hasrefresh={false}>{`$${+stakedTotal.toFixed(2)}`}</Summary>
+                    <PortfolioTable balances={portfolioPositions.portfolio}/>
                 </Box>
-              */  }
+              </Paper>
+          </Grid>
+          
+          <Grid item xs={12} md={4} lg={3}>
+            <Paper class="grape-paper-background">
+              <Box
+                class="grape-paper"
+              >
               
-            </Box>
-          </Paper>
-        </Grid>
-        
+              <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                <Tabs value={value} onChange={handleTabChange} aria-label="basic tabs example">
+                  <Tab icon={<GrapeIcon />} aria-label="Grape" {...a11yProps(0)} />
+                  <Tab icon={<SolIcon />} aria-label="Solana" {...a11yProps(1)} />
+                </Tabs>
+              </Box>
+              <TabPanel value={value} index={0}>
+                <Summary title="TICKER" token={'grape'} subtitle={<GrapeIcon fontSize='12px' />} showtimestamp={true} tstamp={tstamp} calltoaction="" hasrefresh={true} swaptoken={'grape'} portfolioPositions={portfolioPositions} tokenMap={tokenMap}>
+                  <Grid container direction="row" alignItems="center" justifyContent="center">
+                    <Grid item>
+                      $<PretifyCommaNumber number={parseFloat(grapeTicker.grapeTokenReference).toFixed(3)} />
+                    </Grid>
+                  </Grid>
+                </Summary>
+              </TabPanel>
+              <TabPanel value={value} index={1}>
+                <Summary title="TICKER" token={'sol'} subtitle={<SolCurrencyIcon fontSize='12px' />} showtimestamp={true} tstamp={tstamp} calltoaction="" hasrefresh={true}>
+                  <Grid container direction="row" alignItems="center" justifyContent="center">
+                    <Grid item>
+                      $<PretifyCommaNumber number={parseFloat(solTicker.solTokenReference).toFixed(2)} />
+                    </Grid>
+                  </Grid>
+                </Summary>
+              </TabPanel>
+          
+                {(+portfolioTotal > 0) && 
+                  <React.Fragment>
+                    <Divider sx={{mt:2}} />
+                    <Box sx={{mt:2}}>
+                      <Summary title="WALLET" subtitle="SUMMARY" showtimestamp={false} calltoaction="" hasrefresh={false}>
+                        $<PretifyCommaNumber number={portfolioTotal.toFixed(2)} />
+                        {portfolioChange < 0 ?
+                          <>
+                            <Typography variant="subtitle2" sx={{ flex: 1, color:"#f00", textAlign:"center"}}>
+                                <Tooltip title={`24h change $${portfolioChange.toFixed(2)}`}> 
+                                  <Chip color="error" deleteIcon={<ArrowDownwardIcon />} onDelete={handleDeleteChange} label={`${portfolioPercentageChange.toFixed(2)}%`} size="small" variant="outlined"/>
+                                </Tooltip>
+                            </Typography>
+                          </>
+                        :
+                          <>
+                            <Typography color="text.secondary" variant="subtitle2" sx={{ flex: 1, textAlign:"center" }}>
+                              <Tooltip title={`24h change $${portfolioChange.toFixed(2)}`}>  
+                                <Chip color="success" deleteIcon={<ArrowUpwardIcon />} onDelete={handleDeleteChange} label={`${portfolioPercentageChange.toFixed(2)}%`} size="small" variant="outlined"/>
+                              </Tooltip>
+                            </Typography>
+                          </>
+                        }
+                      </Summary>
+                      
+                    </Box>
+                    <Summary title="" subtitle="" showtimestamp={false} calltoaction="" hasrefresh={false}>
+                        {(portfolioPositions.collectibles && portfolioPositions.collectibles.length > 0) &&
+                            <Grid item sx={{textAlign:"center"}}>
+                                <Button
+                                  component="a" href={`https://grape.art/profile?pkey=${session?.publicKey}`} target="_blank"
+                                  variant="outlined" 
+                                  title="View Collection"
+                                  size="small"
+                                  >
+                                  
+                                  {(hasProfilePicture && profilePictureUrl) ?
+                                    <Avatar sx={{ width: 24, height: 24, mr:1 }} alt="Profile" src={profilePictureUrl} />
+                                  :
+                                    <AccountCircleIcon sx={{mr:1}}/>
+                                  }
+                                  
+                                  {portfolioPositions.collectibles.length} {portfolioPositions.collectibles.length > 1 ? 'Collectibles' : 'Collectible'}
+                                </Button>
+                              
+                            </Grid>
+                          }
+                      </Summary>
+                  </React.Fragment>
+                }
+                  {/* (balances.staked && balances.staked.length) &&*/}
+
+                { /*(stakedTotal > 0) &&
+                  <Box sx={{mt:2}}>
+                    <Summary title="STAKED" subtitle="SUMMARY" showtimestamp={false} calltoaction="" hasrefresh={false}>{`$${+stakedTotal.toFixed(2)}`}</Summary>
+                  </Box>
+                */  }
+                
+              </Box>
+            </Paper>
+          </Grid>
+
         <FarmsView portfolioPositions={portfolioPositions} tokenMap={tokenMap} initPortfolio={initPortfolio} initCGPriceData={initCGPriceData} initNewPriceData={initNewPriceData} />
 
       </React.Fragment>
