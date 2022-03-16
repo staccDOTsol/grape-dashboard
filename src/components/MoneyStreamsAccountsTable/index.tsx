@@ -24,6 +24,7 @@ import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 import LastPageIcon from '@mui/icons-material/LastPage';
 import AutorenewOutlinedIcon from '@mui/icons-material/AutorenewOutlined';
+import StopCircleOutlinedIcon from '@mui/icons-material/StopCircleOutlined';
 import ArrowDownwardOutlinedIcon from '@mui/icons-material/ArrowDownwardOutlined';
 import ArrowUpwardOutlinedIcon from '@mui/icons-material/ArrowUpwardOutlined';
 import Jazzicon from 'react-jazzicon'
@@ -303,7 +304,13 @@ function MoneyStreamsAccountsTable(props: MoneyStreamsAccountsTableProps) {
                                                             </Box>
                                                             <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', pl: 1 }}>
                                                                 {isInboundStream(item) ? (
-                                                                    <ArrowDownwardOutlinedIcon fontSize="small" className="stream-type-incoming" />
+                                                                    <>
+                                                                        {getStreamStatus(item) === 'STOPPED' ? (
+                                                                            <StopCircleOutlinedIcon fontSize="small" color="disabled" />
+                                                                        ):(
+                                                                            <ArrowDownwardOutlinedIcon fontSize="small" className="stream-type-incoming" />
+                                                                        )}
+                                                                    </>
                                                                 ) : (
                                                                     <ArrowUpwardOutlinedIcon fontSize="small" className="stream-type-outgoing" />
                                                                 )}
