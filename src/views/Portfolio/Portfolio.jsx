@@ -136,7 +136,6 @@ export const PortfolioView = () => {
         id: "84203270-a3eb-4812-96d7-0a3c40c87a88"
       };
       
-      
       const response = await fetch(GRAPE_RPC_ENDPOINT, {
         method: "POST",
         body: JSON.stringify(body),
