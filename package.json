@@ -1,6 +1,6 @@
 {
   "name": "grape-dashboard",
-  "version": "1.2.172",
+  "version": "1.2.174",
   "private": true,
   "proxy": "http://localhost:3000/",
   "dependencies": {
@@ -18,7 +18,7 @@
     "@mui/styled-engine-sc": "^5.0.0",
     "@mui/styles": "^5.0.1",
     "@mui/x-data-grid": "^4.0.0",
-    "@orca-so/sdk": "^1.2.1",
+    "@orca-so/sdk": "^1.2.15",
     "@project-serum/anchor": "^0.18.2",
     "@project-serum/borsh": "^0.2.2",
     "@project-serum/serum": "^0.13.34",

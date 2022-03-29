@@ -121,7 +121,7 @@ export default function OrcaSwap(props: any) {
     //const name = props.name;
     //const balance = props.balance;
     ///const conversionrate = props.conversionrate;
-    const freeconnection = new Connection(FREE_RPC_ENDPOINT);
+    const solanarpcconnection = new Connection(FREE_RPC_ENDPOINT);
     const { connection } = useConnection();
     const orca = getOrca(connection);
 
@@ -195,8 +195,8 @@ export default function OrcaSwap(props: any) {
                 enqueueSnackbar(`Preparing to swap ${tokenAmount.toString()} ${tokenPoolA.getTokenB().name} for at least ${convertedAmount.toNumber()} ${tokenPoolA.getTokenA().name}`,{ variant: 'info' });
                 //swapPayload.transaction.partialSign(...swapPayload.signers);
                 //const signedTransaction = await sendTransaction(swapPayload.transaction, connection);
-                const signedTransaction = await sendTransaction(swapPayload.transaction, freeconnection, {signers: swapPayload.signers});
-
+                const signedTransaction = await sendTransaction(swapPayload.transaction, connection, {signers: swapPayload.signers});
+                
                 enqueueSnackbar(`Transaction ready`,{ variant: 'info' });
                 await connection.confirmTransaction(signedTransaction, 'processed');
                 enqueueSnackbar(`Swapped: ${signedTransaction}`,{ variant: 'success' });
@@ -222,7 +222,7 @@ export default function OrcaSwap(props: any) {
                 //transaction.partialSign(...swapPayload.signers);
                 //transaction.partialSign(...swapPayloadB.signers);
                 //const signedTransaction = await sendTransaction(transaction, connection);
-                const signedTransaction = await sendTransaction(transaction, freeconnection, {signers: [...swapPayload.signers, ...swapPayloadB.signers]});
+                const signedTransaction = await sendTransaction(transaction, connection, {signers: [...swapPayload.signers, ...swapPayloadB.signers]});
 
                 enqueueSnackbar(`Transaction ready`,{ variant: 'info' });
                 await connection.confirmTransaction(signedTransaction, 'processed');
