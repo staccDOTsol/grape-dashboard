@@ -29,6 +29,7 @@ import {
     ListItemText
 } from '@mui/material';
 
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import AssessmentIcon from '@mui/icons-material/Assessment';
 import GroupWorkIcon from '@mui/icons-material/GroupWork';
 import LinkOffIcon from '@mui/icons-material/LinkOff';
@@ -182,7 +183,11 @@ export function Header(props: any) {
                 
                 <Tooltip title={`Dashboard`}><IconButton component={NavLink} color="inherit" to="/"><DashboardOutlinedIcon/></IconButton></Tooltip>
                 <Tooltip title={`Collection`}><IconButton component="a" href='https://grape.art' target="_blank"><PhotoOutlinedIcon/></IconButton></Tooltip>
+                <Tooltip title={`About`}><IconButton component="a" href='https://grapes.network' target="_blank"><InfoOutlinedIcon/></IconButton></Tooltip>
+                
+                {/*
                 <Tooltip title={`Partners`}><IconButton component={NavLink} color="inherit" to="/partners"><InsertChartOutlinedIcon/></IconButton></Tooltip>
+                */}
                 <Tooltip title={`News`}><IconButton component={NavLink} color="inherit" to="/news"><RssFeedIcon/></IconButton></Tooltip>
             </Box>
             <div>

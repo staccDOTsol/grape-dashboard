@@ -1,6 +1,6 @@
 {
   "name": "grape-dashboard",
-  "version": "1.2.171",
+  "version": "1.2.172",
   "private": true,
   "proxy": "http://localhost:3000/",
   "dependencies": {
