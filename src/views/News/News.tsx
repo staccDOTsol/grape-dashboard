@@ -11,20 +11,12 @@ interface NewsViewProps {
   children?: React.ReactNode;
 }
 
-export function NewsView(props: NewsViewProps) {
-//export default function UnlistedOffersView(props: any) {
-  
-  
-
-  return (
-    <React.Fragment>
-        <React.Component>
-            <Grid container spacing={3}>
-                <TwitterFeedComponent title={'Grape News'} twitterFeedHandle={'grapeprotocol'} twitterFeedHeight={800} twitterFeedElements={2} componentTwitterFeed={true} componentExpanded={true}/>
-                <TwitterFeedComponent title={'Solana News'} twitterFeedHandle={'solana'} twitterFeedHeight={800} twitterFeedElements={2} componentTwitterFeed={true} componentExpanded={true} />
-                <TwitterFeedComponent title={'Grape Events'} twitterFeedHandle={'eventsgrape'} twitterFeedHeight={800} twitterFeedElements={2} componentTwitterFeed={true} componentExpanded={true} />
-            </Grid>
-        </React.Component>
-    </React.Fragment>
-);
+export function NewsView(props: NewsViewProps) {  
+    return (
+        <Grid container spacing={3}>
+            <TwitterFeedComponent title={'Grape News'} twitterFeedHandle={'grapeprotocol'} twitterFeedHeight={800} twitterFeedElements={2} componentTwitterFeed={true} componentExpanded={true}/>
+            <TwitterFeedComponent title={'Solana News'} twitterFeedHandle={'solana'} twitterFeedHeight={800} twitterFeedElements={2} componentTwitterFeed={true} componentExpanded={true} />
+            <TwitterFeedComponent title={'Grape Events'} twitterFeedHandle={'eventsgrape'} twitterFeedHeight={800} twitterFeedElements={2} componentTwitterFeed={true} componentExpanded={true} />
+        </Grid>
+    );
 }
