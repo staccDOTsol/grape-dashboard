@@ -4,7 +4,7 @@ import {WalletAdapterNetwork, WalletError, WalletNotConnectedError} from '@solan
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { Connection, PublicKey, SystemProgram, Transaction, TransactionInstruction, Signer } from '@solana/web3.js';
 import { styled } from '@mui/material/styles';
-
+import { getPrices } from '../Meanfi/helpers/api'
 import {
     Dialog,
     Button,
@@ -23,7 +23,9 @@ import {
     InputLabel,
     Tooltip,
     Typography,
-    MenuItem
+    MenuItem,
+    Autocomplete,
+    Box, InputAdornment
 } from '@mui/material';
 
 import CircularProgress from '@mui/material/CircularProgress';
@@ -122,22 +124,23 @@ function JupiterForm(props: any) {
     const [rate, setRate] = useState('');
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
-    const tokensAvailable = ['GRAPE','SOL','mSOL','USDC','ORCA'];
-
     const wallet = useWallet();
     const connection = useConnection();
 
-    useEffect(() => {
-        new TokenListProvider().resolve().then((tokens) => {
-            const tokenList = tokens.filterByChainId(ENV.MainnetBeta).getList()
-               .filter(i => tokensAvailable.includes(i.symbol));
-            const tokenMapValue = tokenList.reduce((map, item) => {
+    const getTokenList = async () => {
+        const priceList = await getPrices();
+        const raydiumTokens = Object.keys(priceList);
+        console.log('should filter by this',raydiumTokens);
+        const tokens = await new TokenListProvider().resolve();
+        const tokenList = tokens.filterByChainId(ENV.MainnetBeta).getList().filter(ti => raydiumTokens.includes(ti.symbol)) ;
+        const tokenMapValue = tokenList.reduce((map, item) => {
                 map.set(item.address, item);
                 return map;
             }, new Map())
-            setTokenMap(tokenMapValue);
-        });
-
+        setTokenMap(tokenMapValue);
+    }
+    useEffect(() => {
+        getTokenList()
     }, [setTokenMap]);
 
     React.useEffect(() => {
@@ -170,12 +173,7 @@ function JupiterForm(props: any) {
         setOpen(false);
     };
 
-    const handleSelectChange = (event: SelectChangeEvent) => {
-        setSwapFrom(event.target.value);
-        getPortfolioTokenBalance(event.target.value);
-        setTokenBalanceInput(0);
-        setTokensToSwap(0);
-    };
+    const handleImageError = (ev) => ev.target.style.display = 'none';
 
     const swapIt = async () => {
         if(amounttoswap === 0)
@@ -197,12 +195,12 @@ function JupiterForm(props: any) {
             wallet.publicKey
         ) {
             enqueueSnackbar(`Preparing to swap ${amounttoswap.toString()} ${tokenMap.get(swapfrom).name} for at least ${minimumReceived} ${tokenMap.get(swapto).name}`,{ variant: 'info' });
-            
+
             const snackprogress = (key:any) => (
                 <CircularProgress sx={{padding:'10px'}} />
             );
             const cnfrmkey = enqueueSnackbar(`Confirming transaction`,{ variant: 'info', action:snackprogress, persist: true });
-            
+
             const swapResult = await exchange({
                 wallet: {
                     sendTransaction: wallet.sendTransaction,
@@ -230,6 +228,7 @@ function JupiterForm(props: any) {
                     </Button>
                 );*/
                 enqueueSnackbar(`Swapped: ${swapResult.txid}`,{ variant: 'success' });
+                setOpen(false);
             }
         } else
         {
@@ -254,8 +253,8 @@ function JupiterForm(props: any) {
     }
 
     useEffect(() => {
-        if(!routes) {
-            return;
+        if(!routes || routes.length === 0) {
+            return
         }
         setTradeRoute('');
         setLpFees([]);
@@ -273,6 +272,8 @@ function JupiterForm(props: any) {
         setRate(`${(routes[0].outAmount / (10 ** 6))/ (routes[0].inAmount / (10 ** tokenMap.get(swapfrom)!.decimals))} GRAPE per ${tokenMap.get(swapfrom)!.symbol}`)
     }, [routes, tokenMap])
 
+    // @ts-ignore
+    // @ts-ignore
     return (<div>
         <Button
             variant="outlined"
@@ -307,19 +308,23 @@ function JupiterForm(props: any) {
                         <Grid container>
                             <Grid item xs={6}>
                                 <FormControl>
-                                    <InputLabel id="from-label">From</InputLabel>
-                                    <Select
-                                        labelId="from-label"
-                                        id="from-select-dropdown"
+                                    <Autocomplete
+                                        sx={{width:200}}
+                                        value={tokenMap?.get(swapfrom)}
+                                        onChange={(event, newValue) =>
+                                        {console.log(newValue);
+                                            // @ts-ignore
+                                            setSwapFrom(newValue.address)
+                                            // @ts-ignore
+                                            getPortfolioTokenBalance(newValue.address);
+                                            setTokenBalanceInput(0);
+                                            setTokensToSwap(0);
+                                        }}
                                         fullWidth
-                                        value={swapfrom}
-                                        onChange={handleSelectChange}
-                                        label="From"
-                                    >
-                                        {tokenMap && Array.from(tokenMap.values()).map(v =>
-                                            v.symbol !== 'GRAPE' && (<MenuItem key={v.address} value={v.address}>{v.symbol}</MenuItem>)
-                                        )}
-                                    </Select>
+                                        id="from-select-dropdown"
+                                        getOptionLabel={(option) => option.symbol}
+                                        renderInput={(params) => <TextField {...params} label="From"/>}
+                                        renderOption={(params, option) => (<li {...params}><img onError={handleImageError} width={20} src={option.logoURI} style={{float: "left"}}/>{option.symbol}</li>)} options={tokenMap && Array.from(tokenMap.values()).filter(v => v.symbol != 'GRAPE')}/>
                                 </FormControl>
                             </Grid>
                             <Grid item xs={6}>
