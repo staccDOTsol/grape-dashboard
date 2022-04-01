@@ -109,6 +109,7 @@ export default function JupiterSwap(props: any ){
 
 
 function JupiterForm(props: any) {
+    const [tokenSwapAvailableBalance, setPortfolioSwapTokenAvailableBalance] = React.useState(0);
     const [open, setOpen] = React.useState(false);
     const [userTokenBalanceInput, setTokenBalanceInput] = React.useState(0);
     const [convertedAmountValue, setConvertedAmountValue] = React.useState(null);
@@ -117,8 +118,18 @@ function JupiterForm(props: any) {
     const [swapto, setSwapTo] = React.useState('8upjSpvjcdpuzhfR1zriwg5NXkwDruejqNE9WNbPRtyA');
     const [tokenMap, setTokenMap] = React.useState<Map<string,TokenInfo>>(undefined);
 
-    const [tokenSwapAvailableBalance, setPortfolioSwapTokenAvailableBalance] = React.useState(0);
+
+    const [minimumReceived, setMinimumReceived] = useState(0);
+    const [tradeRoute, setTradeRoute] = useState("");
+    const [lpfees, setLpFees] = useState<Array<string>>([]);
+    const [priceImpacts, setPriceImpacts] = useState<Array<string>>([]);
+    const [rate, setRate] = useState('');
+
+
     const tokensAvailable = ['GRAPE','SOL','mSOL','USDC','ORCA'];
+
+    const wallet = useWallet();
+    const connection = useConnection();
 
     useEffect(() => {
         new TokenListProvider().resolve().then((tokens) => {
@@ -147,6 +158,9 @@ function JupiterForm(props: any) {
     //     }
     // },[swapfrom,swapfrom,tokenMap])
 
+    React.useEffect(() => {
+        getPortfolioTokenBalance(swapfrom);
+    }, []);
 
     const jupiter = useJupiter({
         amount: tokenMap?.get(swapfrom) ? amounttoswap * (10 ** tokenMap.get(swapfrom).decimals) : 0, // raw input amount of tokens
@@ -181,14 +195,58 @@ function JupiterForm(props: any) {
 
     const handleSelectChange = (event: SelectChangeEvent) => {
         setSwapFrom(event.target.value);
+        getPortfolioTokenBalance(event.target.value);
         setTokenBalanceInput(0);
         setTokensToSwap(0);
     };
+    
+    async function swapIt() {
+        console.log(wallet.signAllTransactions);
+        if (
+            !loading &&
+            routes?.[0] &&
+            wallet.signAllTransactions &&
+            wallet.signTransaction &&
+            wallet.sendTransaction &&
+            wallet.publicKey
+        ) {
+            const swapResult = await exchange({
+                wallet: {
+                    sendTransaction: wallet.sendTransaction,
+                    publicKey: wallet.publicKey,
+                    signAllTransactions: wallet.signAllTransactions,
+                    signTransaction: wallet.signTransaction,
+                },
+                routeInfo: routes[0],
+                onTransaction: async (txid) => {
+                    console.log("sending transaction");
+                    await connection.connection.confirmTransaction(txid);
+                    console.log("confirmed transaction");
+
+                    return await connection.connection.getTransaction(txid, {
+                        commitment: "confirmed",
+                    });
+                },
+            });
+            console.log({ swapResult });
+        }
+    }
 
     function HandleSendSubmit(event: any) {
         event.preventDefault();
-        console.log(event);
-        console.log("send submit");
+        swapIt();
+    }
+
+    function getPortfolioTokenBalance(swapingfrom:string){
+        let balance = 0;
+        console.log('setting a token')
+        props.portfolioPositions.portfolio.map((token: any) => {
+            if (token.mint === swapingfrom){
+                if (token.balance > 0)
+                    balance = token.balance;
+            }
+        });
+        setPortfolioSwapTokenAvailableBalance(balance);
     }
 
     React.useEffect(() => {
@@ -196,6 +254,25 @@ function JupiterForm(props: any) {
         // get the balance for this token
         console.log("chaging the amount to swap")
     }, [amounttoswap]);
+
+    useEffect(() => {
+        if(!routes) {
+            return;
+        }
+        setTradeRoute('');
+        setLpFees([]);
+        setPriceImpacts([]);
+        setConvertedAmountValue(routes[0].outAmount / (10 ** 6));
+        routes[0].marketInfos.forEach(mi => {
+            setTradeRoute(tr => tr + (tr && " x ") + mi.marketMeta.amm.label)
+            setLpFees(lpf => [...lpf, `${mi.marketMeta.amm.label}: ${(mi.lpFee.amount/(10 ** tokenMap.get(mi.lpFee.mint)!.decimals))}` +
+            ` ${tokenMap.get(mi.lpFee.mint)?.symbol} (${mi.lpFee.pct * 100}%)`]);
+            setPriceImpacts(pi => [...pi, `${mi.marketMeta.amm.label}: ${mi.priceImpactPct * 100 < 0.1 ? '< 0.1' : (mi.priceImpactPct * 100).toFixed(2)}%` ])
+        })
+        setMinimumReceived(routes[0].outAmountWithSlippage / (10 ** 6))
+
+        setRate(`${(routes[0].outAmount / (10 ** 6))/ (routes[0].inAmount / (10 ** tokenMap.get(swapfrom)!.decimals))} GRAPE per ${tokenMap.get(swapfrom)!.symbol}`)
+    }, [routes, tokenMap])
 
     return (<div>
         <Button
@@ -353,6 +430,114 @@ function JupiterForm(props: any) {
                         </Grid>
                     </Grid>
                 </Grid>
+                {!loading && routes?.length > 0?
+                    <Typography variant="caption" sx={{color:"#aaaaaa"}}>
+                        {tradeRoute &&
+                            <Grid container spacing={1}>
+                                <Grid item xs={6}
+                                      sx={{
+                                          textAlign:'right'
+                                      }}
+                                >
+                                    Best Route <Tooltip title={`Best route chosen by Jup.ag`}><HelpOutlineIcon sx={{ fontSize:14  }}/></Tooltip>
+                                </Grid>
+                                <Grid item xs={6}
+                                      sx={{
+                                          textAlign:'right'
+                                      }}
+                                >
+                                    {tradeRoute}
+                                </Grid>
+                            </Grid>
+                        }
+                        {priceImpacts &&
+                            <Grid container spacing={1}>
+                                <Grid item xs={6}
+                                      sx={{
+                                          textAlign:'right'
+                                      }}
+                                >
+                                    Price Impact <Tooltip title={`Swaping shifts the ratio of tokens in the pool, which will cause a change in the price per token`}><HelpOutlineIcon sx={{ fontSize:14  }}/></Tooltip>
+                                </Grid>
+                                <Grid item xs={6}
+                                      sx={{
+                                          textAlign:'right'
+                                      }}
+                                >
+                                    {priceImpacts.map(pi => <>{pi}<br/></>)}
+                                </Grid>
+                            </Grid>
+                        }
+                        {minimumReceived &&
+                            <Grid container spacing={1}>
+                                <Grid item xs={6}
+                                      sx={{
+                                          textAlign:'right'
+                                      }}
+                                >
+                                    Minimum Received <Tooltip title={`1% slippage tolerance`}><HelpOutlineIcon sx={{ fontSize:14  }}/></Tooltip>
+                                </Grid>
+                                <Grid item xs={6}
+                                      sx={{
+                                          textAlign:'right'
+                                      }}
+                                >
+                                    {minimumReceived}
+                                </Grid>
+                            </Grid>
+                        }
+
+                        {rate &&
+                            <Grid container spacing={1}>
+                                <Grid item xs={6}
+                                      sx={{
+                                          textAlign:'right'
+                                      }}
+                                >
+                                    Rate
+                                </Grid>
+                                <Grid item xs={6}
+                                      sx={{
+                                          textAlign:'right'
+                                      }}
+                                >
+                                    {rate}
+                                </Grid>
+                            </Grid>
+                        }
+                        {lpfees &&
+                            <Grid container spacing={1}>
+                                <>
+                                    <Grid item xs={6}
+                                          sx={{
+                                              textAlign:'right'
+                                          }}
+                                    >
+                                        SWAP Fees <Tooltip title={`LP Fees for each exchange used in the route.`}><HelpOutlineIcon sx={{ fontSize:14  }}/></Tooltip>
+                                    </Grid>
+                                    <Grid item xs={6}
+                                          sx={{
+                                              textAlign:'right'
+                                          }}
+                                    >
+                                        {lpfees.map(lp => <>{lp}<br/></>)}
+                                    </Grid>
+                                </>
+                            </Grid>
+                        }
+                    </Typography>
+                    :
+                    <Typography variant="caption" sx={{color:"#aaaaaa"}}>
+                        <Grid container spacing={1}>
+                            <Grid item xs={12}
+                                  sx={{
+                                      textAlign:'center'
+                                  }}>
+                                loading...
+                            </Grid>
+                        </Grid>
+                    </Typography>
+                }
             </DialogContent>
             <DialogActions>
                 <Button
