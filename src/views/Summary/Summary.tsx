@@ -8,6 +8,7 @@ import {
 import OrcaSwap from '../OrcaSwap/OrcaSwap';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { makeFtxPayUrl } from '../../utils/ftx-pay';
+import JupiterSwap from "../JupiterSwap/JupiterSwap";
 
 interface SummaryProps {
   children?: React.ReactNode;
@@ -41,7 +42,7 @@ export default function Summary(props: any) {
     if (publicKey)
       setFtxUrl(makeFtxPayUrl(publicKey.toBase58(), 'SOL'));
   }, [publicKey]);
-    
+
 
 
   //function handleSwapDialogRequest(){
@@ -50,9 +51,9 @@ export default function Summary(props: any) {
 
   return (
     <React.Fragment>
-      <Grid container 
-        spacing={2} 
-        justifyContent="center" 
+      <Grid container
+        spacing={2}
+        justifyContent="center"
         direction="column"
         alignItems="center"
       >
@@ -67,12 +68,13 @@ export default function Summary(props: any) {
             <Typography color="text.secondary" variant="subtitle2" sx={{ flex: 1 }}>
               {tstamp}
             </Typography>
-          } 
+          }
         </Grid>
-        
+
         {swaptoken &&
           <Grid item>
-            <OrcaSwap swapfrom={swapfrom} swapto={swapto} portfolioPositions={portfolioPositions} tokenMap={tokenMap} />
+            <JupiterSwap swapfrom={swapfrom} swapto={swapto} portfolioPositions={portfolioPositions} tokenMap={tokenMap}/>
+            {/*<OrcaSwap swapfrom={swapfrom} swapto={swapto} portfolioPositions={portfolioPositions} tokenMap={tokenMap} />*/}
           </Grid>
         }
         {token && token === 'sol' &&
@@ -80,7 +82,7 @@ export default function Summary(props: any) {
           {ftxurl && ftxurl.length > 0 &&
             <Grid item>
               <Button
-                  variant="outlined" 
+                  variant="outlined"
                   title="FTX Pay"
                   onClick={handleFTXPay}
                   size="small"
