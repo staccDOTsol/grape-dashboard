@@ -1,12 +1,8 @@
 // ADD CODE FOR JUPITAR SWAP IMPLEMENTATION
 import React, {FC, useCallback, useEffect, useState} from 'react';
-import SwapDialog from "../Swap/SwapDialog";
 import {WalletAdapterNetwork, WalletError, WalletNotConnectedError} from '@solana/wallet-adapter-base';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { Connection, PublicKey, SystemProgram, Transaction, TransactionInstruction, Signer } from '@solana/web3.js';
-//import { Token, TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID } from "@solana/spl-token";
-import Decimal from "decimal.js";
-import * as web3 from '@solana/web3.js';
 import { styled } from '@mui/material/styles';
 
 import {
@@ -30,16 +26,14 @@ import {
     MenuItem
 } from '@mui/material';
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
-
-import { TOKEN_LIST_URL } from "@jup-ag/core";
 import { JupiterProvider, useJupiter } from "@jup-ag/react-hook";
 import Select, {SelectChangeEvent} from "@mui/material/Select";
 import {RegexTextField} from "../../components/Tools/RegexTextField";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
-import {OrcaPoolConfig} from "@orca-so/sdk";
 import {ENV, TokenInfo, TokenListProvider} from "@solana/spl-token-registry";
+import {useSnackbar} from "notistack";
 
 export interface Token {
     chainId: number; // 101,
@@ -130,33 +124,20 @@ function JupiterForm(props: any) {
 
     const wallet = useWallet();
     const connection = useConnection();
+    const { enqueueSnackbar } = useSnackbar();
 
     useEffect(() => {
         new TokenListProvider().resolve().then((tokens) => {
             const tokenList = tokens.filterByChainId(ENV.MainnetBeta).getList()
                .filter(i => tokensAvailable.includes(i.symbol));
-            console.log(tokenList)
             const tokenMapValue = tokenList.reduce((map, item) => {
                 map.set(item.address, item);
-                console.log(map);
                 return map;
             }, new Map())
-            console.log(tokenMapValue)
             setTokenMap(tokenMapValue);
-            console.log('token map set', tokenMap);
-
         });
 
     }, [setTokenMap]);
-
-    // useEffect(() => {
-    //     console.log("should update dropdowns")
-    //     if(tokenMap) {
-    //         console.log("check addresses?",Array.from(tokenMap.values()).find(t => t.symbol === props.swapfrom).address, Array.from(tokenMap.values()).find(t => t.symbol === props.swapto).address )
-    //         setSwapFrom(Array.from(tokenMap.values()).find(t => t.symbol === props.swapfrom).address)
-    //         setSwapTo(Array.from(tokenMap.values()).find(t => t.symbol === props.swapto).address)
-    //     }
-    // },[swapfrom,swapfrom,tokenMap])
 
     React.useEffect(() => {
         getPortfolioTokenBalance(swapfrom);
@@ -169,16 +150,11 @@ function JupiterForm(props: any) {
         slippage: 1, // 1% slippage
         debounceTime: 250, // debounce ms time before refresh
     })
-    console.log(jupiter);
-
-
 
     const {
-        allTokenMints, // all the token mints that is possible to be input
-        routeMap, // routeMap, same as the one in @jup-ag/core
         exchange, // exchange
-        refresh, // function to refresh rates
-        lastRefreshTimestamp, // timestamp when the data was last returned
+        // refresh, // function to refresh rates
+        // lastRefreshTimestamp, // timestamp when the data was last returned
         loading, // loading states1
         routes, // all the routes from inputMint to outputMint
         error,
@@ -199,9 +175,18 @@ function JupiterForm(props: any) {
         setTokenBalanceInput(0);
         setTokensToSwap(0);
     };
-    
-    async function swapIt() {
-        console.log(wallet.signAllTransactions);
+
+    const swapIt = async () => {
+        if(amounttoswap === 0)
+        {
+            enqueueSnackbar('Input a non-zero amount to swap.',{ variant: 'error' });
+            return
+        }
+        if(amounttoswap > tokenSwapAvailableBalance)
+        {
+            enqueueSnackbar(`Your ${tokenMap.get(swapfrom).name} balance is not high enough to make this swap.`,{ variant: 'error' });
+            return
+        }
         if (
             !loading &&
             routes?.[0] &&
@@ -210,6 +195,7 @@ function JupiterForm(props: any) {
             wallet.sendTransaction &&
             wallet.publicKey
         ) {
+            enqueueSnackbar(`Preparing to swap ${amounttoswap.toString()} ${tokenMap.get(swapfrom).name} for at least ${minimumReceived} ${tokenMap.get(swapto).name}`,{ variant: 'info' });
             const swapResult = await exchange({
                 wallet: {
                     sendTransaction: wallet.sendTransaction,
@@ -219,16 +205,21 @@ function JupiterForm(props: any) {
                 },
                 routeInfo: routes[0],
                 onTransaction: async (txid) => {
-                    console.log("sending transaction");
                     await connection.connection.confirmTransaction(txid);
-                    console.log("confirmed transaction");
-
                     return await connection.connection.getTransaction(txid, {
                         commitment: "confirmed",
                     });
+
                 },
             });
-            console.log({ swapResult });
+            if ("error" in swapResult) {
+                enqueueSnackbar(`${swapResult.error}`,{ variant: 'error' });
+            } else if ("txid" in swapResult) {
+                enqueueSnackbar(`Swapped: ${swapResult.txid}`,{ variant: 'success' });
+            }
+        } else
+        {
+            enqueueSnackbar(`Unable to setup a valid swap`,{ variant: 'error' });
         }
     }
 
@@ -239,7 +230,6 @@ function JupiterForm(props: any) {
 
     function getPortfolioTokenBalance(swapingfrom:string){
         let balance = 0;
-        console.log('setting a token')
         props.portfolioPositions.portfolio.map((token: any) => {
             if (token.mint === swapingfrom){
                 if (token.balance > 0)
@@ -248,12 +238,6 @@ function JupiterForm(props: any) {
         });
         setPortfolioSwapTokenAvailableBalance(balance);
     }
-
-    React.useEffect(() => {
-
-        // get the balance for this token
-        console.log("chaging the amount to swap")
-    }, [amounttoswap]);
 
     useEffect(() => {
         if(!routes) {
@@ -277,11 +261,9 @@ function JupiterForm(props: any) {
     return (<div>
         <Button
             variant="outlined"
-            //aria-controls={menuId}
             title={`Swap ${tokenMap?.get(swapfrom)?.symbol} > ${tokenMap?.get(swapto)?.symbol}`}
             onClick={handleClickOpen}
             size="small"
-            //onClick={isConnected ? handleProfileMenuOpen : handleOpen}
         >
             {tokenMap?.get(swapfrom)?.symbol} <SwapHorizIcon sx={{mr:1,ml:1}} /> {tokenMap?.get(swapto)?.symbol}
         </Button>
@@ -322,10 +304,6 @@ function JupiterForm(props: any) {
                                         {tokenMap && Array.from(tokenMap.values()).map(v =>
                                             v.symbol !== 'GRAPE' && (<MenuItem key={v.address} value={v.address}>{v.symbol}</MenuItem>)
                                         )}
-                                        {/*<MenuItem value="USDC">USDC</MenuItem>*/}
-                                        {/*<MenuItem value="SOL">SOL</MenuItem>*/}
-                                        {/*<MenuItem value="ORCA">ORCA</MenuItem>*/}
-                                        {/*<MenuItem value="mSOL">mSOL</MenuItem>*/}
                                     </Select>
                                 </FormControl>
                             </Grid>
@@ -533,7 +511,7 @@ function JupiterForm(props: any) {
                                   sx={{
                                       textAlign:'center'
                                   }}>
-                                loading...
+                                not ready to swap...
                             </Grid>
                         </Grid>
                     </Typography>
@@ -545,7 +523,6 @@ function JupiterForm(props: any) {
                     type="submit"
                     variant="outlined"
                     title="Swap"
-                    // disabled={userTokenBalanceInput > tokenSwapAvailableBalance}
                     sx={{
                         margin:1
                     }}>
@@ -554,6 +531,5 @@ function JupiterForm(props: any) {
             </DialogActions>
         </form>
         </BootstrapDialog>
-
     </div>)
 }

@@ -73,7 +73,7 @@ export default function Summary(props: any) {
 
         {swaptoken &&
           <Grid item>
-            <JupiterSwap swapfrom={swapfrom} swapto={swapto} portfolioPositions={portfolioPositions}/>
+            <JupiterSwap swapfrom={swapfrom} swapto={swapto} portfolioPositions={portfolioPositions} tokenMap={tokenMap}/>
             {/*<OrcaSwap swapfrom={swapfrom} swapto={swapto} portfolioPositions={portfolioPositions} tokenMap={tokenMap} />*/}
           </Grid>
         }
