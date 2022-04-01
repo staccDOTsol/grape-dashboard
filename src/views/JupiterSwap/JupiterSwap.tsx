@@ -1,4 +1,4 @@
-// ADD CODE FOR JUPITAR SWAP IMPLEMENTATION
+// ADD CODE FOR JUPITER SWAP IMPLEMENTATION
 import React, {FC, useCallback, useEffect, useState} from 'react';
 import {WalletAdapterNetwork, WalletError, WalletNotConnectedError} from '@solana/wallet-adapter-base';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
@@ -25,6 +25,8 @@ import {
     Typography,
     MenuItem
 } from '@mui/material';
+
+import CircularProgress from '@mui/material/CircularProgress';
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
 import { JupiterProvider, useJupiter } from "@jup-ag/react-hook";
 import Select, {SelectChangeEvent} from "@mui/material/Select";
@@ -118,13 +120,12 @@ function JupiterForm(props: any) {
     const [lpfees, setLpFees] = useState<Array<string>>([]);
     const [priceImpacts, setPriceImpacts] = useState<Array<string>>([]);
     const [rate, setRate] = useState('');
-
+    const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
     const tokensAvailable = ['GRAPE','SOL','mSOL','USDC','ORCA'];
 
     const wallet = useWallet();
     const connection = useConnection();
-    const { enqueueSnackbar } = useSnackbar();
 
     useEffect(() => {
         new TokenListProvider().resolve().then((tokens) => {
@@ -196,6 +197,12 @@ function JupiterForm(props: any) {
             wallet.publicKey
         ) {
             enqueueSnackbar(`Preparing to swap ${amounttoswap.toString()} ${tokenMap.get(swapfrom).name} for at least ${minimumReceived} ${tokenMap.get(swapto).name}`,{ variant: 'info' });
+            
+            const snackprogress = (key:any) => (
+                <CircularProgress sx={{padding:'10px'}} />
+            );
+            const cnfrmkey = enqueueSnackbar(`Confirming transaction`,{ variant: 'info', action:snackprogress, persist: true });
+            
             const swapResult = await exchange({
                 wallet: {
                     sendTransaction: wallet.sendTransaction,
@@ -212,9 +219,16 @@ function JupiterForm(props: any) {
 
                 },
             });
+            closeSnackbar(cnfrmkey);
             if ("error" in swapResult) {
                 enqueueSnackbar(`${swapResult.error}`,{ variant: 'error' });
             } else if ("txid" in swapResult) {
+                /*
+                const action = (key:any) => (
+                    <Button href={`https://explorer.solana.com/tx/${signature}`} target='_blank' sx={{color:'white'}} >
+                        Signature: {signature}
+                    </Button>
+                );*/
                 enqueueSnackbar(`Swapped: ${swapResult.txid}`,{ variant: 'success' });
             }
         } else
@@ -249,7 +263,8 @@ function JupiterForm(props: any) {
         setConvertedAmountValue(routes[0].outAmount / (10 ** 6));
         routes[0].marketInfos.forEach(mi => {
             setTradeRoute(tr => tr + (tr && " x ") + mi.marketMeta.amm.label)
-            setLpFees(lpf => [...lpf, `${mi.marketMeta.amm.label}: ${(mi.lpFee.amount/(10 ** tokenMap.get(mi.lpFee.mint)!.decimals))}` +
+
+            setLpFees(lpf => [...lpf, `${mi.marketMeta.amm.label}: ${(mi.lpFee.amount/(10 ** tokenMap.get(mi.lpFee.mint)?.decimals))}` +
             ` ${tokenMap.get(mi.lpFee.mint)?.symbol} (${mi.lpFee.pct * 100}%)`]);
             setPriceImpacts(pi => [...pi, `${mi.marketMeta.amm.label}: ${mi.priceImpactPct * 100 < 0.1 ? '< 0.1' : (mi.priceImpactPct * 100).toFixed(2)}%` ])
         })
