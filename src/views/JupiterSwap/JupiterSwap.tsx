@@ -130,9 +130,8 @@ function JupiterForm(props: any) {
     const getTokenList = async () => {
         const priceList = await getPrices();
         const raydiumTokens = Object.keys(priceList);
-        console.log('should filter by this',raydiumTokens);
         const tokens = await new TokenListProvider().resolve();
-        const tokenList = tokens.filterByChainId(ENV.MainnetBeta).getList().filter(ti => raydiumTokens.includes(ti.symbol)) ;
+        const tokenList = tokens.filterByChainId(ENV.MainnetBeta).getList().filter(ti => ti.symbol === 'ORCA' || raydiumTokens.includes(ti.symbol) );
         const tokenMapValue = tokenList.reduce((map, item) => {
                 map.set(item.address, item);
                 return map;
@@ -312,8 +311,7 @@ function JupiterForm(props: any) {
                                         sx={{width:200}}
                                         value={tokenMap?.get(swapfrom)}
                                         onChange={(event, newValue) =>
-                                        {console.log(newValue);
-                                            // @ts-ignore
+                                        {// @ts-ignore
                                             setSwapFrom(newValue.address)
                                             // @ts-ignore
                                             getPortfolioTokenBalance(newValue.address);
@@ -324,7 +322,8 @@ function JupiterForm(props: any) {
                                         id="from-select-dropdown"
                                         getOptionLabel={(option) => option.symbol}
                                         renderInput={(params) => <TextField {...params} label="From"/>}
-                                        renderOption={(params, option) => (<li {...params}><img onError={handleImageError} width={20} src={option.logoURI} style={{float: "left"}}/>{option.symbol}</li>)} options={tokenMap && Array.from(tokenMap.values()).filter(v => v.symbol != 'GRAPE')}/>
+                                        renderOption={(params, option) => (<li {...params}><img onError={handleImageError} width={20} src={option.logoURI} style={{float: "left"}}/>{option.symbol}</li>)}
+                                        options={tokenMap && Array.from(tokenMap.values()).sort((a,b)=> a.symbol.localeCompare(b.symbol)).filter(v => v.symbol != 'GRAPE')}/>
                                 </FormControl>
                             </Grid>
                             <Grid item xs={6}>
