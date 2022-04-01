@@ -424,112 +424,116 @@ function JupiterForm(props: any) {
                     </Grid>
                 </Grid>
                 {!loading && routes?.length > 0?
-                    <Typography variant="caption" sx={{color:"#aaaaaa"}}>
-                        {tradeRoute &&
-                            <Grid container spacing={1}>
-                                <Grid item xs={6}
-                                      sx={{
-                                          textAlign:'right'
-                                      }}
-                                >
-                                    Best Route <Tooltip title={`Best route chosen by Jup.ag`}><HelpOutlineIcon sx={{ fontSize:14  }}/></Tooltip>
+                    <Grid sx={{mt:2}}>
+                        <Typography variant="caption" sx={{color:"#aaaaaa"}}>
+                            {tradeRoute &&
+                                <Grid container spacing={1}>
+                                    <Grid item xs={6}
+                                        sx={{
+                                            textAlign:'right'
+                                        }}
+                                    >
+                                        Best Route <Tooltip title={`Best route chosen by Jup.ag`}><HelpOutlineIcon sx={{ fontSize:14  }}/></Tooltip>
+                                    </Grid>
+                                    <Grid item xs={6}
+                                        sx={{
+                                            textAlign:'right'
+                                        }}
+                                    >
+                                        {tradeRoute}
+                                    </Grid>
                                 </Grid>
-                                <Grid item xs={6}
-                                      sx={{
-                                          textAlign:'right'
-                                      }}
-                                >
-                                    {tradeRoute}
+                            }
+                            {priceImpacts &&
+                                <Grid container spacing={1}>
+                                    <Grid item xs={6}
+                                        sx={{
+                                            textAlign:'right'
+                                        }}
+                                    >
+                                        Price Impact <Tooltip title={`Swaping shifts the ratio of tokens in the pool, which will cause a change in the price per token`}><HelpOutlineIcon sx={{ fontSize:14  }}/></Tooltip>
+                                    </Grid>
+                                    <Grid item xs={6}
+                                        sx={{
+                                            textAlign:'right'
+                                        }}
+                                    >
+                                        {priceImpacts.map(pi => <>{pi}<br/></>)}
+                                    </Grid>
                                 </Grid>
-                            </Grid>
-                        }
-                        {priceImpacts &&
-                            <Grid container spacing={1}>
-                                <Grid item xs={6}
-                                      sx={{
-                                          textAlign:'right'
-                                      }}
-                                >
-                                    Price Impact <Tooltip title={`Swaping shifts the ratio of tokens in the pool, which will cause a change in the price per token`}><HelpOutlineIcon sx={{ fontSize:14  }}/></Tooltip>
+                            }
+                            {minimumReceived &&
+                                <Grid container spacing={1}>
+                                    <Grid item xs={6}
+                                        sx={{
+                                            textAlign:'right'
+                                        }}
+                                    >
+                                        Minimum Received <Tooltip title={`1% slippage tolerance`}><HelpOutlineIcon sx={{ fontSize:14  }}/></Tooltip>
+                                    </Grid>
+                                    <Grid item xs={6}
+                                        sx={{
+                                            textAlign:'right'
+                                        }}
+                                    >
+                                        {minimumReceived}
+                                    </Grid>
                                 </Grid>
-                                <Grid item xs={6}
-                                      sx={{
-                                          textAlign:'right'
-                                      }}
-                                >
-                                    {priceImpacts.map(pi => <>{pi}<br/></>)}
-                                </Grid>
-                            </Grid>
-                        }
-                        {minimumReceived &&
-                            <Grid container spacing={1}>
-                                <Grid item xs={6}
-                                      sx={{
-                                          textAlign:'right'
-                                      }}
-                                >
-                                    Minimum Received <Tooltip title={`1% slippage tolerance`}><HelpOutlineIcon sx={{ fontSize:14  }}/></Tooltip>
-                                </Grid>
-                                <Grid item xs={6}
-                                      sx={{
-                                          textAlign:'right'
-                                      }}
-                                >
-                                    {minimumReceived}
-                                </Grid>
-                            </Grid>
-                        }
+                            }
 
-                        {rate &&
-                            <Grid container spacing={1}>
-                                <Grid item xs={6}
-                                      sx={{
-                                          textAlign:'right'
-                                      }}
-                                >
-                                    Rate
-                                </Grid>
-                                <Grid item xs={6}
-                                      sx={{
-                                          textAlign:'right'
-                                      }}
-                                >
-                                    {rate}
-                                </Grid>
-                            </Grid>
-                        }
-                        {lpfees &&
-                            <Grid container spacing={1}>
-                                <>
+                            {rate &&
+                                <Grid container spacing={1}>
                                     <Grid item xs={6}
-                                          sx={{
-                                              textAlign:'right'
-                                          }}
+                                        sx={{
+                                            textAlign:'right'
+                                        }}
                                     >
-                                        SWAP Fees <Tooltip title={`LP Fees for each exchange used in the route.`}><HelpOutlineIcon sx={{ fontSize:14  }}/></Tooltip>
+                                        Rate
                                     </Grid>
                                     <Grid item xs={6}
-                                          sx={{
-                                              textAlign:'right'
-                                          }}
+                                        sx={{
+                                            textAlign:'right'
+                                        }}
                                     >
-                                        {lpfees.map(lp => <>{lp}<br/></>)}
+                                        {rate}
                                     </Grid>
-                                </>
-                            </Grid>
-                        }
-                    </Typography>
+                                </Grid>
+                            }
+                            {lpfees &&
+                                <Grid container spacing={1}>
+                                    <>
+                                        <Grid item xs={6}
+                                            sx={{
+                                                textAlign:'right'
+                                            }}
+                                        >
+                                            SWAP Fees <Tooltip title={`LP Fees for each exchange used in the route.`}><HelpOutlineIcon sx={{ fontSize:14  }}/></Tooltip>
+                                        </Grid>
+                                        <Grid item xs={6}
+                                            sx={{
+                                                textAlign:'right'
+                                            }}
+                                        >
+                                            {lpfees.map(lp => <>{lp}<br/></>)}
+                                        </Grid>
+                                    </>
+                                </Grid>
+                            }
+                        </Typography>
+                    </Grid>
                     :
-                    <Typography variant="caption" sx={{color:"#aaaaaa"}}>
-                        <Grid container spacing={1}>
-                            <Grid item xs={12}
-                                  sx={{
-                                      textAlign:'center'
-                                  }}>
-                                not ready to swap...
+                    <Grid sx={{mt:2}}>
+                        <Typography variant="caption" sx={{color:"#aaaaaa"}}>
+                            <Grid container spacing={1}>
+                                <Grid item xs={12}
+                                    sx={{
+                                        textAlign:'center'
+                                    }}>
+                                    not ready to swap...
+                                </Grid>
                             </Grid>
-                        </Grid>
-                    </Typography>
+                        </Typography>
+                    </Grid>
                 }
             </DialogContent>
             <DialogActions>
