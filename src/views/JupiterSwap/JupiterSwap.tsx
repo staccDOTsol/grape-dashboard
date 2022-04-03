@@ -1,10 +1,10 @@
 // ADD CODE FOR JUPITER SWAP IMPLEMENTATION
-import React, {FC, useCallback, useEffect, useState} from 'react';
+import React, {FC, HTMLAttributes, useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {WalletAdapterNetwork, WalletError, WalletNotConnectedError} from '@solana/wallet-adapter-base';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { Connection, PublicKey, SystemProgram, Transaction, TransactionInstruction, Signer } from '@solana/web3.js';
 import { styled } from '@mui/material/styles';
-
+import { getPrices } from '../Meanfi/helpers/api'
 import {
     Dialog,
     Button,
@@ -23,8 +23,15 @@ import {
     InputLabel,
     Tooltip,
     Typography,
-    MenuItem
+    MenuItem,
+    Autocomplete,
+    Box, InputAdornment,
+    Stack,
+    Input,
+    Popper
 } from '@mui/material';
+
+import { createFilterOptions} from '@mui/material/useAutocomplete'
 
 import CircularProgress from '@mui/material/CircularProgress';
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
@@ -36,6 +43,7 @@ import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import {ENV, TokenInfo, TokenListProvider} from "@solana/spl-token-registry";
 import {useSnackbar} from "notistack";
+import ReactSelect from 'react-select';
 
 export interface Token {
     chainId: number; // 101,
@@ -105,39 +113,41 @@ export default function JupiterSwap(props: any ){
 
 
 function JupiterForm(props: any) {
-    const [tokenSwapAvailableBalance, setPortfolioSwapTokenAvailableBalance] = React.useState(0);
-    const [open, setOpen] = React.useState(false);
-    const [userTokenBalanceInput, setTokenBalanceInput] = React.useState(0);
-    const [convertedAmountValue, setConvertedAmountValue] = React.useState(null);
-    const [amounttoswap, setTokensToSwap] = React.useState(null);
-    const [swapfrom, setSwapFrom] = React.useState('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v');
-    const [swapto, setSwapTo] = React.useState('8upjSpvjcdpuzhfR1zriwg5NXkwDruejqNE9WNbPRtyA');
-    const [tokenMap, setTokenMap] = React.useState<Map<string,TokenInfo>>(undefined);
-
-
+    const [tokenSwapAvailableBalance, setPortfolioSwapTokenAvailableBalance] = useState(0);
+    const [open, setOpen] = useState(false);
+    const [userTokenBalanceInput, setTokenBalanceInput] = useState(0);
+    const [convertedAmountValue, setConvertedAmountValue] = useState(null);
+    const [amounttoswap, setTokensToSwap] = useState(null);
+    const [swapfrom, setSwapFrom] = useState('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v');
+    const [swapto, setSwapTo] = useState('8upjSpvjcdpuzhfR1zriwg5NXkwDruejqNE9WNbPRtyA');
+    const [tokenMap, setTokenMap] = useState<Map<string,TokenInfo>>(undefined);
+    const [inputValue, setInputValue] = useState('')
+    const [selectedValue, setSelectedValue] = useState<TokenInfo>()
     const [minimumReceived, setMinimumReceived] = useState(0);
     const [tradeRoute, setTradeRoute] = useState("");
     const [lpfees, setLpFees] = useState<Array<string>>([]);
     const [priceImpacts, setPriceImpacts] = useState<Array<string>>([]);
     const [rate, setRate] = useState('');
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
-
-    const tokensAvailable = ['GRAPE','SOL','mSOL','USDC','ORCA'];
-
+    const [ autoCompleteOptions, setAutoCompleteOptions ] = useState([]);
+    const [ allAutoCompleteOptions, setAllAutoCompleteOptions ] = useState([]);
     const wallet = useWallet();
     const connection = useConnection();
 
-    useEffect(() => {
-        new TokenListProvider().resolve().then((tokens) => {
-            const tokenList = tokens.filterByChainId(ENV.MainnetBeta).getList()
-               .filter(i => tokensAvailable.includes(i.symbol));
-            const tokenMapValue = tokenList.reduce((map, item) => {
+    const getTokenList = async () => {
+        const priceList = await getPrices();
+        const raydiumTokens = Object.keys(priceList);
+        const tokens = await new TokenListProvider().resolve();
+        const tokenList = tokens.filterByChainId(ENV.MainnetBeta).getList().filter(ti => ti.symbol === 'ORCA' || raydiumTokens.includes(ti.symbol) );
+        const tokenMapValue = tokenList.reduce((map, item) => {
                 map.set(item.address, item);
                 return map;
             }, new Map())
-            setTokenMap(tokenMapValue);
-        });
-
+        setTokenMap(tokenMapValue);
+        setAllAutoCompleteOptions(Array.from<TokenInfo>(tokenMapValue.values()).sort((a,b)=> a.symbol.localeCompare(b.symbol)).filter(v => v.symbol != 'GRAPE' && v.symbol != 'SHILL'));
+    }
+    useEffect(() => {
+        getTokenList()
     }, [setTokenMap]);
 
     React.useEffect(() => {
@@ -170,12 +180,7 @@ function JupiterForm(props: any) {
         setOpen(false);
     };
 
-    const handleSelectChange = (event: SelectChangeEvent) => {
-        setSwapFrom(event.target.value);
-        getPortfolioTokenBalance(event.target.value);
-        setTokenBalanceInput(0);
-        setTokensToSwap(0);
-    };
+    const handleImageError = (ev) => ev.target.style.display = 'none';
 
     const swapIt = async () => {
         if(amounttoswap === 0)
@@ -197,12 +202,12 @@ function JupiterForm(props: any) {
             wallet.publicKey
         ) {
             enqueueSnackbar(`Preparing to swap ${amounttoswap.toString()} ${tokenMap.get(swapfrom).name} for at least ${minimumReceived} ${tokenMap.get(swapto).name}`,{ variant: 'info' });
-            
+
             const snackprogress = (key:any) => (
                 <CircularProgress sx={{padding:'10px'}} />
             );
             const cnfrmkey = enqueueSnackbar(`Confirming transaction`,{ variant: 'info', action:snackprogress, persist: true });
-            
+
             const swapResult = await exchange({
                 wallet: {
                     sendTransaction: wallet.sendTransaction,
@@ -230,6 +235,7 @@ function JupiterForm(props: any) {
                     </Button>
                 );*/
                 enqueueSnackbar(`Swapped: ${swapResult.txid}`,{ variant: 'success' });
+                setOpen(false);
             }
         } else
         {
@@ -253,9 +259,10 @@ function JupiterForm(props: any) {
         setPortfolioSwapTokenAvailableBalance(balance);
     }
 
+
     useEffect(() => {
-        if(!routes) {
-            return;
+        if(!routes || routes.length === 0) {
+            return
         }
         setTradeRoute('');
         setLpFees([]);
@@ -272,6 +279,27 @@ function JupiterForm(props: any) {
 
         setRate(`${(routes[0].outAmount / (10 ** 6))/ (routes[0].inAmount / (10 ** tokenMap.get(swapfrom)!.decimals))} GRAPE per ${tokenMap.get(swapfrom)!.symbol}`)
     }, [routes, tokenMap])
+
+    useEffect(()=>{
+        setAutoCompleteOptions(allAutoCompleteOptions.filter( v => (v.name.toLowerCase() + v.symbol.toLowerCase()).includes(inputValue.toLowerCase())))
+    },[inputValue])
+
+    useEffect(()=>{
+        if(!selectedValue){
+            return;
+        }
+        setSwapFrom(selectedValue.address);
+        // @ts-ignore
+        getPortfolioTokenBalance(selectedValue.address);
+        setTokenBalanceInput(0);
+        setTokensToSwap(0);
+    }, [selectedValue, swapfrom])
+
+    useEffect(()=>{
+        if(swapfrom && tokenMap && tokenMap.size > 0){
+            setSelectedValue(tokenMap.get(swapfrom))
+        }
+    },[swapfrom, tokenMap])
 
     return (<div>
         <Button
@@ -307,19 +335,32 @@ function JupiterForm(props: any) {
                         <Grid container>
                             <Grid item xs={6}>
                                 <FormControl>
-                                    <InputLabel id="from-label">From</InputLabel>
-                                    <Select
-                                        labelId="from-label"
-                                        id="from-select-dropdown"
+                                    <Autocomplete
+                                        sx={{width:230}}
+                                        value={selectedValue}
+                                        onChange={(event, newValue) =>
+                                        {
+                                            setSelectedValue(newValue);
+                                        }}
+                                        filterOptions={(x, state) => x}
                                         fullWidth
-                                        value={swapfrom}
-                                        onChange={handleSelectChange}
-                                        label="From"
-                                    >
-                                        {tokenMap && Array.from(tokenMap.values()).map(v =>
-                                            v.symbol !== 'GRAPE' && (<MenuItem key={v.address} value={v.address}>{v.symbol}</MenuItem>)
-                                        )}
-                                    </Select>
+                                        inputValue={inputValue}
+                                        onInputChange={(e, newValue) => {
+                                            setAutoCompleteOptions([]);
+                                            setInputValue(newValue);
+                                            }}
+                                        selectOnFocus
+                                        clearOnBlur
+                                        handleHomeEndKeys
+                                        id="from-select-dropdown"
+                                        getOptionLabel={(option) => option.symbol}
+                                        renderInput={(params) => <TextField {...params} label="From"/>}
+                                        renderOption={(params, option) => <li {...params}><img width={40} onError={handleImageError} src={option.logoURI} style={{float:"left"}}/>
+                                            <Stack spacing={0.1}>
+                                                <div>{option.symbol}</div>
+                                                <Typography variant="body2" sx={{color:"#aaaaaa"}}>{option.name}</Typography>
+                                            </Stack></li>}
+                                        options={autoCompleteOptions}/>
                                 </FormControl>
                             </Grid>
                             <Grid item xs={6}>
