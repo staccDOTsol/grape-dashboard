@@ -1,6 +1,6 @@
 {
   "name": "grape-dashboard",
-  "version": "1.2.177",
+  "version": "1.2.179",
   "private": true,
   "proxy": "http://localhost:3000/",
   "dependencies": {
@@ -84,6 +84,7 @@
     "react-player": "^2.9.0",
     "react-router-dom": "^6.2.1",
     "react-scripts": "4.0.1",
+    "react-select": "^5.2.2",
     "react-simple-image-viewer": "^1.1.1",
     "react-twitter-widgets": "^1.10.0",
     "styled-components": "^5.3.1",
