@@ -4,7 +4,7 @@ import * as XLSX from 'xlsx';
 import { Connection, PublicKey, SystemProgram, Transaction, TransactionInstruction, Signer } from '@solana/web3.js';
 
 import {CopyToClipboard} from 'react-copy-to-clipboard';
-import { GRAPE_RPC_ENDPOINT, FREE_RPC_ENDPOINT } from '../../components/Tools/constants';
+import { GRAPE_RPC_ENDPOINT, TX_RPC_ENDPOINT } from '../../components/Tools/constants';
 import { getTokenOwnerRecordForRealm } from '@solana/spl-governance';
 import { Token, TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID } from "@solana/spl-token";
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
@@ -39,7 +39,7 @@ const Input = styled('input')({
 
 export function PaymentsView(props: any) {
     const [loading, setLoading] = React.useState(false);
-    const freeconnection = new Connection(FREE_RPC_ENDPOINT);
+    const freeconnection = new Connection(TX_RPC_ENDPOINT);
     const { connection } = useConnection();
     const { publicKey, wallet, sendTransaction } = useWallet();
     

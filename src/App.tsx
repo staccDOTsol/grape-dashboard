@@ -56,7 +56,7 @@ import {
 //import { mainListItems, secondaryListItems } from './components/SidebarList/SidebarList';
 import grapeTheme from  './config/theme'
 import "./App.less";
-import { GRAPE_RPC_ENDPOINT, FREE_RPC_ENDPOINT } from './components/Tools/constants';
+import { GRAPE_RPC_ENDPOINT, TX_RPC_ENDPOINT } from './components/Tools/constants';
 
 function Copyright(props: any) {
   return (

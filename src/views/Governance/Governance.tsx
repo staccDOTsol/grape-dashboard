@@ -1,4 +1,4 @@
-import { getRealms, getVoteRecordsByVoter, getTokenOwnerRecordForRealm, getTokenOwnerRecordsByOwner, getGovernanceAccounts, pubkeyFilter, TokenOwnerRecord } from '@solana/spl-governance';
+import { getRealms, getAllProposals, getAllTokenOwnerRecords, getVoteRecordsByVoter, getTokenOwnerRecordForRealm, getTokenOwnerRecordsByOwner, getGovernanceAccounts, pubkeyFilter, TokenOwnerRecord } from '@solana/spl-governance';
 import { PublicKey } from '@solana/web3.js';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import * as React from 'react';
@@ -16,11 +16,17 @@ import {
   TableCell,
   TableHead,
   TableBody,
-  TableRow
+  TableRow,
+  Collapse
 } from '@mui/material/';
 
+import IconButton from '@mui/material/IconButton';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import HowToVoteIcon from '@mui/icons-material/HowToVote';
 import { PretifyCommaNumber } from '../../components/Tools/PretifyCommaNumber';
+import { REALM_ID, GOVERNING_TOKEN, GOVERNANCE_PROGRAM_ID } from '../../components/Tools/constants';
+import { token } from '@project-serum/anchor/dist/cjs/utils';
 
 const StyledTable = styled(Table)(({ theme }) => ({
     '& .MuiTableCell-root': {
@@ -28,67 +34,179 @@ const StyledTable = styled(Table)(({ theme }) => ({
     },
 }));
 
+function RealmProposals(props:any) {
+    const [loading, setLoading] = React.useState(false);
+    const [proposals, setProposals] = React.useState(null);
+    const { connection } = useConnection();
+    const { publicKey } = useWallet();
+    const realm = props.realm;
+
+    const getProposals = async () => {
+        if (!loading){
+            setLoading(true);
+            try{
+            
+                const programId = new PublicKey(GOVERNANCE_PROGRAM_ID);
+                const gprops = await getAllProposals(connection, programId, realm);
+                setProposals(gprops);
+                console.log("Proposals ("+realm+"): "+JSON.stringify(gprops));
+            }catch(e){console.log("ERR: "+e)}
+        }
+        setLoading(false);
+    }
+
+    React.useEffect(() => { 
+        if (publicKey && !loading && realm)
+            getProposals();
+    }, [realm]);
+
+    return (
+        <>
+            {proposals && (proposals).map((item: any, index:number) => (
+                <>
+                    {JSON.stringify(item)}
+                </>
+            ))}
+        </>
+    );
+        /*
+    if(loading){
+        return (
+            <React.Fragment>
+                <Grid item xs={12}>
+                    <Paper className="grape-paper-background">
+                        <Paper
+                        className="grape-paper"
+                        sx={{
+                            p: 2,
+                            display: 'flex',
+                            flexDirection: 'column',
+                        }}
+                        >
+                            <Box sx={{ p:1, width: "100%" }}>
+                                <Skeleton />
+                            </Box>
+                        </Paper>
+                    </Paper>
+                </Grid>
+            </React.Fragment>
+        )
+    } else{
+        if (proposals){
+            return (
+                <>
+                    {JSON.stringify(proposals)}
+                </>
+            );
+        }
+    }
+*/
+}
+
 export function GovernanceView(props: any) {
     const [loading, setLoading] = React.useState(false);
     const { connection } = useConnection();
     const { publicKey } = useWallet();
     const [realms, setRealms] = React.useState(null);
-    const [realmsArray, setRealmsArray] = React.useState(new Array);
     const [voteRecords, setVoteRecords] = React.useState(null);
     const [tokenOwnerRecords, setOwnerRecords] = React.useState(null);
+    const [tokenOwnerRecordsByOwner, setOwnerRecordsByOwner] = React.useState(null);
 
     const getGovernance = async () => {
         if (!loading){
             setLoading(true);
             try{
-                const programId = new PublicKey('GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw');
+                const programId = new PublicKey(GOVERNANCE_PROGRAM_ID);
                 
-                /*
-                const loadedRealms = await getRealms(rpcEndpoint, programId);
-                setRealms(loadedRealms);
-                let loadedRealmsArray = new Array();
-                Object.keys(loadedRealms).forEach(function(key) {
-                    loadedRealmsArray.push(loadedRealms[key]);
-                });
-                setRealmsArray(loadedRealmsArray);
-                
-                console.log("Realms: "+JSON.stringify(loadedRealms));
-                */
-                
-                //const loadedRecords = await getVoteRecordsByVoter(programId, rpcEndpoint, publicKey)
-                //setVoteRecords(loadedRecords);
-
-                // statically referencing this for now
-                // we will dynamically get this using the above call - loadedRealmsArray
-                
-                const realmId = new PublicKey('By2sVGZXwfQq6rAiAM3rNPJ9iQfb5e2QhnF4YjJ4Bip'); // Grape RealmId
-                const governingTokenMint = new PublicKey('8upjSpvjcdpuzhfR1zriwg5NXkwDruejqNE9WNbPRtyA'); // Grape Mint
+                const realmId = new PublicKey(REALM_ID);
+                const governingTokenMint = new PublicKey(GOVERNING_TOKEN); // Grape Mint
                 const governingTokenOwner = publicKey;
 
-                const ownerRecords = await getTokenOwnerRecordForRealm(
-                    connection, 
-                    programId,
-                    realmId,
-                    governingTokenMint,
-                    governingTokenOwner
-                );
-                setOwnerRecords(ownerRecords);
+                const rlms = await getRealms(connection, programId);
+                const uTable = rlms.reduce((acc, it) => (acc[it.pubkey.toBase58()] = it, acc), {})
+                setRealms(uTable);
 
-                const ownerRecordsAll = await getGovernanceAccounts(
-                    connection, 
-                    programId, 
-                    TokenOwnerRecord, [
-                        pubkeyFilter(1 + 32 + 32, governingTokenOwner)!,
-                    ]);
-                
+                const ownerRecordsbyOwner = await getTokenOwnerRecordsByOwner(connection, programId, governingTokenOwner);
+                setOwnerRecordsByOwner(ownerRecordsbyOwner);
+            
             }catch(e){console.log("ERR: "+e)}
-            //console.log("Realms: "+JSON.stringify(ownerRecordsAll));
-
-            setLoading(false);
         } else{
 
         }
         setLoading(false);
+    }
+
+    function GovernanceRow(props: any) {
+        const item = props.item;
+        const index = props.index;
+        const realm = props.realm;
+        const tokenOwnerRecord = props.tokenOwnerRecord;
+        const [open, setOpen] = React.useState(false);
+        
+        return (
+            <React.Fragment>
+                    <TableRow key={index} sx={{borderBottom:"none"}}>
+                        
+                        <TableCell style={{ verticalAlign: 'middle' }}>
+                            <IconButton
+                                aria-label="expand row"
+                                size="small"
+                                onClick={() => setOpen(!open)}
+                            >
+                                {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+                            </IconButton>
+                        </TableCell>
+                        <TableCell align='left' style={{ verticalAlign: 'middle' }}>  
+                            {tokenOwnerRecordsByOwner[index].account.governingTokenMint.toBase58() === GOVERNING_TOKEN ? (
+                                <Grid container direction="row" alignItems="center" sx={{ }}>
+                                    <Grid item>
+                                        <Avatar 
+                                            component={Paper} 
+                                            elevation={4}
+                                            alt="Token" 
+                                            src={'https://lh3.googleusercontent.com/y7Wsemw9UVBc9dtjtRfVilnS1cgpDt356PPAjne5NvMXIwWz9_x7WKMPH99teyv8vXDmpZinsJdgiFQ16_OAda1dNcsUxlpw9DyMkUk=s0'}
+                                            sx={{ width: 28, height: 28, bgcolor: "#222" }}
+                                        />
+                                    </Grid>
+                                    <Grid item sx={{ ml: 1 }}>
+                                        {realm.account?.name || tokenOwnerRecordsByOwner[index].account.governingTokenMint.toBase58()}
+                                    </Grid>
+                                </Grid>
+                            ):(
+                                <Grid container direction="row" alignItems="center" sx={{ }}>
+                                    {realm.account?.name || tokenOwnerRecordsByOwner[index].account.governingTokenMint.toBase58()}
+                                </Grid>
+                            )}
+                        </TableCell>
+                        <TableCell align="right">{(parseInt(tokenOwnerRecordsByOwner[index].account?.governingTokenDepositAmount, 10))/1000000}</TableCell>
+                        <TableCell align="right"><Button href={`https://realms.today/dao/${tokenOwnerRecordsByOwner[index].account.realm.toBase58()}`} target='_blank'><HowToVoteIcon /></Button></TableCell>                        
+                    </TableRow>
+    
+                    <TableRow key={`r-${index}`}>
+                        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={7} align="center">
+                            <Collapse in={open} timeout="auto" unmountOnExit>
+                                <Box sx={{ margin: 1 }}>
+                                    
+
+
+                                    {/*
+                                    <Typography variant="h6" gutterBottom component="div">
+                                        Address
+                                    </Typography>
+                                    */}
+                                    <Grid container spacing={2}>
+                                        <Grid item xs={12}>Realm: {tokenOwnerRecord.account.realm.toBase58()}
+                                        </Grid>
+                                        <Grid item xs={12}>
+                                            <RealmProposals realm={tokenOwnerRecord.account.realm} />
+                                        </Grid>
+                                    </Grid>
+                                </Box>
+                            </Collapse>
+                        </TableCell>
+                    </TableRow>
+            </React.Fragment>
+        );
     }
     
     React.useEffect(() => { 
@@ -118,7 +236,7 @@ export function GovernanceView(props: any) {
             </React.Fragment>
         )
     } else{
-        if (tokenOwnerRecords){
+        if (tokenOwnerRecordsByOwner && realms){
             return (
                 <React.Fragment>
                     <Grid item xs={12} md={12} lg={12}>
@@ -133,35 +251,21 @@ export function GovernanceView(props: any) {
                                 </Box>
                                 
                                 <TableContainer>
-                                    <StyledTable sx={{ minWidth: 500 }} size="small" aria-label="Portfolio Table">
+                                    <StyledTable sx={{ minWidth: 500 }} size="small" aria-label="Governance Table">
                                         <TableHead>
                                             <TableRow>
+                                                <TableCell></TableCell>
                                                 <TableCell><Typography variant="caption">Realm</Typography></TableCell>
                                                 <TableCell align="right"><Typography variant="caption">Votes</Typography></TableCell>
                                                 <TableCell></TableCell>
                                             </TableRow>
                                         </TableHead>
                                         <TableBody>
-                                            <TableRow>
-                                                <TableCell style={{ verticalAlign: 'middle' }}>
-                                                    <Grid container direction="row" alignItems="center" sx={{ }}>
-                                                        <Grid item>
-                                                            <Avatar 
-                                                                component={Paper} 
-                                                                elevation={4}
-                                                                alt="Token" 
-                                                                src={'https://lh3.googleusercontent.com/y7Wsemw9UVBc9dtjtRfVilnS1cgpDt356PPAjne5NvMXIwWz9_x7WKMPH99teyv8vXDmpZinsJdgiFQ16_OAda1dNcsUxlpw9DyMkUk=s0'}
-                                                                sx={{ width: 28, height: 28, bgcolor: "#222" }}
-                                                            />
-                                                        </Grid>
-                                                        <Grid item sx={{ ml: 1 }}>
-                                                                {'Grape Votes'}
-                                                        </Grid>
-                                                    </Grid>
-                                                </TableCell>
-                                                <TableCell align="right">{(parseInt(tokenOwnerRecords.account.governingTokenDepositAmount, 10))/1000000}</TableCell>
-                                                <TableCell align="right"><Button href='https://realms.today/dao/GRAPE' target='_blank'><HowToVoteIcon /></Button></TableCell>
-                                            </TableRow> 
+                                            {tokenOwnerRecordsByOwner && Object.keys(tokenOwnerRecordsByOwner).map((item: any, index:number) => (
+                                                <>
+                                                    <GovernanceRow item={item} index={index} realm={realms[tokenOwnerRecordsByOwner[item].account.realm.toBase58()]} tokenOwnerRecord={tokenOwnerRecordsByOwner[item]}/>
+                                                </>
+                                            ))}
                                         </TableBody>
                                     </StyledTable>
                                 </TableContainer>
