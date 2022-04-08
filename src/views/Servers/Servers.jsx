@@ -477,8 +477,8 @@ export const ServersView = (props) => {
               {tab === 0 && 
                 <React.Fragment>
                   <TableContainer>
-                    <StyledTable sx={{ minWidth: 500 }} size="small" aria-label="Servers Table">
-                      <TableHead>
+                    <StyledTable sx={{ minWidth: 500}} size="small" aria-label="Servers Table">
+                      <TableHead sx={{p:1}}>
                         <TableRow>
                           <TableCell 
                               align="left" 
@@ -505,7 +505,7 @@ export const ServersView = (props) => {
                           <TableCell align="right"><Typography variant="caption">Actions</Typography></TableCell>
                         </TableRow>
                       </TableHead>
-                      <TableBody>
+                      <TableBody sx={{p:1}}>
                         {(rowsPerPageT1 > 0
                           ? 
                           stableSort(userServers, getComparator(orderT1, orderByT1)).slice(pageT1 * rowsPerPageT1, pageT1 * rowsPerPageT1 + rowsPerPageT1)

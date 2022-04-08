@@ -17,7 +17,9 @@ import {
   TableCell,
   TableHead,
   TableBody,
+  TableFooter,
   TableRow,
+  TablePagination,
   Collapse,
   Tooltip,
   CircularProgress,
@@ -28,6 +30,10 @@ import {formatAmount, getFormattedNumberToLocale} from '../Meanfi/helpers/ui';
 
 import moment from 'moment';
 
+import FirstPageIcon from '@mui/icons-material/FirstPage';
+import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
+import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
+import LastPageIcon from '@mui/icons-material/LastPage';
 import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
 import TimerIcon from '@mui/icons-material/Timer';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
@@ -39,6 +45,8 @@ import HowToVoteIcon from '@mui/icons-material/HowToVote';
 import { PretifyCommaNumber } from '../../components/Tools/PretifyCommaNumber';
 import { REALM_ID, GOVERNING_TOKEN, GOVERNANCE_PROGRAM_ID } from '../../components/Tools/constants';
 import { token } from '@project-serum/anchor/dist/cjs/utils';
+
+import PropTypes from 'prop-types';
 
 const StyledTable = styled(Table)(({ theme }) => ({
     '& .MuiTableCell-root': {
@@ -58,6 +66,75 @@ const GOVERNANNCE_STATE = {
     8:'Executing with Errors!',
 }
 
+TablePaginationActions.propTypes = {
+    count: PropTypes.number.isRequired,
+    onPageChange: PropTypes.func.isRequired,
+    page: PropTypes.number.isRequired,
+    rowsPerPage: PropTypes.number.isRequired,
+};
+
+function TablePaginationActions(props) {
+    const theme = useTheme();
+    const { count, page, rowsPerPage, onPageChange } = props;
+  
+    const handleFirstPageButtonClick = (event) => {
+        onPageChange(event, 0);
+    };
+
+    const handleBackButtonClick = (event) => {
+        onPageChange(event, page - 1);
+    };
+  
+    const handleNextButtonClick = (event) => {
+        onPageChange(event, page + 1);
+    };
+  
+    const handleLastPageButtonClick = (event) => {
+        onPageChange(event, Math.max(0, Math.ceil(count / rowsPerPage) - 1));
+    };
+    
+    return (
+        <Box sx={{ flexShrink: 0, ml: 2.5 }}>
+            <IconButton
+                onClick={handleFirstPageButtonClick}
+                disabled={page === 0}
+                aria-label="first page"
+            >
+                {theme.direction === "rtl" ? <LastPageIcon /> : <FirstPageIcon />}
+            </IconButton>
+            <IconButton
+                onClick={handleBackButtonClick}
+                disabled={page === 0}
+                aria-label="previous page"
+            >
+                {theme.direction === "rtl" ? (
+                    <KeyboardArrowRight />
+                ) : (
+                    <KeyboardArrowLeft />
+                )}
+            </IconButton>
+            <IconButton
+                onClick={handleNextButtonClick}
+                disabled={page >= Math.ceil(count / rowsPerPage) - 1}
+                aria-label="next page"
+            >
+                {theme.direction === "rtl" ? (
+                    <KeyboardArrowLeft />
+                ) : (
+                    <KeyboardArrowRight />
+                )}
+            </IconButton>
+            <IconButton
+                onClick={handleLastPageButtonClick}
+                disabled={page >= Math.ceil(count / rowsPerPage) - 1}
+                aria-label="last page"
+            >
+                {theme.direction === "rtl" ? <FirstPageIcon /> : <LastPageIcon />}
+            </IconButton>
+        </Box>
+    );
+  }
+
 function RealmProposals(props:any) {
     const [loading, setLoading] = React.useState(false);
     const [proposals, setProposals] = React.useState(null);
@@ -65,6 +142,20 @@ function RealmProposals(props:any) {
     const { publicKey } = useWallet();
     const realm = props.realm;
     const dao = props.dao;
+
+    const [page, setPage] = React.useState(0);
+    const [rowsPerPage, setRowsPerPage] = React.useState(10);
+    // Avoid a layout jump when reaching the last page with empty rows.
+    const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - proposals.length) : 0;
+
+    const handleChangePage = (event:any, newPage:number) => {
+        setPage(newPage);
+    };
+
+    const handleChangeRowsPerPage = (event:any) => {
+        setRowsPerPage(parseInt(event.target.value, 10));
+        setPage(0);
+    };
 
     const getProposals = async () => {
         if (!loading){
@@ -104,8 +195,6 @@ function RealmProposals(props:any) {
             getProposals();
     }, [realm]);
 
-
-    
     if(loading){
         return (
             <Box sx={{ width: '100%' }}>
@@ -122,55 +211,111 @@ function RealmProposals(props:any) {
                         <TableHead>
                             <TableRow>
                                 <TableCell><Typography variant="caption">Name</Typography></TableCell>
-                                <TableCell><Typography variant="caption"></Typography></TableCell>
+                                <TableCell sx={{width:"1%"}}><Typography variant="caption"></Typography></TableCell>
                                 <TableCell align="center"><Typography variant="caption">Started</Typography></TableCell>
                                 <TableCell align="center"><Typography variant="caption">Ended</Typography></TableCell>
                                 <TableCell align="center"><Typography variant="caption">Vote</Typography></TableCell>
                             </TableRow>
                         </TableHead>
-                        {proposals && (proposals).map((item: any, index:number) => (
-                            <>
-                                {item?.pubkey && item?.account &&
-                                    <TableRow key={index} sx={{borderBottom:"none"}}>
-                                        <TableCell>
-                                            {item.account?.name}
-                                            {item.account?.descriptionLink && 
-                                                <Tooltip title={item.account?.descriptionLink}>
-                                                    <Button sx={{ml:1}}><HelpOutlineIcon sx={{ fontSize:16 }}/></Button>
-                                                </Tooltip>
-                                            }
-                                        </TableCell>
-                                        <TableCell  align="center">
-                                            {GOVERNANNCE_STATE[item.account?.state]}
-                                        </TableCell>
-                                        <TableCell align="center">
-                                            <Typography variant="caption">
-                                                {item.account?.votingAt && (moment.unix((item.account?.votingAt).toNumber()).format("MMMM Do YYYY, h:mm a"))}
-                                            </Typography>
-                                        </TableCell>
-                                        <TableCell align="center">
-                                            <Typography variant="caption">
-                                                {item.account?.votingCompletedAt ?
-                                                (moment.unix((item.account?.votingCompletedAt).toNumber()).format("MMMM Do YYYY, h:mm a"))
-                                                : <>
-                                                    { item.account?.state === 2 ?
-                                                        <TimerIcon sx={{ fontSize:"small"}} />
-                                                    : 
-                                                        <CancelOutlinedIcon sx={{ fontSize:"small", color:"red"}} />
-                                                    }
-                                                    </>
+                        <TableBody>
+                            {/*proposals && (proposals).map((item: any, index:number) => (*/}
+
+                            {proposals && 
+                            <>  
+                                {(rowsPerPage > 0
+                                    ? proposals.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                    : proposals
+                                ).map((item:any, index:number) => (
+                                <>
+                                    {item?.pubkey && item?.account &&
+                                        <TableRow key={index} sx={{borderBottom:"none"}}>
+                                            <TableCell>
+                                                {item.account?.name}
+                                                {item.account?.descriptionLink && 
+                                                    <Tooltip title={item.account?.descriptionLink}>
+                                                        <Button sx={{ml:1}}><HelpOutlineIcon sx={{ fontSize:16 }}/></Button>
+                                                    </Tooltip>
                                                 }
-                                            </Typography>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Tooltip title="Participate &amp; Cast your Vote">
-                                                <Button sx={{color:'white'}} href={`https://realms.today/dao/${dao}/proposal/${item?.pubkey}`} target='_blank'><HowToVoteIcon /></Button>
-                                            </Tooltip>
-                                        </TableCell>
-                                    </TableRow>
-                                }
+                                            </TableCell>
+                                            <TableCell  align="center">
+                                                {GOVERNANNCE_STATE[item.account?.state]}
+                                            </TableCell>
+                                            <TableCell align="center">
+                                                <Typography variant="caption">
+                                                    <Tooltip title={`${item.account?.votingAt && (moment.unix((item.account?.votingAt).toNumber()).format("MMMM Da, YYYY, h:mm a"))}`}>
+                                                        <Button sx={{fontSize:'12px',color:'white'}}>
+                                                            {item.account?.votingAt && (moment.unix((item.account?.votingAt).toNumber()).format("MMMM D, YYYY"))}
+                                                        </Button>
+                                                    </Tooltip>
+                                                </Typography>
+                                            </TableCell>
+                                            <TableCell align="center">
+                                                <Typography variant="caption">
+                                                    {item.account?.votingCompletedAt ?
+                                                    (
+                                                        <Tooltip title={`${item.account?.votingAt && (moment.unix((item.account?.votingCompletedAt).toNumber()).format("MMMM Da, YYYY, h:mm a"))}`}>
+                                                            <Button sx={{fontSize:'12px',color:'white'}}>
+                                                                {item.account?.votingAt && (moment.unix((item.account?.votingCompletedAt).toNumber()).format("MMMM D, YYYY"))}
+                                                            </Button>
+                                                        </Tooltip>
+                                                    ): (<>
+                                                        { item.account?.state === 2 ?
+                                                            <TimerIcon sx={{ fontSize:"small"}} />
+                                                        : 
+                                                            <CancelOutlinedIcon sx={{ fontSize:"small", color:"red"}} />
+                                                        }
+                                                        </>
+                                                    )}
+                                                </Typography>
+                                            </TableCell>
+                                            <TableCell>
+                                                {item.account?.votingCompletedAt ?
+                                                (
+                                                    <Tooltip title="View Vote Results">
+                                                        <Button sx={{color:'white'}} href={`https://realms.today/dao/${dao}/proposal/${item?.pubkey}`} target='_blank'><OpenInNewIcon sx={{ fontSize:"12px"}} /></Button>
+                                                    </Tooltip>
+                                                ):(
+                                                    <Tooltip title="Participate &amp; Cast your Vote">
+                                                        <Button sx={{color:'white'}} href={`https://realms.today/dao/${dao}/proposal/${item?.pubkey}`} target='_blank'><HowToVoteIcon /></Button>
+                                                    </Tooltip>
+                                                )}
+                                            </TableCell>
+                                        </TableRow>
+                                    }
+                                </>
+
+                            ))}
+                            {/*emptyRows > 0 && (
+                                <TableRow style={{ height: 53 * emptyRows }}>
+                                    <TableCell colSpan={5} />
+                                </TableRow>
+                            )*/}
                             </>
-                        ))}
+                            }
+                        </TableBody>
+                        
+                        <TableFooter>
+                            <TableRow>
+                                <TablePagination
+                                rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
+                                colSpan={5}
+                                count={proposals && proposals.length}
+                                rowsPerPage={rowsPerPage}
+                                page={page}
+                                SelectProps={{
+                                    inputProps: {
+                                    'aria-label': 'rows per page',
+                                    },
+                                    native: true,
+                                }}
+                                onPageChange={handleChangePage}
+                                onRowsPerPageChange={handleChangeRowsPerPage}
+                                ActionsComponent={TablePaginationActions}
+                                />
+                            </TableRow>
+                        </TableFooter>
+                        
+                        
                     </StyledTable>
                 </TableContainer>
             </Table>
@@ -266,9 +411,6 @@ export function GovernanceView(props: any) {
                         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={7} align="center">
                             <Collapse in={open} timeout="auto" unmountOnExit>
                                 <Box sx={{ margin: 1 }}>
-                                    
-
-
                                     {/*
                                     <Typography variant="h6" gutterBottom component="div">
                                         Address
