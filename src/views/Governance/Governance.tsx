@@ -107,7 +107,11 @@ function RealmProposals(props:any) {
     
     if(loading){
         return (
-            <Typography variant="caption">Loading... <CircularProgress sx={{padding:'10px', color:'white'}} /></Typography>
+            <Grid container direction="row" alignItems="center" sx={{ }}>
+                <Grid item>
+                    <Typography variant="h6">Loading... <CircularProgress sx={{padding:'8px', color:'white'}} /></Typography>
+                </Grid>
+            </Grid>
         )
     }
 
@@ -171,39 +175,6 @@ function RealmProposals(props:any) {
                 </TableContainer>
             </Table>
         )
-    
-        /*
-    if(loading){
-        return (
-            <React.Fragment>
-                <Grid item xs={12}>
-                    <Paper className="grape-paper-background">
-                        <Paper
-                        className="grape-paper"
-                        sx={{
-                            p: 2,
-                            display: 'flex',
-                            flexDirection: 'column',
-                        }}
-                        >
-                            <Box sx={{ p:1, width: "100%" }}>
-                                <Skeleton />
-                            </Box>
-                        </Paper>
-                    </Paper>
-                </Grid>
-            </React.Fragment>
-        )
-    } else{
-        if (proposals){
-            return (
-                <>
-                    {JSON.stringify(proposals)}
-                </>
-            );
-        }
-    }
-*/
 }
 
 export function GovernanceView(props: any) {
