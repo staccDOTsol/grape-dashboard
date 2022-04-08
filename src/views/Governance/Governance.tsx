@@ -2,6 +2,7 @@ import { getRealms, getAllProposals, getAllTokenOwnerRecords, getVoteRecordsByVo
 import { PublicKey } from '@solana/web3.js';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import * as React from 'react';
+import BN from 'bn.js';
 import { styled, useTheme } from '@mui/material/styles';
 import {
   Typography,
@@ -17,9 +18,19 @@ import {
   TableHead,
   TableBody,
   TableRow,
-  Collapse
+  Collapse,
+  Tooltip,
+  CircularProgress,
 } from '@mui/material/';
 
+import {formatAmount, getFormattedNumberToLocale} from '../Meanfi/helpers/ui';
+
+import moment from 'moment';
+
+import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
+import TimerIcon from '@mui/icons-material/Timer';
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import IconButton from '@mui/material/IconButton';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
@@ -34,12 +45,25 @@ const StyledTable = styled(Table)(({ theme }) => ({
     },
 }));
 
+const GOVERNANNCE_STATE = {
+    0:'Draft',
+    1:'Signing Off',
+    2:'Voting',
+    3:'Succeeded',
+    4:'Executing',
+    5:'Completed',
+    6:'Cancelled',
+    7:'Defeated',
+    8:'Executing with Errors!',
+}
+
 function RealmProposals(props:any) {
     const [loading, setLoading] = React.useState(false);
     const [proposals, setProposals] = React.useState(null);
     const { connection } = useConnection();
     const { publicKey } = useWallet();
     const realm = props.realm;
+    const dao = props.dao;
 
     const getProposals = async () => {
         if (!loading){
@@ -48,8 +72,27 @@ function RealmProposals(props:any) {
             
                 const programId = new PublicKey(GOVERNANCE_PROGRAM_ID);
                 const gprops = await getAllProposals(connection, programId, realm);
-                setProposals(gprops);
-                console.log("Proposals ("+realm+"): "+JSON.stringify(gprops));
+                // Arrange
+                //expect(proposals.length).toBeGreaterThan(0);
+                
+                let allprops: any[] = [];
+                for (let props of gprops){
+                    for (let prop of props){
+                        var jprs = JSON.parse(JSON.stringify(prop));
+                        if (prop){
+                            if (jprs.account?.votingAt){
+                                allprops.push(prop);
+                                //console.log("Pushing: "+JSON.stringify(prop));
+                            }
+                        }
+                    }
+                }
+                // sort by date! 
+                allprops.sort((a,b) => (a.account?.votingAt.toNumber() < b.account?.votingAt.toNumber()) ? 1 : -1);
+
+                // then set props
+                setProposals(allprops);
+                //console.log("Proposals ("+realm+"): "+JSON.stringify(gprops[0]));
             }catch(e){console.log("ERR: "+e)}
         }
         setLoading(false);
@@ -60,15 +103,75 @@ function RealmProposals(props:any) {
             getProposals();
     }, [realm]);
 
-    return (
-        <>
-            {proposals && (proposals).map((item: any, index:number) => (
-                <>
-                    {JSON.stringify(item)}
-                </>
-            ))}
-        </>
-    );
+
+    
+    if(loading){
+        return (
+            <Typography variant="caption">Loading... <CircularProgress sx={{padding:'10px', color:'white'}} /></Typography>
+        )
+    }
+
+        return (
+            <Table>
+                <TableContainer component={Paper} sx={{background:'none'}}>
+                    <StyledTable sx={{ minWidth: 500 }} size="small" aria-label="Portfolio Table">
+                        <TableHead>
+                            <TableRow>
+                                <TableCell><Typography variant="caption">Name</Typography></TableCell>
+                                <TableCell><Typography variant="caption"></Typography></TableCell>
+                                <TableCell align="center"><Typography variant="caption">Started</Typography></TableCell>
+                                <TableCell align="center"><Typography variant="caption">Ended</Typography></TableCell>
+                                <TableCell align="center"><Typography variant="caption">Vote</Typography></TableCell>
+                            </TableRow>
+                        </TableHead>
+                        {proposals && (proposals).map((item: any, index:number) => (
+                            <>
+                                {item?.pubkey && item?.account &&
+                                    <TableRow key={index} sx={{borderBottom:"none"}}>
+                                        <TableCell>
+                                            {item.account?.name}
+                                            {item.account?.descriptionLink && 
+                                                <Tooltip title={item.account?.descriptionLink}>
+                                                    <Button sx={{ml:1}}><HelpOutlineIcon sx={{ fontSize:16 }}/></Button>
+                                                </Tooltip>
+                                            }
+                                        </TableCell>
+                                        <TableCell  align="center">
+                                            {GOVERNANNCE_STATE[item.account?.state]}
+                                        </TableCell>
+                                        <TableCell align="center">
+                                            <Typography variant="caption">
+                                                {item.account?.votingAt && (moment.unix((item.account?.votingAt).toNumber()).format("MMMM Do YYYY, h:mm a"))}
+                                            </Typography>
+                                        </TableCell>
+                                        <TableCell align="center">
+                                            <Typography variant="caption">
+                                                {item.account?.votingCompletedAt ?
+                                                (moment.unix((item.account?.votingCompletedAt).toNumber()).format("MMMM Do YYYY, h:mm a"))
+                                                : <>
+                                                    { item.account?.state === 2 ?
+                                                        <TimerIcon sx={{ fontSize:"small"}} />
+                                                    : 
+                                                        <CancelOutlinedIcon sx={{ fontSize:"small", color:"red"}} />
+                                                    }
+                                                    </>
+                                                }
+                                            </Typography>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Tooltip title="Participate &amp; Cast your Vote">
+                                                <Button sx={{color:'white'}} href={`https://realms.today/dao/${dao}/proposal/${item?.pubkey}`} target='_blank'><HowToVoteIcon /></Button>
+                                            </Tooltip>
+                                        </TableCell>
+                                    </TableRow>
+                                }
+                            </>
+                        ))}
+                    </StyledTable>
+                </TableContainer>
+            </Table>
+        )
+    
         /*
     if(loading){
         return (
@@ -169,17 +272,24 @@ export function GovernanceView(props: any) {
                                         />
                                     </Grid>
                                     <Grid item sx={{ ml: 1 }}>
-                                        {realm.account?.name || tokenOwnerRecordsByOwner[index].account.governingTokenMint.toBase58()}
+                                        <Tooltip title={`Realm: ${tokenOwnerRecord.account.realm.toBase58()}`}>
+                                            <Button href={`https://realms.today/dao/${tokenOwnerRecordsByOwner[index].account.realm.toBase58()}`} target='_blank'>
+                                                {realm.account?.name || tokenOwnerRecordsByOwner[index].account.governingTokenMint.toBase58()}
+                                            </Button>
+                                        </Tooltip>
                                     </Grid>
                                 </Grid>
                             ):(
                                 <Grid container direction="row" alignItems="center" sx={{ }}>
-                                    {realm.account?.name || tokenOwnerRecordsByOwner[index].account.governingTokenMint.toBase58()}
+                                    <Tooltip title={`Realm: ${tokenOwnerRecord.account.realm.toBase58()}`}>
+                                        <Button href={`https://realms.today/dao/${tokenOwnerRecordsByOwner[index].account.realm.toBase58()}`} target='_blank'>
+                                            {realm.account?.name || tokenOwnerRecordsByOwner[index].account.governingTokenMint.toBase58()}
+                                        </Button>
+                                    </Tooltip>
                                 </Grid>
                             )}
                         </TableCell>
-                        <TableCell align="right">{(parseInt(tokenOwnerRecordsByOwner[index].account?.governingTokenDepositAmount, 10))/1000000}</TableCell>
-                        <TableCell align="right"><Button href={`https://realms.today/dao/${tokenOwnerRecordsByOwner[index].account.realm.toBase58()}`} target='_blank'><HowToVoteIcon /></Button></TableCell>                        
+                        <TableCell align="right">{getFormattedNumberToLocale(formatAmount((parseInt(tokenOwnerRecordsByOwner[index].account?.governingTokenDepositAmount, 10))/1000000))}</TableCell>                     
                     </TableRow>
     
                     <TableRow key={`r-${index}`}>
@@ -195,10 +305,8 @@ export function GovernanceView(props: any) {
                                     </Typography>
                                     */}
                                     <Grid container spacing={2}>
-                                        <Grid item xs={12}>Realm: {tokenOwnerRecord.account.realm.toBase58()}
-                                        </Grid>
                                         <Grid item xs={12}>
-                                            <RealmProposals realm={tokenOwnerRecord.account.realm} />
+                                            <RealmProposals dao={tokenOwnerRecordsByOwner[index].account.realm.toBase58()} realm={tokenOwnerRecord.account.realm} />
                                         </Grid>
                                     </Grid>
                                 </Box>
@@ -257,7 +365,6 @@ export function GovernanceView(props: any) {
                                                 <TableCell></TableCell>
                                                 <TableCell><Typography variant="caption">Realm</Typography></TableCell>
                                                 <TableCell align="right"><Typography variant="caption">Votes</Typography></TableCell>
-                                                <TableCell></TableCell>
                                             </TableRow>
                                         </TableHead>
                                         <TableBody>
