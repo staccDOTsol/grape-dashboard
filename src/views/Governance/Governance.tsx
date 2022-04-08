@@ -21,6 +21,7 @@ import {
   Collapse,
   Tooltip,
   CircularProgress,
+  LinearProgress,
 } from '@mui/material/';
 
 import {formatAmount, getFormattedNumberToLocale} from '../Meanfi/helpers/ui';
@@ -107,11 +108,10 @@ function RealmProposals(props:any) {
     
     if(loading){
         return (
-            <Grid container direction="row" alignItems="center" sx={{ }}>
-                <Grid item>
-                    <Typography variant="h6">Loading... <CircularProgress sx={{padding:'8px', color:'white'}} /></Typography>
-                </Grid>
-            </Grid>
+            <Box sx={{ width: '100%' }}>
+                <LinearProgress sx={{borderRadius:'10px;'}} />
+            </Box>
+            
         )
     }
 
@@ -221,7 +221,7 @@ export function GovernanceView(props: any) {
             <React.Fragment>
                     <TableRow key={index} sx={{borderBottom:"none"}}>
                         
-                        <TableCell style={{ verticalAlign: 'middle' }}>
+                        <TableCell sx={{width:"1%"}}>
                             <IconButton
                                 aria-label="expand row"
                                 size="small"
@@ -231,34 +231,33 @@ export function GovernanceView(props: any) {
                             </IconButton>
                         </TableCell>
                         <TableCell align='left' style={{ verticalAlign: 'middle' }}>  
-                            {tokenOwnerRecordsByOwner[index].account.governingTokenMint.toBase58() === GOVERNING_TOKEN ? (
-                                <Grid container direction="row" alignItems="center" sx={{ }}>
-                                    <Grid item>
+                            <Grid container direction="row" alignItems="center" sx={{ }}>
+                                <Grid item>
+                                    {tokenOwnerRecordsByOwner[index].account.governingTokenMint.toBase58() === GOVERNING_TOKEN ? (
                                         <Avatar 
                                             component={Paper} 
                                             elevation={4}
-                                            alt="Token" 
+                                            alt={realm.account?.name || tokenOwnerRecordsByOwner[index].account.governingTokenMint.toBase58()} 
                                             src={'https://lh3.googleusercontent.com/y7Wsemw9UVBc9dtjtRfVilnS1cgpDt356PPAjne5NvMXIwWz9_x7WKMPH99teyv8vXDmpZinsJdgiFQ16_OAda1dNcsUxlpw9DyMkUk=s0'}
                                             sx={{ width: 28, height: 28, bgcolor: "#222" }}
                                         />
-                                    </Grid>
-                                    <Grid item sx={{ ml: 1 }}>
-                                        <Tooltip title={`Realm: ${tokenOwnerRecord.account.realm.toBase58()}`}>
-                                            <Button href={`https://realms.today/dao/${tokenOwnerRecordsByOwner[index].account.realm.toBase58()}`} target='_blank'>
-                                                {realm.account?.name || tokenOwnerRecordsByOwner[index].account.governingTokenMint.toBase58()}
-                                            </Button>
-                                        </Tooltip>
-                                    </Grid>
+                                    ):(
+                                        <Avatar 
+                                            component={Paper} 
+                                            elevation={4}
+                                            alt={realm.account?.name || tokenOwnerRecordsByOwner[index].account.governingTokenMint.toBase58()} 
+                                            sx={{ width: 28, height: 28, bgcolor: "#222" }}
+                                        />
+                                    )}
                                 </Grid>
-                            ):(
-                                <Grid container direction="row" alignItems="center" sx={{ }}>
+                                <Grid item sx={{ ml: 1 }}>
                                     <Tooltip title={`Realm: ${tokenOwnerRecord.account.realm.toBase58()}`}>
-                                        <Button href={`https://realms.today/dao/${tokenOwnerRecordsByOwner[index].account.realm.toBase58()}`} target='_blank'>
+                                        <Button  sx={{color:'white'}} href={`https://realms.today/dao/${tokenOwnerRecordsByOwner[index].account.realm.toBase58()}`} target='_blank'>
                                             {realm.account?.name || tokenOwnerRecordsByOwner[index].account.governingTokenMint.toBase58()}
                                         </Button>
                                     </Tooltip>
                                 </Grid>
-                            )}
+                            </Grid>
                         </TableCell>
                         <TableCell align="right">{getFormattedNumberToLocale(formatAmount((parseInt(tokenOwnerRecordsByOwner[index].account?.governingTokenDepositAmount, 10))/1000000))}</TableCell>                     
                     </TableRow>
