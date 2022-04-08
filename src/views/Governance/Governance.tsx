@@ -247,13 +247,13 @@ export function GovernanceView(props: any) {
                                             elevation={4}
                                             alt={realm.account?.name || tokenOwnerRecordsByOwner[index].account.governingTokenMint.toBase58()} 
                                             sx={{ width: 28, height: 28, bgcolor: "#222" }}
-                                        />
+                                        >{realm.account?.name || tokenOwnerRecordsByOwner[index].account.governingTokenMint.toBase58()}</Avatar>
                                     )}
                                 </Grid>
                                 <Grid item sx={{ ml: 1 }}>
                                     <Tooltip title={`Realm: ${tokenOwnerRecord.account.realm.toBase58()}`}>
                                         <Button  sx={{color:'white'}} href={`https://realms.today/dao/${tokenOwnerRecordsByOwner[index].account.realm.toBase58()}`} target='_blank'>
-                                            {realm.account?.name || tokenOwnerRecordsByOwner[index].account.governingTokenMint.toBase58()}
+                                            {realm.account?.name.substring(0,1) || tokenOwnerRecordsByOwner[index].account.governingTokenMint.toBase58().substring(0,1)}
                                         </Button>
                                     </Tooltip>
                                 </Grid>
