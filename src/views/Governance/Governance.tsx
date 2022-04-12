@@ -243,6 +243,7 @@ function RealmProposals(props:any) {
                                                         <Tooltip title={`${(((item.account?.options[0].voteWeight.toNumber()/1000000)/((item.account?.denyVoteWeight.toNumber()/1000000)+(item.account?.options[0].voteWeight.toNumber()/1000000)))*100).toFixed(2)}%`}>
                                                             <Button sx={{fontSize:'12px',color:'white'}}>
                                                                 {`${(item.account?.options[0].voteWeight.toNumber()/1000000).toFixed(0)}`}
+                                                                {/*`${(getFormattedNumberToLocale(formatAmount(item.account?.options[0].voteWeight.toNumber()/1000000),0))}`*/}
                                                             </Button>
                                                         </Tooltip>
                                                     </Typography>
@@ -253,7 +254,7 @@ function RealmProposals(props:any) {
                                                     <Typography variant="caption">
                                                         <Tooltip title={`${(((item.account?.denyVoteWeight.toNumber()/1000000)/((item.account?.denyVoteWeight.toNumber()/1000000)+(item.account?.options[0].voteWeight.toNumber()/1000000)))*100).toFixed(2)}%`}>
                                                             <Button sx={{fontSize:'12px',color:'white'}}>
-                                                                {`${(item.account?.denyVoteWeight.toNumber()/1000000).toFixed()}`}
+                                                                {`${(item.account?.denyVoteWeight.toNumber()/1000000).toFixed(0)}`}
                                                             </Button>
                                                         </Tooltip>
                                                     </Typography>
@@ -268,11 +269,13 @@ function RealmProposals(props:any) {
                                                 <Typography variant="caption">
                                                     {item.account?.votingCompletedAt ?
                                                     (
-                                                        <Tooltip title={`Started: ${item.account?.votingAt && (moment.unix((item.account?.votingAt).toNumber()).format("MMMM Da, YYYY, h:mm a"))} - Ended: ${item.account?.votingAt && (moment.unix((item.account?.votingCompletedAt).toNumber()).format("MMMM Da, YYYY, h:mm a"))}`}>
-                                                            <Button sx={{fontSize:'12px',color:'white'}}>
-                                                                {item.account?.votingAt && (moment.unix((item.account?.votingCompletedAt).toNumber()).format("MMMM D, YYYY"))}
-                                                            </Button>
-                                                        </Tooltip>
+                                                        <Typography variant="caption">
+                                                            <Tooltip title={`Started: ${item.account?.votingAt && (moment.unix((item.account?.votingAt).toNumber()).format("MMMM Da, YYYY, h:mm a"))} - Ended: ${item.account?.votingAt && (moment.unix((item.account?.votingCompletedAt).toNumber()).format("MMMM Da, YYYY, h:mm a"))}`}>
+                                                                <Button sx={{fontSize:'12px',color:'white'}}>
+                                                                    {item.account?.votingAt && (moment.unix((item.account?.votingCompletedAt).toNumber()).format("MMMM D, YYYY"))}
+                                                                </Button>
+                                                            </Tooltip>
+                                                        </Typography>
                                                     ): (<>
                                                         { item.account?.state === 2 ?
                                                             <Tooltip title={`Started: ${item.account?.votingAt && (moment.unix((item.account?.votingAt).toNumber()).format("MMMM Da, YYYY, h:mm a"))}`}>
