@@ -211,15 +211,15 @@ function RealmProposals(props:any) {
                         <TableHead>
                             <TableRow>
                                 <TableCell><Typography variant="caption">Name</Typography></TableCell>
-                                <TableCell sx={{width:"1%"}}><Typography variant="caption"></Typography></TableCell>
-                                <TableCell align="center"><Typography variant="caption">Started</Typography></TableCell>
-                                <TableCell align="center"><Typography variant="caption">Ended</Typography></TableCell>
+                                <TableCell align="center" sx={{width:"1%"}}><Typography variant="caption">Yes</Typography></TableCell>
+                                <TableCell align="center" sx={{width:"1%"}}><Typography variant="caption">No</Typography></TableCell>
+                                <TableCell align="center" sx={{width:"1%"}}><Typography variant="caption"></Typography></TableCell>
+                                <TableCell align="center"><Typography variant="caption">Ending</Typography></TableCell>
                                 <TableCell align="center"><Typography variant="caption">Vote</Typography></TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
                             {/*proposals && (proposals).map((item: any, index:number) => (*/}
-
                             {proposals && 
                             <>  
                                 {(rowsPerPage > 0
@@ -237,32 +237,55 @@ function RealmProposals(props:any) {
                                                     </Tooltip>
                                                 }
                                             </TableCell>
-                                            <TableCell  align="center">
-                                                {GOVERNANNCE_STATE[item.account?.state]}
+                                            <TableCell>
+                                                {item.account?.options[0].voteWeight && 
+                                                    <Typography variant="caption">
+                                                        <Tooltip title={`${(((item.account?.options[0].voteWeight.toNumber()/1000000)/((item.account?.denyVoteWeight.toNumber()/1000000)+(item.account?.options[0].voteWeight.toNumber()/1000000)))*100).toFixed(2)}%`}>
+                                                            <Button sx={{fontSize:'12px',color:'white'}}>
+                                                                {`${(item.account?.options[0].voteWeight.toNumber()/1000000).toFixed(0)}`}
+                                                            </Button>
+                                                        </Tooltip>
+                                                    </Typography>
+                                                }
                                             </TableCell>
-                                            <TableCell align="center">
+                                            <TableCell>
+                                                {item.account?.denyVoteWeight && 
+                                                    <Typography variant="caption">
+                                                        <Tooltip title={`${(((item.account?.denyVoteWeight.toNumber()/1000000)/((item.account?.denyVoteWeight.toNumber()/1000000)+(item.account?.options[0].voteWeight.toNumber()/1000000)))*100).toFixed(2)}%`}>
+                                                            <Button sx={{fontSize:'12px',color:'white'}}>
+                                                                {`${(item.account?.denyVoteWeight.toNumber()/1000000).toFixed()}`}
+                                                            </Button>
+                                                        </Tooltip>
+                                                    </Typography>
+                                                }
+                                            </TableCell>
+                                            <TableCell  align="center">
                                                 <Typography variant="caption">
-                                                    <Tooltip title={`${item.account?.votingAt && (moment.unix((item.account?.votingAt).toNumber()).format("MMMM Da, YYYY, h:mm a"))}`}>
-                                                        <Button sx={{fontSize:'12px',color:'white'}}>
-                                                            {item.account?.votingAt && (moment.unix((item.account?.votingAt).toNumber()).format("MMMM D, YYYY"))}
-                                                        </Button>
-                                                    </Tooltip>
+                                                    {GOVERNANNCE_STATE[item.account?.state]}
                                                 </Typography>
                                             </TableCell>
                                             <TableCell align="center">
                                                 <Typography variant="caption">
                                                     {item.account?.votingCompletedAt ?
                                                     (
-                                                        <Tooltip title={`${item.account?.votingAt && (moment.unix((item.account?.votingCompletedAt).toNumber()).format("MMMM Da, YYYY, h:mm a"))}`}>
+                                                        <Tooltip title={`Started: ${item.account?.votingAt && (moment.unix((item.account?.votingAt).toNumber()).format("MMMM Da, YYYY, h:mm a"))} - Ended: ${item.account?.votingAt && (moment.unix((item.account?.votingCompletedAt).toNumber()).format("MMMM Da, YYYY, h:mm a"))}`}>
                                                             <Button sx={{fontSize:'12px',color:'white'}}>
                                                                 {item.account?.votingAt && (moment.unix((item.account?.votingCompletedAt).toNumber()).format("MMMM D, YYYY"))}
                                                             </Button>
                                                         </Tooltip>
                                                     ): (<>
                                                         { item.account?.state === 2 ?
-                                                            <TimerIcon sx={{ fontSize:"small"}} />
+                                                            <Tooltip title={`Started: ${item.account?.votingAt && (moment.unix((item.account?.votingAt).toNumber()).format("MMMM Da, YYYY, h:mm a"))}`}>
+                                                                <Button sx={{fontSize:'12px',color:'white'}}>
+                                                                    <TimerIcon sx={{ fontSize:"small"}} />
+                                                                </Button>
+                                                            </Tooltip>
                                                         : 
-                                                            <CancelOutlinedIcon sx={{ fontSize:"small", color:"red"}} />
+                                                            <Tooltip title={`Started: ${item.account?.votingAt && (moment.unix((item.account?.votingAt).toNumber()).format("MMMM Da, YYYY, h:mm a"))}`}>
+                                                                <Button sx={{fontSize:'12px',color:'white'}}>
+                                                                    <CancelOutlinedIcon sx={{ fontSize:"small", color:"red"}} />
+                                                                </Button>
+                                                            </Tooltip>
                                                         }
                                                         </>
                                                     )}

@@ -23,8 +23,8 @@ function BasicComponent(props) {
   return (
     <React.Fragment>
       <PortfolioView />
-      <MeanfiView />
       <GovernanceView />
+      <MeanfiView />
     </React.Fragment>
   );
 }
