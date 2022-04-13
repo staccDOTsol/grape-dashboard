@@ -20,6 +20,8 @@ import {
     AvatarGroup,
 } from '@mui/material';
 
+import {formatAmount, getFormattedNumberToLocale} from '../Meanfi/helpers/ui';
+
 import IconButton from '@mui/material/IconButton';
 import FirstPageIcon from '@mui/icons-material/FirstPage';
 import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
@@ -253,7 +255,7 @@ export const FarmsTableView = (props) => {
                                             <TableCell align="center" style={{ verticalAlign: 'middle' }}>
                                                 <FarmStake stake={token.farmInfo} />
                                             </TableCell>
-                                            <TableCell align="right"><TokenFixPrice tokenFormatValue={token.balance} defaultFixed={6} /></TableCell>
+                                            <TableCell align="right">{(getFormattedNumberToLocale(formatAmount(token.balance),0))}</TableCell>
                                             <TableCell align="right"><TokenFixPrice tokenFormatValue={token.apr} defaultFixed={2} />%</TableCell>
                                             <TableCell align="right"><Typography variant="caption" sx={{color:"#aaaaaa"}}>$</Typography><TokenFixPrice tokenFormatValue={token.value} defaultFixed={2} /></TableCell>
                                         </TableRow> 
