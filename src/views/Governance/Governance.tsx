@@ -1,4 +1,4 @@
-import { getRealms, getAllProposals, getAllTokenOwnerRecords, getVoteRecordsByVoter, getTokenOwnerRecordForRealm, getTokenOwnerRecordsByOwner, getGovernanceAccounts, pubkeyFilter, TokenOwnerRecord } from '@solana/spl-governance';
+import { getRealms, getAllProposals, getVoteRecordsByVoter, getTokenOwnerRecordForRealm, getTokenOwnerRecordsByOwner} from '@solana/spl-governance';
 import { PublicKey } from '@solana/web3.js';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import * as React from 'react';
@@ -138,6 +138,7 @@ function TablePaginationActions(props) {
 function RealmProposals(props:any) {
     const [loading, setLoading] = React.useState(false);
     const [proposals, setProposals] = React.useState(null);
+    const [voteRecords, setVoteRecords] = React.useState(null);
     const { connection } = useConnection();
     const { publicKey } = useWallet();
     const realm = props.realm;
@@ -165,15 +166,21 @@ function RealmProposals(props:any) {
                 const programId = new PublicKey(GOVERNANCE_PROGRAM_ID);
                 const gprops = await getAllProposals(connection, programId, realm);
                 // Arrange
-                //expect(proposals.length).toBeGreaterThan(0);
+                const gvotes = await getVoteRecordsByVoter(connection, programId, publicKey);
+                setVoteRecords(gvotes);
                 
+
                 let allprops: any[] = [];
                 for (let props of gprops){
                     for (let prop of props){
                         var jprs = JSON.parse(JSON.stringify(prop));
                         if (prop){
                             if (jprs.account?.votingAt){
-                                allprops.push(prop);
+                                //try{
+                                //    let position = gvotes.filter(value => {return value.account.proposal.toBase58() === prop.pubkey.toBase58()});
+                                //    allprops.push(prop, position);
+                                //}catch(e){allprops.push(prop)}
+                                allprops.push(prop)
                                 //console.log("Pushing: "+JSON.stringify(prop));
                             }
                         }
@@ -181,7 +188,6 @@ function RealmProposals(props:any) {
                 }
                 // sort by date! 
                 allprops.sort((a,b) => (a.account?.votingAt.toNumber() < b.account?.votingAt.toNumber()) ? 1 : -1);
-
                 // then set props
                 setProposals(allprops);
                 //console.log("Proposals ("+realm+"): "+JSON.stringify(gprops[0]));
@@ -213,7 +219,7 @@ function RealmProposals(props:any) {
                                 <TableCell><Typography variant="caption">Name</Typography></TableCell>
                                 <TableCell align="center" sx={{width:"1%"}}><Typography variant="caption">Yes</Typography></TableCell>
                                 <TableCell align="center" sx={{width:"1%"}}><Typography variant="caption">No</Typography></TableCell>
-                                <TableCell align="center" sx={{width:"1%"}}><Typography variant="caption"></Typography></TableCell>
+                                <TableCell align="center" sx={{width:"1%"}}><Typography variant="caption">Status</Typography></TableCell>
                                 <TableCell align="center"><Typography variant="caption">Ending</Typography></TableCell>
                                 <TableCell align="center"><Typography variant="caption">Vote</Typography></TableCell>
                             </TableRow>
@@ -297,13 +303,18 @@ function RealmProposals(props:any) {
                                             <TableCell>
                                                 {item.account?.votingCompletedAt ?
                                                 (
-                                                    <Tooltip title="View Vote Results">
-                                                        <Button sx={{color:'white'}} href={`https://realms.today/dao/${dao}/proposal/${item?.pubkey}`} target='_blank'><OpenInNewIcon sx={{ fontSize:"12px"}} /></Button>
-                                                    </Tooltip>
+                                                    <>
+                                                        <Tooltip title="View Vote Results">
+                                                            <Button sx={{color:'white'}} href={`https://realms.today/dao/${dao}/proposal/${item?.pubkey}`} target='_blank'><OpenInNewIcon sx={{ fontSize:"12px"}} /></Button>
+                                                        </Tooltip>
+                                                    </>
                                                 ):(
-                                                    <Tooltip title="Participate &amp; Cast your Vote">
-                                                        <Button sx={{color:'white'}} href={`https://realms.today/dao/${dao}/proposal/${item?.pubkey}`} target='_blank'><HowToVoteIcon /></Button>
-                                                    </Tooltip>
+                                                    <>
+                                                        {/*(voteRecords.filter(value => {return value.account.proposal.toBase58() === item?.pubkey.toBase58()}).account?.vote?.deny)*/}
+                                                      <Tooltip title="Participate &amp; Cast your Vote">
+                                                            <Button sx={{color:'white'}} href={`https://realms.today/dao/${dao}/proposal/${item?.pubkey}`} target='_blank'><HowToVoteIcon /></Button>
+                                                        </Tooltip>
+                                                    </>
                                                 )}
                                             </TableCell>
                                         </TableRow>
