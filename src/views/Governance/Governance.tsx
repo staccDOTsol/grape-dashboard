@@ -1,4 +1,5 @@
 import { getRealms, getAllProposals, getVoteRecordsByVoter, getTokenOwnerRecordForRealm, getTokenOwnerRecordsByOwner} from '@solana/spl-governance';
+import { formatMintNaturalAmountAsDecimal } from '../../components/Tools/units'
 import { PublicKey } from '@solana/web3.js';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import * as React from 'react';
@@ -441,7 +442,7 @@ export function GovernanceView(props: any) {
                                 </Grid>
                             </Grid>
                         </TableCell>
-                        <TableCell align="right">{getFormattedNumberToLocale(formatAmount((parseInt(tokenOwnerRecordsByOwner[index].account?.governingTokenDepositAmount, 10))/1000000))}</TableCell>                     
+                        <TableCell align="right">{formatMintNaturalAmountAsDecimal(tokenOwnerRecordsByOwner[index].account?.mint,tokenOwnerRecordsByOwner[index].account?.governingTokenDepositAmount)}</TableCell>                   
                     </TableRow>
     
                     <TableRow key={`r-${index}`}>
