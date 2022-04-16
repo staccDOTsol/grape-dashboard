@@ -1,6 +1,7 @@
 import { getRealms, getAllProposals, getVoteRecordsByVoter, getTokenOwnerRecordForRealm, getTokenOwnerRecordsByOwner} from '@solana/spl-governance';
 import { formatMintNaturalAmountAsDecimal } from '../../components/Tools/units'
 import { PublicKey } from '@solana/web3.js';
+//import { MintInfo } from '@solana/spl-token';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import * as React from 'react';
 import BN from 'bn.js';
@@ -167,8 +168,8 @@ function RealmProposals(props:any) {
                 const programId = new PublicKey(GOVERNANCE_PROGRAM_ID);
                 const gprops = await getAllProposals(connection, programId, realm);
                 // Arrange
-                const gvotes = await getVoteRecordsByVoter(connection, programId, publicKey);
-                setVoteRecords(gvotes);
+                //const gvotes = await getVoteRecordsByVoter(connection, programId, publicKey);
+                //setVoteRecords(gvotes);
                 
 
                 let allprops: any[] = [];
@@ -373,6 +374,7 @@ export function GovernanceView(props: any) {
         if (!loading){
             setLoading(true);
             try{
+                
                 const programId = new PublicKey(GOVERNANCE_PROGRAM_ID);
                 
                 const realmId = new PublicKey(REALM_ID);
@@ -380,12 +382,13 @@ export function GovernanceView(props: any) {
                 const governingTokenOwner = publicKey;
 
                 const rlms = await getRealms(connection, programId);
+                
                 const uTable = rlms.reduce((acc, it) => (acc[it.pubkey.toBase58()] = it, acc), {})
                 setRealms(uTable);
-
+                
                 const ownerRecordsbyOwner = await getTokenOwnerRecordsByOwner(connection, programId, governingTokenOwner);
                 setOwnerRecordsByOwner(ownerRecordsbyOwner);
-            
+                
             }catch(e){console.log("ERR: "+e)}
         } else{
 
@@ -442,7 +445,7 @@ export function GovernanceView(props: any) {
                                 </Grid>
                             </Grid>
                         </TableCell>
-                        <TableCell align="right">{formatMintNaturalAmountAsDecimal(tokenOwnerRecordsByOwner[index].account?.mint,tokenOwnerRecordsByOwner[index].account?.governingTokenDepositAmount)}</TableCell>                   
+                        <TableCell align="right">{tokenOwnerRecordsByOwner[index].account?.governingTokenDepositAmount.toNumber()}</TableCell>    
                     </TableRow>
     
                     <TableRow key={`r-${index}`}>

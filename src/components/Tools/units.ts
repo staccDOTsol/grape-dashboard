@@ -26,6 +26,8 @@ export function formatMintNaturalAmountAsDecimal(
   mint: MintInfo,
   naturalAmount: BN,
 ) {
+  console.log("mint: "+mint);
+  console.log("naturalAmount: "+naturalAmount);
   return getMintDecimalAmountFromNatural(mint, naturalAmount).toFormat();
 }
 
