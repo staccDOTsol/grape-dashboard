@@ -1,7 +1,6 @@
 import { getRealms, getAllProposals, getVoteRecordsByVoter, getTokenOwnerRecordForRealm, getTokenOwnerRecordsByOwner} from '@solana/spl-governance';
-import { formatMintNaturalAmountAsDecimal } from '../../components/Tools/units'
-import { PublicKey } from '@solana/web3.js';
-//import { MintInfo } from '@solana/spl-token';
+import { PublicKey, TokenAmount } from '@solana/web3.js';
+import { ENV, TokenListProvider, TokenInfo } from '@solana/spl-token-registry';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import * as React from 'react';
 import BN from 'bn.js';
@@ -145,6 +144,7 @@ function RealmProposals(props:any) {
     const { publicKey } = useWallet();
     const realm = props.realm;
     const dao = props.dao;
+    const token = props.token;
 
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
@@ -168,8 +168,8 @@ function RealmProposals(props:any) {
                 const programId = new PublicKey(GOVERNANCE_PROGRAM_ID);
                 const gprops = await getAllProposals(connection, programId, realm);
                 // Arrange
-                //const gvotes = await getVoteRecordsByVoter(connection, programId, publicKey);
-                //setVoteRecords(gvotes);
+                const gvotes = await getVoteRecordsByVoter(connection, programId, publicKey);
+                setVoteRecords(gvotes);
                 
 
                 let allprops: any[] = [];
@@ -248,9 +248,9 @@ function RealmProposals(props:any) {
                                             <TableCell>
                                                 {item.account?.options[0].voteWeight && 
                                                     <Typography variant="caption">
-                                                        <Tooltip title={`${(((item.account?.options[0].voteWeight.toNumber()/1000000)/((item.account?.denyVoteWeight.toNumber()/1000000)+(item.account?.options[0].voteWeight.toNumber()/1000000)))*100).toFixed(2)}%`}>
+                                                        <Tooltip title={`${(((item.account?.options[0].voteWeight.toNumber()/Math.pow(10, token?.decimals))/((item.account?.denyVoteWeight.toNumber()/1000000)+(item.account?.options[0].voteWeight.toNumber()/Math.pow(10, token?.decimals))))*100).toFixed(2)}%`}>
                                                             <Button sx={{fontSize:'12px',color:'white'}}>
-                                                                {`${(item.account?.options[0].voteWeight.toNumber()/1000000).toFixed(0)}`}
+                                                                {`${(item.account?.options[0].voteWeight.toNumber()/Math.pow(10, token?.decimals)).toFixed(0)}`}
                                                                 {/*`${(getFormattedNumberToLocale(formatAmount(item.account?.options[0].voteWeight.toNumber()/1000000),0))}`*/}
                                                             </Button>
                                                         </Tooltip>
@@ -260,9 +260,9 @@ function RealmProposals(props:any) {
                                             <TableCell>
                                                 {item.account?.denyVoteWeight && 
                                                     <Typography variant="caption">
-                                                        <Tooltip title={`${(((item.account?.denyVoteWeight.toNumber()/1000000)/((item.account?.denyVoteWeight.toNumber()/1000000)+(item.account?.options[0].voteWeight.toNumber()/1000000)))*100).toFixed(2)}%`}>
+                                                        <Tooltip title={`${(((item.account?.denyVoteWeight.toNumber()/Math.pow(10, token?.decimals))/((item.account?.denyVoteWeight.toNumber()/Math.pow(10, token?.decimals))+(item.account?.options[0].voteWeight.toNumber()/Math.pow(10, token?.decimals))))*100).toFixed(2)}%`}>
                                                             <Button sx={{fontSize:'12px',color:'white'}}>
-                                                                {`${(item.account?.denyVoteWeight.toNumber()/1000000).toFixed(0)}`}
+                                                                {`${(item.account?.denyVoteWeight.toNumber()/Math.pow(10, token?.decimals)).toFixed(0)}`}
                                                             </Button>
                                                         </Tooltip>
                                                     </Typography>
@@ -361,48 +361,42 @@ function RealmProposals(props:any) {
         )
 }
 
-export function GovernanceView(props: any) {
+function GovernanceRow(props: any) {
     const [loading, setLoading] = React.useState(false);
-    const { connection } = useConnection();
-    const { publicKey } = useWallet();
-    const [realms, setRealms] = React.useState(null);
-    const [voteRecords, setVoteRecords] = React.useState(null);
-    const [tokenOwnerRecords, setOwnerRecords] = React.useState(null);
-    const [tokenOwnerRecordsByOwner, setOwnerRecordsByOwner] = React.useState(null);
-
-    const getGovernance = async () => {
-        if (!loading){
-            setLoading(true);
+    const item = props.item;
+    const index = props.index;
+    const realm = props.realm;
+    const tokenOwnerRecord = props.tokenOwnerRecord;
+    const tokenOwnerRecordsByOwner = props.tokenOwnerRecordsByOwner;
+    const dtokenArray = props.tokenArray;
+    const [open, setOpen] = React.useState(false);
+    const [token, setToken] = React.useState(null);
+    
+    const getRowSetup = async () => {
+        setLoading(true);
+        if (dtokenArray){    
             try{
-                
-                const programId = new PublicKey(GOVERNANCE_PROGRAM_ID);
-                
-                const realmId = new PublicKey(REALM_ID);
-                const governingTokenMint = new PublicKey(GOVERNING_TOKEN); // Grape Mint
-                const governingTokenOwner = publicKey;
+                let decimals = 0;
+                for (var item of dtokenArray){
+                    if (item?.address === tokenOwnerRecordsByOwner[index].account.governingTokenMint.toBase58())
+                        decimals = item.decimals;
+                }
+                console.log(tokenOwnerRecordsByOwner[index].account.governingTokenMint.toBase58()+" found: "+decimals);
 
-                const rlms = await getRealms(connection, programId);
-                
-                const uTable = rlms.reduce((acc, it) => (acc[it.pubkey.toBase58()] = it, acc), {})
-                setRealms(uTable);
-                
-                const ownerRecordsbyOwner = await getTokenOwnerRecordsByOwner(connection, programId, governingTokenOwner);
-                setOwnerRecordsByOwner(ownerRecordsbyOwner);
-                
-            }catch(e){console.log("ERR: "+e)}
-        } else{
-
+                setToken({address:tokenOwnerRecordsByOwner[index].account.governingTokenMint.toBase58(), decimals:decimals});
+            } catch(e){
+                setToken({address:tokenOwnerRecordsByOwner[index].account.governingTokenMint.toBase58(),decimals:0})
+            }
         }
         setLoading(false);
     }
 
-    function GovernanceRow(props: any) {
-        const item = props.item;
-        const index = props.index;
-        const realm = props.realm;
-        const tokenOwnerRecord = props.tokenOwnerRecord;
-        const [open, setOpen] = React.useState(false);
-        
+    React.useEffect(() => {
+        if (!loading && item)
+            getRowSetup();
+    }, [item]);
+
+    if (!loading){
         return (
             <React.Fragment>
                     <TableRow key={index} sx={{borderBottom:"none"}}>
@@ -445,9 +439,9 @@ export function GovernanceView(props: any) {
                                 </Grid>
                             </Grid>
                         </TableCell>
-                        <TableCell align="right">{tokenOwnerRecordsByOwner[index].account?.governingTokenDepositAmount.toNumber()}</TableCell>    
+                        <TableCell align="right">{getFormattedNumberToLocale(formatAmount((parseInt(tokenOwnerRecordsByOwner[index].account?.governingTokenDepositAmount, 10)/Math.pow(10, token?.decimals))))}</TableCell>                     
                     </TableRow>
-    
+
                     <TableRow key={`r-${index}`}>
                         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={7} align="center">
                             <Collapse in={open} timeout="auto" unmountOnExit>
@@ -459,7 +453,7 @@ export function GovernanceView(props: any) {
                                     */}
                                     <Grid container spacing={2}>
                                         <Grid item xs={12}>
-                                            <RealmProposals dao={tokenOwnerRecordsByOwner[index].account.realm.toBase58()} realm={tokenOwnerRecord.account.realm} />
+                                            <RealmProposals dao={tokenOwnerRecordsByOwner[index].account.realm.toBase58()} realm={tokenOwnerRecord.account.realm} token={token} />
                                         </Grid>
                                     </Grid>
                                 </Box>
@@ -469,7 +463,61 @@ export function GovernanceView(props: any) {
             </React.Fragment>
         );
     }
-    
+}
+
+export function GovernanceView(props: any) {
+    const [loading, setLoading] = React.useState(false);
+    const { connection } = useConnection();
+    const { publicKey } = useWallet();
+    const [realms, setRealms] = React.useState(null);
+    const [voteRecords, setVoteRecords] = React.useState(null);
+    const [tokenOwnerRecords, setOwnerRecords] = React.useState(null);
+    const [tokenOwnerRecordsByOwner, setOwnerRecordsByOwner] = React.useState(null);
+    const [tokenMap, setTokenMap] = React.useState<Map<string, TokenInfo>>(new Map());
+    const [tokenArray, setTokenArray] = React.useState(null);
+
+    const getTokens = async () => {
+        const tarray:any[] = [];
+        const tlp = await new TokenListProvider().resolve().then(tokens => {
+            const tokenList = tokens.filterByChainId(ENV.MainnetBeta).getList();
+            //console.log("tokenList: "+JSON.stringify(tokenList));
+            setTokenMap(tokenList.reduce((map, item) => {
+                tarray.push({address:item.address, decimals:item.decimals})
+                map.set(item.address, item);
+                return map;
+            },new Map()));
+            setTokenArray(tarray);
+            //console.log("tokenMap::: "+JSON.stringify(tokenArray))
+        });
+    }
+
+    const getGovernance = async () => {
+        if (!loading){
+            setLoading(true);
+            try{
+
+                await getTokens();
+
+                const programId = new PublicKey(GOVERNANCE_PROGRAM_ID);
+                
+                //const realmId = new PublicKey(REALM_ID);
+                //const governingTokenMint = new PublicKey(GOVERNING_TOKEN); // Grape Mint
+                const governingTokenOwner = publicKey;
+
+                const rlms = await getRealms(connection, programId);
+                const uTable = rlms.reduce((acc, it) => (acc[it.pubkey.toBase58()] = it, acc), {})
+                setRealms(uTable);
+                
+                const ownerRecordsbyOwner = await getTokenOwnerRecordsByOwner(connection, programId, governingTokenOwner);
+                setOwnerRecordsByOwner(ownerRecordsbyOwner);
+            
+            }catch(e){console.log("ERR: "+e)}
+        } else{
+
+        }
+        setLoading(false);
+    }
+
     React.useEffect(() => { 
         if (publicKey && !loading)
             getGovernance();
@@ -497,7 +545,7 @@ export function GovernanceView(props: any) {
             </React.Fragment>
         )
     } else{
-        if (tokenOwnerRecordsByOwner && realms){
+        if (tokenOwnerRecordsByOwner && realms && tokenArray){
             return (
                 <React.Fragment>
                     <Grid item xs={12} md={12} lg={12}>
@@ -523,7 +571,7 @@ export function GovernanceView(props: any) {
                                         <TableBody>
                                             {tokenOwnerRecordsByOwner && Object.keys(tokenOwnerRecordsByOwner).map((item: any, index:number) => (
                                                 <>
-                                                    <GovernanceRow item={item} index={index} realm={realms[tokenOwnerRecordsByOwner[item].account.realm.toBase58()]} tokenOwnerRecord={tokenOwnerRecordsByOwner[item]}/>
+                                                    <GovernanceRow item={item} index={index} realm={realms[tokenOwnerRecordsByOwner[item].account.realm.toBase58()]} tokenOwnerRecord={tokenOwnerRecordsByOwner[item]} tokenOwnerRecordsByOwner={tokenOwnerRecordsByOwner} tokenArray={tokenArray}/>
                                                 </>
                                             ))}
                                         </TableBody>

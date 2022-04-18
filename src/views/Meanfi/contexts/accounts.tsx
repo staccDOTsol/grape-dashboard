@@ -113,8 +113,10 @@ export const cache = {
     if (query) {
       return query;
     }
+    console.log("address: "+JSON.stringify(address));
 
     query = connection.getAccountInfo(id).then((data) => {
+      
       if (!data) {
         throw new Error("Account not found");
       }
@@ -501,17 +503,16 @@ export function useMint(key?: string | PublicKey) {
   const [mint, setMint] = useState<MintInfo>();
   
   const id = typeof key === "string" ? key : key?.toBase58();
-
+  
   useEffect(() => {
     if (!id) {
       return;
     }
-
     cache
       .query(connection, id, MintParser)
       .then((acc) => setMint(acc.info as any))
       .catch((err) => console.error(err));
-
+    
     const dispose = cache.emitter.onCache((e) => {
       const event = e;
       if (event.id === id) {
@@ -524,7 +525,6 @@ export function useMint(key?: string | PublicKey) {
       dispose();
     };
   }, [connection, id]);
-
   return mint;
 }
 

@@ -349,7 +349,6 @@ export const PortfolioView = () => {
       setSuccess(false);
       setLoading(true);
       
-      //let [portfolio, staked, sol, priceData, tokenMap, pairsDataRaydium] = await Promise.all([fetchBalances(), fetchStakedRaydium(), fetchSOLBalance(), fetchPriceList(), fetchTokenMap(), fetchPairsRaydium()]);
       let [portfolio, tokenMap] = await Promise.all([fetchBalances(), fetchTokenMap()]);
       
       // first load a skeleton of the portfolio
@@ -459,8 +458,6 @@ export const PortfolioView = () => {
                   collectibles.push(token);    
         } catch(e){console.log(e);}
         
-        
-
         return {
           address: token.pubkey,
           decimals: token.decimals,

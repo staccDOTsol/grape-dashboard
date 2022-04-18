@@ -2946,7 +2946,14 @@
     tweetnacl "^1.0.3"
     webpack-dev-server "^3.11.2"
 
-"@solana/spl-token-registry@^0.2.1280", "@solana/spl-token-registry@^0.2.214":
+"@solana/spl-token-registry@^0.2.1280":
+  version "0.2.3470"
+  resolved "https://registry.yarnpkg.com/@solana/spl-token-registry/-/spl-token-registry-0.2.3470.tgz#ca419a46d1699101e4da389ec51697c285dc38cf"
+  integrity sha512-g95PyEnIieVpYqyv/uu2d3f/IQN2csJPSUuReIGr0EH36+s06kfgKHBGwqFNigpc7ASzJO7npcTvuWs/ut8r0Q==
+  dependencies:
+    cross-fetch "3.0.6"
+
+"@solana/spl-token-registry@^0.2.214":
   version "0.2.3105"
   resolved "https://registry.yarnpkg.com/@solana/spl-token-registry/-/spl-token-registry-0.2.3105.tgz#14bb4c5253843c63d55d2d4166f7925e9332fa1b"
   integrity sha512-QTVrX601nJ/czrr7wxDtzeSUjs6HPzCLank3pYS5JBWPsBIuLQTqZ+QIRyvMWista3ANVk20uKHqQ0xEUlhSJg==
