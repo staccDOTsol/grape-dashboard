@@ -516,11 +516,11 @@ export const ServersView = (props) => {
                           return(
                             <ServerRow server={server} indexus={indexus} labelId={labelId} unregister={unregister} />
                           )})}
-                      {emptyRowsT1 > 0 && (
+                      {/*emptyRowsT1 > 0 && (
                           <TableRow style={{ height: 53 * emptyRowsT1 }}>
                               <TableCell colSpan={4} />
                           </TableRow>
-                      )}  
+                      )*/}  
                       </TableBody>
                       <TableFooter>
                         <TableRow>
