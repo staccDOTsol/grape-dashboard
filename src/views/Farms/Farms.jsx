@@ -526,8 +526,8 @@ export const FarmsView = (props) => {
             }
           }
 
-          const farmPlatform = 'Raydium';
-          const farmPlatformLogo = {RAYDIUM_STATIC_LOGO};
+          const farmPlatform = `Raydium ${RAYDIUM_LOGO}`;
+          const farmPlatformLogo = {RAYDIUM_LOGO};
 
           const pair = pairsDataRaydium.find(pair => {
             return pair.name === farm.name

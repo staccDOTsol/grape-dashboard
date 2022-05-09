@@ -194,42 +194,50 @@ export default function SendToken(props: any) {
             const decimals = accountParsed.parsed.info.decimals;
 
             let fromAta = await getAssociatedTokenAddress( // calculate from ATA
-                ASSOCIATED_TOKEN_PROGRAM_ID, // always ASSOCIATED_TOKEN_PROGRAM_ID
-                TOKEN_PROGRAM_ID, // always TOKEN_PROGRAM_ID
                 mintPubkey, // mint
-                fromWallet // from owner
+                fromWallet, // from owner
+                true,
+                TOKEN_PROGRAM_ID, // always TOKEN_PROGRAM_ID
+                ASSOCIATED_TOKEN_PROGRAM_ID, // always ASSOCIATED_TOKEN_PROGRAM_ID
             );
             
+            
             let toAta = await getAssociatedTokenAddress( // calculate to ATA
-                ASSOCIATED_TOKEN_PROGRAM_ID, // always ASSOCIATED_TOKEN_PROGRAM_ID
-                TOKEN_PROGRAM_ID, // always TOKEN_PROGRAM_ID
                 mintPubkey, // mint
-                toWallet // to owner
+                toWallet, // to owner
+                true,
+                TOKEN_PROGRAM_ID, // always TOKEN_PROGRAM_ID
+                ASSOCIATED_TOKEN_PROGRAM_ID, // always ASSOCIATED_TOKEN_PROGRAM_ID
             );
             
             const adjustedAmountToSend = amountToSend * Math.pow(10, decimals);
             const receiverAccount = await connection.getAccountInfo(toAta);
             
+            console.log(
+                "fromAta: "+fromAta+
+                " toAta: "+toAta
+            )
+
             if (receiverAccount === null) { // initialize token
                 const transaction = new Transaction()
                 .add(
                     createAssociatedTokenAccountInstruction(
-                        ASSOCIATED_TOKEN_PROGRAM_ID, // always ASSOCIATED_TOKEN_PROGRAM_ID
-                        TOKEN_PROGRAM_ID, // always TOKEN_PROGRAM_ID
-                        mintPubkey, // mint
-                        toAta, // ata
                         toWallet, // owner of token account
-                        fromWallet // fee payer
+                        toAta, // ata
+                        fromWallet, // fee payer
+                        mintPubkey, // mint
+                        TOKEN_PROGRAM_ID, // always TOKEN_PROGRAM_ID
+                        ASSOCIATED_TOKEN_PROGRAM_ID, // always ASSOCIATED_TOKEN_PROGRAM_ID
                     )
                 )
                 .add(
                     createTransferInstruction(
-                        TOKEN_PROGRAM_ID,
                         fromAta,
                         toAta,
                         publicKey,
-                        [],
                         adjustedAmountToSend,
+                        [],
+                        TOKEN_PROGRAM_ID,
                     )
                 ).add(
                     new TransactionInstruction({
@@ -262,12 +270,12 @@ export default function SendToken(props: any) {
                 const transaction = new Transaction()
                 .add(
                     createTransferInstruction(
-                    TOKEN_PROGRAM_ID,
-                    fromAta,
-                    toAta,
-                    publicKey,
-                    [],
-                    adjustedAmountToSend,
+                        fromAta,
+                        toAta,
+                        publicKey,
+                        adjustedAmountToSend,
+                        [],
+                        TOKEN_PROGRAM_ID,
                     )
                 )
                 .add(
