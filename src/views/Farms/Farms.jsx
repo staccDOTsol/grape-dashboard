@@ -439,7 +439,7 @@ export const FarmsView = (props) => {
 
                 if (newPriceData.farms[key]?.platform == "raydium"){
                 } else if (newPriceData.farms[key].platform == "solfarm"){
-
+                  
                   console.log("Solfarm::: "+JSON.stringify(newPriceData.farms[key]));
                   
                   const farmPlatform = "Tulip/solFarm";//newPriceData.farms[key].platform;
@@ -486,6 +486,7 @@ export const FarmsView = (props) => {
                     */
                     
                   }
+                  
                 }
               }
             }
@@ -526,9 +527,6 @@ export const FarmsView = (props) => {
             }
           }
 
-          const farmPlatform = `Raydium ${RAYDIUM_LOGO}`;
-          const farmPlatformLogo = {RAYDIUM_LOGO};
-
           const pair = pairsDataRaydium.find(pair => {
             return pair.name === farm.name
           });
@@ -542,11 +540,11 @@ export const FarmsView = (props) => {
           let pendingReward = new BigNumber(+userStakeInfo.rewardDebt);
           pendingReward = pendingReward.shiftedBy(shift);
 
-          let stupid_balance = new TokenAmount(userStakeInfo.depositBalance.toNumber(), 6);
-          stupid_balance = parseFloat(stupid_balance.format());
+          let invalid_balance = new TokenAmount(userStakeInfo.depositBalance.toNumber(), 6);
+          invalid_balance = parseFloat(invalid_balance.format());
 
-          let stupid_pendingReward = new TokenAmount(userStakeInfo.rewardDebt.toNumber(), 6);
-          stupid_pendingReward = parseFloat(stupid_pendingReward.format());
+          let invalid_pendingReward = new TokenAmount(userStakeInfo.rewardDebt.toNumber(), 6);
+          invalid_pendingReward = parseFloat(invalid_pendingReward.format());
 
           //farmData = newPriceData.farms.find(pair => {
           //const found = newPriceData.farms.find(element => element == poolId);
@@ -576,6 +574,9 @@ export const FarmsView = (props) => {
             }
           });
 
+          //if (farmPlaform)
+          //  console.log("farmPlaform: "+(farmPlatform||"null"));
+          
           return {
               balance,
               pendingReward,
@@ -584,10 +585,10 @@ export const FarmsView = (props) => {
               value : farmValue,
               farmInfo: assets,
               apr: farmApr,
-              farmName: farmPlatform,
+              farmName: farmPlatform||null,
               farmPoolId: poolId,
               stakedInfo: data,
-              farmLogoURI: farmPlatformLogo,
+              farmLogoURI: RAYDIUM_LOGO,
               farmPendingReward: 0
           }
       }).filter((token) => {

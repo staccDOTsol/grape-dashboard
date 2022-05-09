@@ -181,13 +181,13 @@ function ServerRow(props) {
 
   return (
       <React.Fragment>
-        <TableRow key={server.name} >
+        <TableRow key={server.name}>
           <TableCell align="left">
               <Avatar component={Paper} 
                   elevation={4}
                   alt={server.name} 
                   src={`/server-logos/${server.logo}`}
-                  sx={{ width: 30, height: 30, bgcolor: "#333" }}
+                  sx={{ width: 30, height: 30, bgcolor: "#333",ml:1 }}
               />
           </TableCell>
           <TableCell id={labelId}>
@@ -203,7 +203,7 @@ function ServerRow(props) {
             }
           </TableCell>
           <TableCell align="right">
-            <Tooltip title={`Unregister ${server.name}`}><Button color="error" size="small" variant="outlined" onClick={() => unregister(server.serverId, indexus)}><RemoveCircleOutlineIcon/></Button></Tooltip>
+            <Tooltip title={`Unregister ${server.name}`}><Button color="error" size="small" variant="outlined" onClick={() => unregister(server.serverId, indexus)} sx={{mr:1}}><RemoveCircleOutlineIcon/></Button></Tooltip>
           </TableCell>
         </TableRow>
         {server?.twitter &&
@@ -340,7 +340,6 @@ export const ServersView = (props) => {
 
   }, [session]);
 
-
   const servercolumns = [
     {
       name:"logo",
@@ -385,7 +384,7 @@ export const ServersView = (props) => {
                       elevation={4}
                       alt={tableMeta.rowData[1]}
                       src={`/server-logos/${tableMeta.rowData[0]}`}
-                      sx={{ width: 30, height: 30, bgcolor: "#333", mr:1 }}
+                      sx={{ width: 30, height: 30, bgcolor: "#333", ml:1 }}
                   />
                 </Grid>
                 <Grid item>
@@ -403,9 +402,10 @@ export const ServersView = (props) => {
         filter: false,
         sort: false,
         align: "right",
+        style: "",
         customBodyRender: (value, tableMeta, updateValue) => {
           return (
-            <Tooltip title={`Register ${tableMeta.rowData[1]}`}><Button color="primary" size="small" variant="contained" onClick={() => register(value)}><AddCircleOutlineIcon /></Button></Tooltip>
+            <Tooltip title={`Register ${tableMeta.rowData[1]}`}><Button color="primary" size="small" variant="contained" onClick={() => register(value)} sx={{mr:1}}><AddCircleOutlineIcon /></Button></Tooltip>
           )           
         },
         setCellProps: () => ({
@@ -493,7 +493,7 @@ export const ServersView = (props) => {
                                 direction={orderByT1 === 'name' ? orderT1 : 'asc'}
                                 onClick={createSortHandlerT1('name')}
                               >
-                                <Typography variant="caption">Name</Typography>
+                                <Typography variant="caption" sx={{ml:1}}>Name</Typography>
                                 {orderByT1 === 'name}' ? (
                                   <Box component="span" sx={visuallyHidden}>
                                     {orderT1 === 'desc' ? 'sorted descending' : 'sorted ascending'}
@@ -502,7 +502,7 @@ export const ServersView = (props) => {
                               </TableSortLabel>
                           </TableCell>
                           <TableCell align="left" sx={{ width: '70%' }}></TableCell>
-                          <TableCell align="right"><Typography variant="caption">Actions</Typography></TableCell>
+                          <TableCell align="right"><Typography variant="caption" sx={{mr:1}}>Actions</Typography></TableCell>
                         </TableRow>
                       </TableHead>
                       <TableBody sx={{p:1}}>

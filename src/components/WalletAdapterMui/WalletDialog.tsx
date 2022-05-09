@@ -22,6 +22,7 @@ const RootDialog = styled(Dialog)(({ theme }: { theme: Theme }) => ({
     '& .MuiDialog-paper': {
         width: theme.spacing(40),
         margin: 0,
+        borderRadius: '24px',
     },
     '& .MuiDialogTitle-root': {
         backgroundColor: 'black',
@@ -32,18 +33,18 @@ const RootDialog = styled(Dialog)(({ theme }: { theme: Theme }) => ({
             flexShrink: 1,
             padding: theme.spacing(),
             marginRight: theme.spacing(-1),
-            color: theme.palette.grey[500],
+            color: theme.palette.grey[700],
         },
     },
     '& .MuiDialogContent-root': {
         padding: 0,
         '& .MuiCollapse-root': {
             '& .MuiList-root': {
-                background: theme.palette.grey[900],
+                background: theme.palette.grey[1000],
             },
         },
         '& .MuiList-root': {
-            background: theme.palette.grey[900],
+            background: theme.palette.grey[1000],
             padding: 0,
         },
         '& .MuiListItem-root': {

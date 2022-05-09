@@ -1,7 +1,9 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
 import { AccountInfo, ConfirmedSignatureInfo, ConfirmedTransaction, Connection, PublicKey } from "@solana/web3.js";
 import { AccountLayout, MintInfo, MintLayout } from "@solana/spl-token";
-import { u64 } from '../../../utils/u64';
+//import { u64 } from '../../../utils/u64';
+//import { u64 } from '@project-serum/borsh';
+import BN from 'bn.js'
 import { TokenAccount } from "../models/account";
 import { EventEmitter } from "../helpers/eventEmitter";
 import { programIds, WRAPPED_SOL_MINT } from "../helpers/ids";
@@ -246,9 +248,9 @@ function wrapNativeAccount(
       address: pubkey,
       mint: WRAPPED_SOL_MINT,
       owner: pubkey,
-      amount: new u64(account.lamports || 0),
+      amount: new BN(account.lamports || 0),//new u64(account.lamports || 0),
       delegate: null,
-      delegatedAmount: new u64(0),
+      delegatedAmount: new BN(0),//new u64(0),
       isInitialized: true,
       isFrozen: false,
       isNative: true,
@@ -587,21 +589,21 @@ const deserializeAccount = (data: Buffer) => {
   const accountInfo = AccountLayout.decode(data);
   accountInfo.mint = new PublicKey(accountInfo.mint);
   accountInfo.owner = new PublicKey(accountInfo.owner);
-  accountInfo.amount = u64.fromBuffer(accountInfo.amount);
+  accountInfo.amount = new BN(accountInfo.amount);//u64.fromBuffer(accountInfo.amount);
 
   if (accountInfo.delegateOption === 0) {
     accountInfo.delegate = null;
-    accountInfo.delegatedAmount = new u64(0);
+    accountInfo.delegatedAmount = new BN(0);//new u64(0);
   } else {
     accountInfo.delegate = new PublicKey(accountInfo.delegate);
-    accountInfo.delegatedAmount = u64.fromBuffer(accountInfo.delegatedAmount);
+    accountInfo.delegatedAmount = new BN(accountInfo.delegatedAmount);//u64.fromBuffer(accountInfo.delegatedAmount);
   }
 
   accountInfo.isInitialized = accountInfo.state !== 0;
   accountInfo.isFrozen = accountInfo.state === 2;
 
   if (accountInfo.isNativeOption === 1) {
-    accountInfo.rentExemptReserve = u64.fromBuffer(accountInfo.isNative);
+    accountInfo.rentExemptReserve = new BN(accountInfo.isNative);//u64.fromBuffer(accountInfo.isNative);
     accountInfo.isNative = true;
   } else {
     accountInfo.rentExemptReserve = null;
@@ -630,7 +632,7 @@ export const deserializeMint = (data: Buffer) => {
     mintInfo.mintAuthority = new PublicKey(mintInfo.mintAuthority);
   }
 
-  mintInfo.supply = u64.fromBuffer(mintInfo.supply);
+  mintInfo.supply = new BN(mintInfo.supply);//u64.fromBuffer(mintInfo.supply);
   mintInfo.isInitialized = mintInfo.isInitialized !== 0;
 
   if (mintInfo.freezeAuthorityOption === 0) {
