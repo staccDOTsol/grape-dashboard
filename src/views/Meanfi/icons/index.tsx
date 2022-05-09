@@ -1,1 +1,0 @@
-export { IconMeanfi } from './IconMeanfi';
