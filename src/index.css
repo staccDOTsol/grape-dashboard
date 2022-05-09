@@ -1,0 +1,87 @@
+html, body{
+  background: #30154E;  /* fallback for old browsers */
+  background: radial-gradient(88.33% 113.42% at 71.34% 83.89%, #4e8ebf 0%,  #5671be 32.29%,  #713585 58.85%,  #36325d 85.5%,  #251a3a 98.96%);
+  height:100%;
+  background-attachment: fixed;
+}
+.grape-dashboard-header{
+  background: none;
+  backdrop-filter: blur(5px);
+}
+.grape-paper{
+  padding-top: 10px!important;
+  padding-bottom: 10px!important;
+  width: 100%!important;
+  background: #13151C!important;
+  border-radius: 17px!important;
+  height: 100%!important;
+}
+.grape-paper-background{
+  border-radius: 24px!important;
+  background: rgba(0, 0, 0, 0.6)!important;
+  padding: 10px!important;
+  height:100%;
+}
+
+.grape-dashboard-component-header{
+  padding-left: 10px!important;
+}
+
+.logo-small {
+  height:45px;
+  display:inline-block;
+}
+
+.header-logo {
+  height:44px;
+  margin-right:12px;
+}
+
+.discord-btn {
+  background: #7289DA !important;
+  display:inline-block !important;
+}
+.discord-btn-icon {
+  background-image: url('./public/discord_icon.svg') !important;
+  background-repeat: no-repeat !important;
+  background-size: 100% !important;
+  display: inline-block !important;
+  height: 20px !important;
+  width: 20px !important;
+  vertical-align: middle !important;
+  margin: -1px 10px 0 0 !important;
+}
+
+.grape-blur-title{
+  padding:0;
+}
+
+.grape-paper-blur{
+  background: rgba(0,0,0,0.30)!important;
+  border-radius: 14px!important; 
+  padding: 8px!important;
+  display: flex;
+  flex-direction: column;
+  backdrop-filter: blur(40px)!important;
+}
+
+
+.grape-blur-bg{
+  background: rgba(0,0,0,0.30)!important;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.1125) 9.37%, rgba(255, 255, 255, 0.0375) 54.69%, rgba(255, 255, 255, 0.0394911) 66.15%, rgba(255, 255, 255, 0.15) 100%)!important;
+  border-radius: 14px!important; 
+  padding: 8px!important;
+  display: flex;
+  flex-direction: column;
+  backdrop-filter: blur(40px)!important;
+}
+
+.grape-blur{
+  background: rgba(0,0,0,0.30)!important;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.1125) 9.37%, rgba(255, 255, 255, 0.0375) 54.69%, rgba(255, 255, 255, 0.0394911) 66.15%, rgba(255, 255, 255, 0.15) 100%)!important;
+  border-radius: 14px!important; 
+  padding: 8px!important;
+  display: flex;
+  flex-direction: column;
+  backdrop-filter: blur(40px)!important;
+}
