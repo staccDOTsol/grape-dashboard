@@ -264,7 +264,7 @@ export default function SendToken(props: any) {
                     enqueueSnackbar(`Sent ${amountToSend} ${name} to ${toaddress}`,{ variant: 'success', action });
                 }catch(e){
                     closeSnackbar();
-                    enqueueSnackbar(`Error: ${(e)}`,{ variant: 'error' });
+                    enqueueSnackbar(e.message ? `${e.name}: ${e.message}` : e.name, { variant: 'error' });
                 } 
             } else{ // token already in wallet
                 const transaction = new Transaction()
@@ -303,7 +303,7 @@ export default function SendToken(props: any) {
                     enqueueSnackbar(`Sent ${amountToSend} ${name} to ${toaddress}`,{ variant: 'success', action });
                 }catch(e){
                     closeSnackbar();
-                    enqueueSnackbar(`Error: ${(e)}`,{ variant: 'error' });
+                    enqueueSnackbar(e.message ? `${e.name}: ${e.message}` : e.name, { variant: 'error' });
                 } 
             }
         }

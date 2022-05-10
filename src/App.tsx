@@ -30,7 +30,7 @@ import ConfirmDialog from './components/ConfirmDialog/ConfirmDialog';
 
 import {
   GlowWalletAdapter,
-  LedgerWalletAdapter,
+  //LedgerWalletAdapter,
   PhantomWalletAdapter,
   SlopeWalletAdapter,
   SolflareWalletAdapter,
@@ -107,7 +107,7 @@ function DashboardContent() {
     new SlopeWalletAdapter(),
     new SolflareWalletAdapter(),
     new TorusWalletAdapter(),
-    new LedgerWalletAdapter(),
+    //new LedgerWalletAdapter(),
     new SolletWalletAdapter({ network }),
     new SolletExtensionWalletAdapter({ network }),
     

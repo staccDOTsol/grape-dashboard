@@ -526,6 +526,8 @@ export const FarmsView = (props) => {
               balance: 0
             }
           }
+          
+          const farmPlatform = 'Raydium';
 
           const pair = pairsDataRaydium.find(pair => {
             return pair.name === farm.name
