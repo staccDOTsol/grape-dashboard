@@ -2992,6 +2992,7 @@ function blockBlackList(tokens: { address: string }[]) {
 }
 
 function addTokensSolana() {
+  /*
   fetch('https://api.raydium.io/cache/solana-token-list')
     .then(async (response) => {
       addTokensSolanaFunc(blockBlackList((await response.json()).tokens))
@@ -3009,6 +3010,7 @@ function addTokensSolana() {
   fetch('https://sdk.raydium.io/token/raydium.mainnet.json').then(async (response) => {
     flushTokenIcon(Object.values((await response.json()).spl))
   })
+  */
 }
 
 const notUseSolanaPicMint: string[] = [TOKENS.TTT.mintAddress]

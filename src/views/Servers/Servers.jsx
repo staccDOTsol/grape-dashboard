@@ -207,7 +207,7 @@ function ServerRow(props) {
           </TableCell>
         </TableRow>
         {server?.twitter &&
-          <TableRow>
+          <TableRow key={server.name}>
               <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
                   <Collapse in={open} timeout="auto" unmountOnExit>
                       <Box sx={{ margin: 1 }}>

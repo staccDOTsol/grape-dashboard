@@ -428,7 +428,7 @@ export function TwitterBoardingDialog(props:any){
         //disabled={!publicKey && !wallet}
         disabled={!publicKey}
         //disabled={!session.publicKey}
-        color="primary" size="small" variant="contained" onClick={handleClickOpenDialog} title="Link Twitter"><LinkIcon sx={{mr:1}}/> Link Twitter</Button>
+        color="primary" size="small" variant="contained" onClick={handleClickOpenDialog}><LinkIcon sx={{mr:1}}/> Link Twitter</Button>
       </Tooltip>
         <BootstrapDialog
           open={open_dialog} 
@@ -708,7 +708,7 @@ export const TwitterSettings: FC = (props: any) => {
                 <TwitterBoardingDialog setNewTwitterRegistration={setNewTwitterRegistration} /> 
                 </>
               }{twitterRegistration && 
-                <Tooltip title={`Remove Twitter Registration`}><Button color="primary" size="small" variant="outlined" onClick={unlinkTwitter} title="Remove Twitter Registration"><LinkOffIcon/></Button></Tooltip>
+                <Tooltip title={`Remove Twitter Registration`}><Button color="primary" size="small" variant="outlined" onClick={unlinkTwitter}><LinkOffIcon/></Button></Tooltip>
               }
             </>
           }

@@ -124,7 +124,7 @@ export function Header(props: any) {
     };
 
     function SimpleDialog(props: any) {
-        const { onClose, selectedValue, open_wallet } = props;
+        const { onClose, selectedValue } = props;
 
         const handleCloseWallet = () => {
             onClose(selectedValue);

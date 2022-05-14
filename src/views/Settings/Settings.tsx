@@ -232,9 +232,9 @@ export const SettingsView = (props:any) => {
                             <TableCell align="right">{discord || <i>Not linked</i>}</TableCell>
                             <TableCell align="right">
                               {!discord && 
-                                <Tooltip title={`Link Discord`}><Button href={`https://verify.grapes.network/start`} color="primary" size="small" variant="contained" title="Link Discord"><LinkIcon sx={{mr:1}}/> Link Discord</Button></Tooltip>
+                                <Tooltip title={`Link Discord`}><Button href={`https://verify.grapes.network/start`} color="primary" size="small" variant="contained"><LinkIcon sx={{mr:1}}/> Link Discord</Button></Tooltip>
                               }{discord && 
-                                <Tooltip title={`Unlink Discord`}><Button color="primary" size="small" variant="outlined" onClick={unlinkDiscord} title="Unlink Discord"><LinkOffIcon/></Button></Tooltip>
+                                <Tooltip title={`Unlink Discord`}><Button color="primary" size="small" variant="outlined" onClick={unlinkDiscord}><LinkOffIcon/></Button></Tooltip>
                               }
                             </TableCell>
                           </TableRow>
@@ -274,7 +274,7 @@ export const SettingsView = (props:any) => {
                             </TableCell>
                             <TableCell align="right">
                               <Tooltip title={`Add Wallet`}>
-                                <Button href={`https://verify.grapes.network/start`} color="primary" size="small" variant="contained" title="Add Wallet"
+                                <Button href={`https://verify.grapes.network/start`} color="primary" size="small" variant="contained"
                                   onClick={disconnectWallet}
                                 >
                                   <AddCircleOutlineOutlinedIcon sx={{mr:1}}/> Wallet</Button>
