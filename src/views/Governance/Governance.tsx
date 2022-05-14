@@ -168,6 +168,7 @@ function RealmProposals(props:any) {
                 const gprops = await getAllProposals(connection, programId, realm);
                 // Arrange
                 const gvotes = await getVoteRecordsByVoter(connection, programId, publicKey);
+                
                 setVoteRecords(gvotes);
                 
 
@@ -191,6 +192,7 @@ function RealmProposals(props:any) {
                 allprops.sort((a,b) => (a.account?.votingAt.toNumber() < b.account?.votingAt.toNumber()) ? 1 : -1);
                 // then set props
                 setProposals(allprops);
+                
                 //console.log("Proposals ("+realm+"): "+JSON.stringify(gprops[0]));
             }catch(e){console.log("ERR: "+e)}
         }
