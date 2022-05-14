@@ -2,7 +2,6 @@ import React, { FC, useCallback } from 'react';
 import { WalletError, WalletNotConnectedError } from '@solana/wallet-adapter-base';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { Connection, PublicKey, SystemProgram, Transaction, TransactionInstruction, Signer } from '@solana/web3.js';
-import { Token, TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID } from "@solana/spl-token";
 import { getOrca, OrcaFarmConfig, OrcaPool, OrcaPoolConfig } from "@orca-so/sdk";
 import Decimal from "decimal.js";
 import * as web3 from '@solana/web3.js';

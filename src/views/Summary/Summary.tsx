@@ -5,7 +5,7 @@ import {
   Button,
   Grid,
 } from '@mui/material/';
-import OrcaSwap from '../OrcaSwap/OrcaSwap';
+//import OrcaSwap from '../OrcaSwap/OrcaSwap';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { makeFtxPayUrl } from '../../utils/ftx-pay';
 import JupiterSwap from "../JupiterSwap/JupiterSwap";

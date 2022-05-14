@@ -17,9 +17,8 @@ import {
 
 import Header from './components/Header/Header';
 import { SnackbarProvider } from 'notistack';
-import { useConnection, ConnectionProvider, WalletProvider, useWallet } from '@solana/wallet-adapter-react';
-import { WalletAdapterNetwork, WalletError, WalletNotConnectedError } from '@solana/wallet-adapter-base';
-import { Connection, Keypair, SystemProgram, Transaction, clusterApiUrl } from '@solana/web3.js';
+import { ConnectionProvider, WalletProvider } from '@solana/wallet-adapter-react';
+import { WalletAdapterNetwork } from '@solana/wallet-adapter-base';
 import { Helmet } from 'react-helmet';
 
 import { useSnackbar } from 'notistack';
@@ -36,8 +35,9 @@ import {
   SolflareWalletAdapter,
   SolletExtensionWalletAdapter,
   SolletWalletAdapter,
+  TokenPocketWalletAdapter,
   TorusWalletAdapter,
-  //CloverWalletAdapter,
+  CloverWalletAdapter,
   //MathWalletAdapter,
   //Coin98WalletAdapter,
   //SolongWalletAdapter,
@@ -110,8 +110,8 @@ function DashboardContent() {
     //new LedgerWalletAdapter(),
     new SolletWalletAdapter({ network }),
     new SolletExtensionWalletAdapter({ network }),
-    
-    //new CloverWalletAdapter(),
+    new TokenPocketWalletAdapter(),
+    new CloverWalletAdapter(),
     //new MathWalletAdapter(),
     //new Coin98WalletAdapter(),
     //new SolongWalletAdapter(),

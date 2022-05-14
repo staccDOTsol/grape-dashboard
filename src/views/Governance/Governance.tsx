@@ -247,10 +247,16 @@ function RealmProposals(props:any) {
                                             <TableCell>
                                                 {item.account?.options[0].voteWeight && 
                                                     <Typography variant="caption">
-                                                        <Tooltip title={`${(((item.account?.options[0].voteWeight.toNumber()/Math.pow(10, token?.decimals))/((item.account?.denyVoteWeight.toNumber()/1000000)+(item.account?.options[0].voteWeight.toNumber()/Math.pow(10, token?.decimals))))*100).toFixed(2)}%`}>
+                                                        <Tooltip title={`${(item.account?.options[0].voteWeight.toNumber()/Math.pow(10, token?.decimals)).toFixed(0)}`}>
                                                             <Button sx={{fontSize:'12px',color:'white'}}>
-                                                                {`${(item.account?.options[0].voteWeight.toNumber()/Math.pow(10, token?.decimals)).toFixed(0)}`}
+                                                                {item.account?.options[0].voteWeight.toNumber() > 0 ?
+                                                                <>
+                                                                {`${(((item.account?.options[0].voteWeight.toNumber()/Math.pow(10, token?.decimals))/((item.account?.denyVoteWeight.toNumber()/1000000)+(item.account?.options[0].voteWeight.toNumber()/Math.pow(10, token?.decimals))))*100).toFixed(2)}%`}
                                                                 {/*`${(getFormattedNumberToLocale(formatAmount(item.account?.options[0].voteWeight.toNumber()/1000000),0))}`*/}
+                                                                </>
+                                                                :
+                                                                <>0%</>
+}
                                                             </Button>
                                                         </Tooltip>
                                                     </Typography>
@@ -259,9 +265,14 @@ function RealmProposals(props:any) {
                                             <TableCell>
                                                 {item.account?.denyVoteWeight && 
                                                     <Typography variant="caption">
-                                                        <Tooltip title={`${(((item.account?.denyVoteWeight.toNumber()/Math.pow(10, token?.decimals))/((item.account?.denyVoteWeight.toNumber()/Math.pow(10, token?.decimals))+(item.account?.options[0].voteWeight.toNumber()/Math.pow(10, token?.decimals))))*100).toFixed(2)}%`}>
+                                                        <Tooltip title={`${(item.account?.denyVoteWeight.toNumber()/Math.pow(10, token?.decimals)).toFixed(0)}`} >
                                                             <Button sx={{fontSize:'12px',color:'white'}}>
-                                                                {`${(item.account?.denyVoteWeight.toNumber()/Math.pow(10, token?.decimals)).toFixed(0)}`}
+                                                                {item.account?.denyVoteWeight.toNumber() > 0 ?
+                                                                <>
+                                                                {`${(((item.account?.denyVoteWeight.toNumber()/Math.pow(10, token?.decimals))/((item.account?.denyVoteWeight.toNumber()/Math.pow(10, token?.decimals))+(item.account?.options[0].voteWeight.toNumber()/Math.pow(10, token?.decimals))))*100).toFixed(2)}%`}
+                                                                </>:
+                                                                <>0%</>
+                                                                }
                                                             </Button>
                                                         </Tooltip>
                                                     </Typography>
@@ -302,7 +313,7 @@ function RealmProposals(props:any) {
                                                 </Typography>
                                             </TableCell>
                                             <TableCell>
-                                                {item.account?.votingCompletedAt ?
+                                                {(item.account?.votingCompletedAt || item.account?.state !== 2 )?
                                                 (
                                                     <>
                                                         <Tooltip title="View Vote Results">
