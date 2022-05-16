@@ -40,7 +40,7 @@
     "@emotion/styled": "^11.3.0",
     "@jup-ag/core": "^1.0.0-beta.24",
     "@jup-ag/react-hook": "^1.0.0-beta.24",
-    "@mean-dao/msp": "^2.5.2-alpha.1",
+    "@mean-dao/msp": "^2.5.1",
     "@metaplex-foundation/mpl-core": "^0.6.1",
     "@mui/icons-material": "^5.0.0",
     "@mui/lab": "^5.0.0-alpha.50",
