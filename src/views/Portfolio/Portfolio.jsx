@@ -281,9 +281,9 @@ export const PortfolioView = () => {
 
     //Get Raydium Prices
     const fetchRaydiumPriceList = async () => {
+      
       const response = await fetch("https://api.raydium.io/coin/price", {
         method: "GET",
-        //body: JSON.stringify(body),
         headers: { "Content-Type": "application/json" },
       }).catch((error)=>{
         console.log("ERROR GETTING RAYDIUM DATA!");
@@ -294,6 +294,20 @@ export const PortfolioView = () => {
         const json = await response.json();
         return json;
       }catch(e){return null;}
+      
+      /*
+      return fetch(path || "https://api.raydium.io/coin/price", {
+        method: "GET",
+      })
+      .then((response) => response.json())
+      .then((response) => {
+        return response;
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+      */
+
     }
 
   //Get Prices RPC
@@ -424,8 +438,8 @@ export const PortfolioView = () => {
 
             // handle prices not on CG
             if (price === 0){ // check raydium pool data
-              if ((tmapitem) && (tmapitem.symbol)) {
-                try{
+              if ((tmapitem) && (tmapitem.symbol) && raydiumPriceData) {
+                try{                  
                   if (raydiumPriceData[tmapitem.symbol.toUpperCase()])
                     price = raydiumPriceData[tmapitem.symbol.toUpperCase()];
                 }catch(e){console.log("ERR:"+e)}
