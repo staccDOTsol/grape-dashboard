@@ -468,9 +468,12 @@ const AppStateProvider: React.FC<AppStateProviderProps> = (props) => {
 
     msp.listStreams({treasurer: publicKey, beneficiary: publicKey})
       .then(streams => {
+        
         const rawStreams = streams;
+        
         const sortedStreams = rawStreams.sort((a, b) => (a.createdBlockTime < b.createdBlockTime) ? 1 : -1);
-
+        console.log('Sorted Streams:', sortedStreams);
+        
         // Sort debugging block
         const debugTable: any[] = [];
         rawStreams.forEach(item => debugTable.push({
@@ -481,14 +484,14 @@ const AppStateProvider: React.FC<AppStateProviderProps> = (props) => {
         // End of debugging block
         setStreamList(sortedStreams);
         console.log('Streams:', sortedStreams);
-
+        
         if (sortedStreams.length === 0) {
           setStreamActivity([]);
           setHasMoreStreamActivity(false);
           updateStreamDetail(undefined);
           updateSelectedStream(undefined);
         }
-
+        
       })
       .catch(err => console.error(err))
       .finally(() => updateLoadingStreams(false));
