@@ -90,15 +90,8 @@ build
 
 #lock files
 *.lock
-./package-lock.json
-./yarn.lock
-.parcel-cache/0cd98839dafdfaac
-.parcel-cache/4f22a940fb0d3032
-.parcel-cache/53d9d87aff2816ed.txt
-.parcel-cache/73ebef2fc01c4f1d
-.parcel-cache/34657c54215359b9
-.parcel-cache/b72f446afb579f45
-.parcel-cache/data.mdb
-.parcel-cache/lock.mdb
+.package-lock.json
+.yarn.lock
+.parcel-cache
 package.json
 Archive.zip
