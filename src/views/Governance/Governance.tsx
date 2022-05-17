@@ -1,5 +1,5 @@
 import { getRealms, getAllProposals, getVoteRecordsByVoter, getTokenOwnerRecordForRealm, getTokenOwnerRecordsByOwner} from '@solana/spl-governance';
-import { PublicKey, TokenAmount } from '@solana/web3.js';
+import { PublicKey, TokenAmount, Connection } from '@solana/web3.js';
 import { ENV, TokenListProvider, TokenInfo } from '@solana/spl-token-registry';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import * as React from 'react';
@@ -44,7 +44,7 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import HowToVoteIcon from '@mui/icons-material/HowToVote';
 import { PretifyCommaNumber } from '../../components/Tools/PretifyCommaNumber';
-import { REALM_ID, GOVERNING_TOKEN, GOVERNANCE_PROGRAM_ID } from '../../components/Tools/constants';
+import { REALM_ID, GOVERNING_TOKEN, GOVERNANCE_PROGRAM_ID, GOVERNANCE_RPC_ENDPOINT } from '../../components/Tools/constants';
 
 import PropTypes from 'prop-types';
 
@@ -165,13 +165,12 @@ function RealmProposals(props:any) {
             try{
             
                 const programId = new PublicKey(GOVERNANCE_PROGRAM_ID);
-                const gprops = await getAllProposals(connection, programId, realm);
+                const gprops = await getAllProposals(new Connection(GOVERNANCE_RPC_ENDPOINT), programId, realm);
+                
                 // Arrange
                 const gvotes = await getVoteRecordsByVoter(connection, programId, publicKey);
-                
                 setVoteRecords(gvotes);
-                
-
+            
                 let allprops: any[] = [];
                 for (let props of gprops){
                     for (let prop of props){
@@ -490,17 +489,20 @@ export function GovernanceView(props: any) {
 
     const getTokens = async () => {
         const tarray:any[] = [];
-        const tlp = await new TokenListProvider().resolve().then(tokens => {
-            const tokenList = tokens.filterByChainId(ENV.MainnetBeta).getList();
-            //console.log("tokenList: "+JSON.stringify(tokenList));
-            setTokenMap(tokenList.reduce((map, item) => {
-                tarray.push({address:item.address, decimals:item.decimals})
-                map.set(item.address, item);
-                return map;
-            },new Map()));
-            setTokenArray(tarray);
-            //console.log("tokenMap::: "+JSON.stringify(tokenArray))
-        });
+        try{
+        
+            const tlp = await new TokenListProvider().resolve().then(tokens => {
+                const tokenList = tokens.filterByChainId(ENV.MainnetBeta).getList();
+                //console.log("tokenList: "+JSON.stringify(tokenList));
+                setTokenMap(tokenList.reduce((map, item) => {
+                    tarray.push({address:item.address, decimals:item.decimals})
+                    map.set(item.address, item);
+                    return map;
+                },new Map()));
+                setTokenArray(tarray);
+                //console.log("tokenMap::: "+JSON.stringify(tokenArray))
+            });
+        } catch(e){console.log("ERR: "+e)}
     }
 
     const getGovernance = async () => {
@@ -508,7 +510,8 @@ export function GovernanceView(props: any) {
             setLoading(true);
             try{
 
-                await getTokens();
+                if (!tokenArray)
+                    await getTokens();
 
                 const programId = new PublicKey(GOVERNANCE_PROGRAM_ID);
                 
@@ -522,7 +525,6 @@ export function GovernanceView(props: any) {
                 
                 const ownerRecordsbyOwner = await getTokenOwnerRecordsByOwner(connection, programId, governingTokenOwner);
                 setOwnerRecordsByOwner(ownerRecordsbyOwner);
-            
             }catch(e){console.log("ERR: "+e)}
         } else{
 
