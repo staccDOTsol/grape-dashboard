@@ -15,6 +15,10 @@ import { useWallet } from '@solana/wallet-adapter-react';
 import Avatar from '@mui/material/Avatar';
 import AvatarGroup from '@mui/material/AvatarGroup';
 
+
+import { red } from '@mui/material/colors';
+
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import SvgIcon, { SvgIconProps } from '@mui/material/SvgIcon';
 import CheckIcon from '@mui/icons-material/Check';
 import LinkOffIcon from '@mui/icons-material/LinkOff';
@@ -104,8 +108,8 @@ export function RegisterView(props: any) {
         }
     }, [session]);
 
-    return (
-        <React.Fragment>
+    if (serverName && serverName !== 'undefined'){
+        return (
             <Paper className="grape-paper-background" >
                 <Paper className="grape-paper" sx={{ p: 2, flexDirection: 'column', flexWrap: 'wrap', alignItems: 'center' }}>
                     <Grid 
@@ -208,6 +212,46 @@ export function RegisterView(props: any) {
                         </Grid>
                     </Paper>
                 </Paper>
-        </React.Fragment>
-    );
+        );
+    } else{
+        return (
+            <Paper className="grape-paper-background" >
+                <Paper className="grape-paper" sx={{ p: 2, flexDirection: 'column', flexWrap: 'wrap', alignItems: 'center' }}>
+                    <Grid 
+                        container 
+                        direction="column" 
+                        spacing={2} 
+                        alignItems="center"
+                        justifyContent="center"
+                        rowSpacing={8}
+                        sx={{ flexGrow: 1 }}
+                    >
+                        <Grid 
+                            item xs={12}
+                        >
+                            <Typography variant="h5" gutterBottom align="center">
+                                ERROR <ErrorOutlineIcon sx={{ color: red[500] }}  />
+                            </Typography>
+                        </Grid>
+                        
+                        <Grid 
+                            item xs={12}
+                        >
+                            <Box
+                            >
+                                <p>
+                                Could not register the server.
+                                <br/>
+                                Visit the Grape Dashboard and add your server in the servers section 
+                                </p>
+                            </Box>
+                            <Box>
+                                <Button variant="outlined" component={Link} to='/' title="Home">Dashboard</Button>
+                            </Box>
+                        </Grid>
+                    </Grid>
+                </Paper>
+            </Paper>
+        )
+    }
 }
