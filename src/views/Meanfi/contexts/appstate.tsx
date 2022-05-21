@@ -470,7 +470,7 @@ const AppStateProvider: React.FC<AppStateProviderProps> = (props) => {
       .then(streams => {
         
         const rawStreams = streams;
-        
+        console.log("rawStreams", rawStreams);
         const sortedStreams = rawStreams.sort((a, b) => (a.createdBlockTime < b.createdBlockTime) ? 1 : -1);
         console.log('Sorted Streams:', sortedStreams);
         
