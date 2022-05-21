@@ -1,4 +1,4 @@
-import React, { FC, useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { WalletError, WalletNotConnectedError } from '@solana/wallet-adapter-base';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { Connection, PublicKey, SystemProgram, Transaction, TransactionInstruction, Signer } from '@solana/web3.js';
@@ -140,7 +140,6 @@ export default function SendToken(props: any) {
         const amountToSend = +amounttosend;
         const tokenAccount = new PublicKey(mintPubkey);
         
-
         let GRAPE_TT_MEMO = {
             status:1, // status
             type:memotype, // AMA - SETUP 
@@ -186,7 +185,7 @@ export default function SendToken(props: any) {
                 );
                 enqueueSnackbar(`Sent ${amountToSend} ${name} to ${toaddress}`,{ variant: 'success', action });
             }catch(e){
-                enqueueSnackbar(`Error: ${(e)}`,{ variant: 'error' });
+                enqueueSnackbar(e.message ? `${e.name}: ${e.message}` : e.name, { variant: 'error' });
             } 
         } else{
             const accountInfo = await connection.getParsedAccountInfo(tokenAccount);
@@ -196,7 +195,7 @@ export default function SendToken(props: any) {
             let fromAta = await getAssociatedTokenAddress( // calculate from ATA
                 mintPubkey, // mint
                 fromWallet, // from owner
-                true,
+                false,
                 TOKEN_PROGRAM_ID, // always TOKEN_PROGRAM_ID
                 ASSOCIATED_TOKEN_PROGRAM_ID, // always ASSOCIATED_TOKEN_PROGRAM_ID
             );
@@ -205,7 +204,7 @@ export default function SendToken(props: any) {
             let toAta = await getAssociatedTokenAddress( // calculate to ATA
                 mintPubkey, // mint
                 toWallet, // to owner
-                true,
+                false,
                 TOKEN_PROGRAM_ID, // always TOKEN_PROGRAM_ID
                 ASSOCIATED_TOKEN_PROGRAM_ID, // always ASSOCIATED_TOKEN_PROGRAM_ID
             );
