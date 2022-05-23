@@ -450,7 +450,8 @@ function GovernanceRow(props: any) {
                                 </Grid>
                             </Grid>
                         </TableCell>
-                        <TableCell align="right">{getFormattedNumberToLocale(formatAmount((parseInt(tokenOwnerRecordsByOwner[index].account?.governingTokenDepositAmount, 10)/Math.pow(10, token?.decimals))))}</TableCell>                     
+                        {/*<TableCell align="right">{JSON.stringify(tokenOwnerRecordsByOwner[index]?.account?.governingTokenDepositAmount)}</TableCell>*/}              
+                        <TableCell align="right">{getFormattedNumberToLocale(formatAmount((parseInt(tokenOwnerRecordsByOwner[index].account?.governingTokenDepositAmount, 10)/Math.pow(10, token?.decimals))))}</TableCell>                  
                     </TableRow>
 
                     <TableRow key={`r-${index}`}>
