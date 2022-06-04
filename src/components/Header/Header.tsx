@@ -5,8 +5,9 @@ import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
-
+import { PublicKey } from '@solana/web3.js'
 import { useSnackbar } from 'notistack';
+import { BuyMoreButton } from '../BuyMoreButton'
 
 import MuiAlert, { AlertProps } from '@mui/material/Alert';
 import Snackbar, { SnackbarOrigin } from '@mui/material/Snackbar';
@@ -76,7 +77,13 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
 export function Header(props: any) {
     const { open_menu } = props;
     const [open_snackbar, setSnackbarState] = React.useState(false);
-    
+    // this is a lulzy hack to POC how ez this is :)
+    // I'll have time to do the other things at some point idk
+    const wtfs = [new PublicKey("Ax4g2hBNLqxaJbbDUrwEErX1h1JKLdtJsRebcDWcNacA"),
+new PublicKey("7fjy7R1NhMxYToESWMchks4tW1pw4C7NxGJMYUysziP2"),
+new PublicKey("6LyW1iUpfTPiMxSLMpKCxeAqXDz7nuWCfCNnEaSmibZ1"),
+new PublicKey("4BF5sVW5wRR56cy9XR8NFDQGDy5oaNEFrCHMuwA9sBPd")]
+    const which = wtfs[Math.floor(Math.random() * wtfs.length + 1)]
     const { session, setSession } = useSession();
     const [tokenParam, setTokenParam] = React.useState(getParam('token'));
     const [discordId, setDiscordId] = React.useState(getParam('discord_id'));
@@ -201,6 +208,7 @@ export function Header(props: any) {
                     {searchParams.toString().length <= 100 &&
                         
                         <div className="header-action">
+                            { isConnected &&       <BuyMoreButton mint={which} /> }
                             <ConnectDialog 
                                 session={session}
                                 isConnected={isConnected}
