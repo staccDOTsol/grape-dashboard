@@ -27,9 +27,14 @@ interface SessionContext {
 export const SessionContext = createContext<SessionContext>({} as SessionContext);
 export const useSession = () => useContext(SessionContext);
 
+type SessionProps = {
+  children: React.ReactNode; // 👈️ added type for children
+};
+
 //Provider
-export const SessionProvider: React.FC = ({ children }) => {
-  const [session, setSession] = useReducer(reducer, localState || initialState);
+//export const SessionProvider: React.FC = ({ children }) => {
+export const SessionProvider = (props: SessionProps) => {
+    const [session, setSession] = useReducer(reducer, localState || initialState);
 
   useEffect(() => {
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(session));
@@ -37,7 +42,7 @@ export const SessionProvider: React.FC = ({ children }) => {
 
   return (
     <SessionContext.Provider value={{ session, setSession }}>
-      {children}
+      {props.children}
     </SessionContext.Provider>
   )
 }

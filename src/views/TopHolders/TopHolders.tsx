@@ -2,6 +2,8 @@ import React, { FC, useCallback } from 'react';
 
 import { styled } from '@mui/material/styles';
 
+import { Connection, PublicKey } from '@solana/web3.js';
+
 import {
   Dialog,
   Button,
@@ -23,12 +25,10 @@ import {
 import { PretifyCommaNumber } from '../../components/Tools/PretifyCommaNumber';
 import { MakeLinkableAddress, ValidateAddress } from '../../components/Tools/WalletAddress'; // global key handling
 
-import HelpIcon from '@mui/icons-material/Help';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
-import { GRAPE_RPC_ENDPOINT } from '../../components/Tools/constants';
-import { RegexTextField } from '../../components/Tools/RegexTextField';
+import { GRAPE_RPC_ENDPOINT, TX_RPC_ENDPOINT } from '../../components/Tools/constants';
 
 const StyledTable = styled(Table)(({ theme }) => ({
   '& .MuiTableCell-root': {
@@ -92,7 +92,8 @@ export default function TopHolders(props: any) {
     const mint = props.mint;
     const logoURI = props.logoURI;
     const name = props.name;
-    
+    const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
+
     const handleClickOpen = () => {
         setOpen(true);
     };
@@ -101,58 +102,26 @@ export default function TopHolders(props: any) {
     };
 
     const GetLargestTokenAccounts = async () => {
-      const body = {
-        method: "getTokenLargestAccounts",
-        jsonrpc: "2.0",
-        params: [
-          // Get the public key of the account you want the balance for.
-          mint,
-          // add <object> (optional) Commitment
-        ],
-        "id":1,
-      };
-  
-      const response = await fetch(GRAPE_RPC_ENDPOINT, {
-        method: "POST",
-        body: JSON.stringify(body),
-        headers: { "Content-Type": "application/json" },
-      });
-  
-      const json = await response.json();
-      const resultValues = json.result.value
+      const response = await ggoconnection.getTokenLargestAccounts(new PublicKey(mint));
+      const resultValues = response.value;
       return resultValues;
     };
 
     const GetTokenSupply = async () => {
-      const body = {
-        method: "getTokenSupply",
-        jsonrpc: "2.0",
-        params: [
-          // Get the public key of the account you want the balance for.
-          mint,
-          // add <object> (optional) Commitment
-        ],
-        "id":2,
-      };
-  
-      const response = await fetch("GRAPE_RPC_ENDPOINT", {
-        method: "POST",
-        body: JSON.stringify(body),
-        headers: { "Content-Type": "application/json" },
-      });
-  
-      const json = await response.json();
-      const resultValues = json.result.value
+      const response = await ggoconnection.getTokenSupply(new PublicKey(mint));
+      const resultValues = response.value;
       return resultValues;
     };
     
     const fetchTokenAccountData = async () => {
-      let [flargestTokenAccounts] = await Promise.all([GetLargestTokenAccounts()]);
+      let flargestTokenAccounts = await Promise.all([GetLargestTokenAccounts()]);
       setLargestAccounts(flargestTokenAccounts);
     }
     const fetchTokenSupply = async () => {
-      let [ftokenSupply] = await Promise.all([GetTokenSupply()]);
-      setTokenSupply(ftokenSupply);
+      //try{
+        let ftokenSupply = await Promise.all([GetTokenSupply()]);
+        setTokenSupply(ftokenSupply);
+      //}catch(e){console.log("ERR: "+e);}
     }
 
     React.useEffect(() => { 

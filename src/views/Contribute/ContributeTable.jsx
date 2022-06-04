@@ -5,9 +5,6 @@ import { makeStyles, styled, alpha, useTheme } from '@mui/material/styles';
 import {
     Grid,
     Typography,
-    Collapse,
-    Button,
-    Divider,
     Table,
     TableBody,
     TableCell,
@@ -28,16 +25,10 @@ import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 import LastPageIcon from '@mui/icons-material/LastPage';
 import HelpIcon from '@mui/icons-material/Help';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import OpenInNewIcon from '@mui/icons-material/OpenInNew';
-import TableSortLabel from '@mui/material/TableSortLabel';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 
 import SendToken from '../SendToken/SendToken';
-import TopHolders from '../TopHolders/TopHolders';
-import { MakeLinkableAddress, ValidateAddress } from '../../components/Tools/WalletAddress'; // global key handling
 import { PretifyCommaNumber } from '../../components/Tools/PretifyCommaNumber';
 
 const StyledTable = styled(Table)(({ theme }) => ({

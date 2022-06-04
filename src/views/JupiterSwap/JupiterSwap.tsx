@@ -1,8 +1,8 @@
 // ADD CODE FOR JUPITER SWAP IMPLEMENTATION
-import React, {FC, HTMLAttributes, useCallback, useEffect, useMemo, useRef, useState} from 'react';
-import {WalletAdapterNetwork, WalletError, WalletNotConnectedError} from '@solana/wallet-adapter-base';
+import React, {useEffect, useState} from 'react';
+import {WalletAdapterNetwork} from '@solana/wallet-adapter-base';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
-import { Connection, PublicKey, SystemProgram, Transaction, TransactionInstruction, Signer } from '@solana/web3.js';
+import { PublicKey } from '@solana/web3.js';
 import { styled } from '@mui/material/styles';
 import { getPrices } from '../Meanfi/helpers/api'
 import {
@@ -14,21 +14,13 @@ import {
     DialogActions,
     TextField,
     FormControl,
-    FormLabel,
-    FormHelperText,
-    Avatar,
     Grid,
-    Paper,
-    Skeleton,
     InputLabel,
     Tooltip,
     Typography,
     MenuItem,
     Autocomplete,
-    Box, InputAdornment,
     Stack,
-    Input,
-    Popper
 } from '@mui/material';
 
 import { createFilterOptions} from '@mui/material/useAutocomplete'
@@ -43,7 +35,6 @@ import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import {ENV, TokenInfo, TokenListProvider} from "@solana/spl-token-registry";
 import {useSnackbar} from "notistack";
-import ReactSelect from 'react-select';
 
 export interface Token {
     chainId: number; // 101,
@@ -101,13 +92,29 @@ const BootstrapDialogTitle = (props: DialogTitleProps) => {
     );
 };
 
-export default function JupiterSwap(props: any ){
+/*
+interface JupiterProps {
+    connection: Connection;
+    cluster: Cluster;
+    userPublicKey?: PublicKey;
+    platformFeeAndAccounts?: PlatformFeeAndAccounts;
+    quoteMintToReferrer?: QuoteMintToReferrer;
+    routeCacheDuration?: number;
+    onlyDirectRoutes?: boolean;
+    marketUrl?: string;
+    restrictIntermediateTokens?: boolean;
+    children?: ReactNode; // <- Add this here
+}*/
+
+//export default function JupiterSwap(props: any ){
+export const JupiterSwap = (props: any) => {
     const connection = useConnection();
     const wallet = useWallet();
     return(<JupiterProvider
         connection={connection.connection}
         cluster={WalletAdapterNetwork.Mainnet}
-        userPublicKey={wallet.publicKey}><JupiterForm {...props}/></JupiterProvider>);
+        userPublicKey={wallet.publicKey}>
+            {props.children}</JupiterProvider>);
 
 }
 
