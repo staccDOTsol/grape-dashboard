@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { NavLink } from 'react-router-dom';
 import { TokenListProvider, TokenInfo } from '@solana/spl-token-registry';
 import { getProfilePicture } from '@solflare-wallet/pfp';
-
+import { delay } from "../../views/Meanfi/helpers/ui";
 import { useConnection } from '@solana/wallet-adapter-react';
 
 import{

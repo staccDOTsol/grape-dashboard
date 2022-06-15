@@ -24,7 +24,6 @@ function BasicComponent(props) {
     <React.Fragment>
       <PortfolioView />
       <GovernanceView />
-      <MeanfiView />
     </React.Fragment>
   );
 }

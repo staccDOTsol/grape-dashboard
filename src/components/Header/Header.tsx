@@ -26,13 +26,15 @@ import {
     DialogTitle,
     List,
     ListItem,
-    ListItemText
+    ListItemText,
+    Hidden
 } from '@mui/material';
 
 import { 
     DASHBOARD_LOGO
 } from '../Tools/constants';
 
+import DownloadingIcon from '@mui/icons-material/Downloading';
 import StorageIcon from '@mui/icons-material/Storage';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import AssessmentIcon from '@mui/icons-material/Assessment';
@@ -192,8 +194,12 @@ export function Header(props: any) {
                 
                 <Tooltip title={`Collection`}><IconButton sx={{borderRadius:'17px'}} component="a" href='https://grape.art' target="_blank"><PhotoOutlinedIcon/></IconButton></Tooltip>
                 <Tooltip title={`Grape Drive`}><IconButton sx={{borderRadius:'17px'}} component="a" href='https://grape-drive.pages.dev/' target="_blank"><StorageIcon/></IconButton></Tooltip>
+                <Tooltip title={`Streams`}><IconButton sx={{borderRadius:'17px'}} component={NavLink} color="inherit" to="/streams"><DownloadingIcon /></IconButton></Tooltip>
+                
+                <Hidden smDown>
                 <Tooltip title={`About`}><IconButton sx={{borderRadius:'17px'}} component="a" href='https://grapes.network' target="_blank"><InfoOutlinedIcon/></IconButton></Tooltip>
                 <Tooltip title={`News`}><IconButton sx={{borderRadius:'17px'}} component={NavLink} color="inherit" to="/news"><RssFeedIcon/></IconButton></Tooltip>
+                </Hidden>
             </Box>
             <div>
 

@@ -239,7 +239,7 @@ function MoneyStreamsAccountsTable(props: MoneyStreamsAccountsTableProps) {
                             </TableHead>
                             <TableBody>
                                 <>
-                                {console.log("streamList: "+JSON.stringify(streamList))}
+                                
                                 {streamList && streamList.length > 0 ? 
                                     
                                 (

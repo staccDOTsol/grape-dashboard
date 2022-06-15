@@ -1,7 +1,18 @@
 import React, { FC, ReactNode, useCallback, useMemo } from 'react';
 import { styled, ThemeProvider } from '@mui/material/styles';
 import { HashRouter, BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import { HomeView, ServersView, SettingsView, ConfirmationView, RegisterView, NewsView, GrapePartnersView, MembershipView, ContributeView, PaymentsView } from "./views";
+import { 
+  HomeView, 
+  ServersView, 
+  SettingsView, 
+  ConfirmationView, 
+  RegisterView, 
+  NewsView, 
+  GrapePartnersView,
+  MembershipView, 
+  ContributeView, 
+  PaymentsView,
+  MeanfiView } from "./views";
 import { SessionProvider } from "./contexts/session";
 import CssBaseline from '@mui/material/CssBaseline';
 import MuiDrawer from '@mui/material/Drawer';
@@ -177,6 +188,7 @@ function DashboardContent() {
                             <Route index element={<HomeView/>} />
                             <Route path="dashboard" element={<HomeView/>} />
                             <Route path="contribute" element={<ContributeView />} />
+                            <Route path="streams" element={<MeanfiView />} />
                             <Route path="servers" element={<ServersView />} />
                             <Route path="settings" element={<SettingsView />} />
                             <Route path="partners" element={<GrapePartnersView />} />
