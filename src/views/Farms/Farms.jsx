@@ -129,7 +129,7 @@ export const FarmsView = (props) => {
       });
       
       const json = await response.json();
-      let decoded = json.result.map(({ pubkey, account: { data, executable, owner, lamports } }) => ({
+      let decoded = json.result && json.result.map(({ pubkey, account: { data, executable, owner, lamports } }) => ({
         publicKey: new PublicKey(pubkey),
         accountInfo: {
           data: Buffer.from(data[0], 'base64'),
@@ -512,7 +512,7 @@ export const FarmsView = (props) => {
           return b.value - a.value;
       });
 
-      staked = staked.map((stakeAccountInfo) => {
+      staked = staked && staked.map((stakeAccountInfo) => {
           const { data } = stakeAccountInfo.accountInfo
           const userStakeInfo = USER_STAKE_INFO_ACCOUNT_LAYOUT.decode(data)
           const poolId = userStakeInfo.poolId.toBase58()
@@ -597,10 +597,12 @@ export const FarmsView = (props) => {
           return token.balance > 0;
       });
       
-      {other_stakes != null && 
-        staked.push(...other_stakes);
+      if (staked){
+        {other_stakes != null && 
+          staked.push(...other_stakes);
+        }
       }
-      
+
       setPorfolioBalances({
           staked
       });
@@ -674,7 +676,7 @@ export const FarmsView = (props) => {
     );
   }else{   
     
-    stakedTotal = portfolioPositions.staked.reduce((acc, token) => {
+    stakedTotal = portfolioPositions.staked && portfolioPositions.staked.reduce((acc, token) => {
         return acc + token.value;
     }, 0);
 

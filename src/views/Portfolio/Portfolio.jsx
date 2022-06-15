@@ -144,7 +144,7 @@ export const PortfolioView = () => {
       });
       
       const json = await response.json();
-      let decoded = json.result.map(({ pubkey, account: { data, executable, owner, lamports } }) => ({
+      let decoded = json.result && json.result.map(({ pubkey, account: { data, executable, owner, lamports } }) => ({
         publicKey: new PublicKey(pubkey),
         accountInfo: {
           data: Buffer.from(data[0], 'base64'),

@@ -176,25 +176,24 @@ export function Header(props: any) {
             >
             
             <Box display='flex' flexGrow={1}>
-                <Typography
-                    component="h1"
-                    variant="h6"
-                    color="inherit"
-                    noWrap
-                    display='flex'
-                >
-                    <img src={DASHBOARD_LOGO} height="40px" className="header-logo" alt="Grape" />
-                </Typography>
+                <Tooltip title={`Dashboard`}>
+                    <IconButton sx={{borderRadius:'17px'}} component={NavLink} color="inherit" to="/">
+                        <Typography
+                            component="h1"
+                            variant="h6"
+                            color="inherit"
+                            noWrap
+                            display='flex'
+                        >
+                            <img src={DASHBOARD_LOGO} height="40px" className="header-logo" alt="Grape" />
+                        </Typography>
+                    </IconButton>
+                </Tooltip>
                 
-                <Tooltip title={`Dashboard`}><IconButton component={NavLink} color="inherit" to="/"><DashboardOutlinedIcon/></IconButton></Tooltip>
-                <Tooltip title={`Collection`}><IconButton component="a" href='https://grape.art' target="_blank"><PhotoOutlinedIcon/></IconButton></Tooltip>
-                <Tooltip title={`Grape Drive`}><IconButton component="a" href='https://grape-drive.pages.dev/' target="_blank"><StorageIcon/></IconButton></Tooltip>
-                <Tooltip title={`About`}><IconButton component="a" href='https://grapes.network' target="_blank"><InfoOutlinedIcon/></IconButton></Tooltip>
-                
-                {/*
-                <Tooltip title={`Partners`}><IconButton component={NavLink} color="inherit" to="/partners"><InsertChartOutlinedIcon/></IconButton></Tooltip>
-                */}
-                <Tooltip title={`News`}><IconButton component={NavLink} color="inherit" to="/news"><RssFeedIcon/></IconButton></Tooltip>
+                <Tooltip title={`Collection`}><IconButton sx={{borderRadius:'17px'}} component="a" href='https://grape.art' target="_blank"><PhotoOutlinedIcon/></IconButton></Tooltip>
+                <Tooltip title={`Grape Drive`}><IconButton sx={{borderRadius:'17px'}} component="a" href='https://grape-drive.pages.dev/' target="_blank"><StorageIcon/></IconButton></Tooltip>
+                <Tooltip title={`About`}><IconButton sx={{borderRadius:'17px'}} component="a" href='https://grapes.network' target="_blank"><InfoOutlinedIcon/></IconButton></Tooltip>
+                <Tooltip title={`News`}><IconButton sx={{borderRadius:'17px'}} component={NavLink} color="inherit" to="/news"><RssFeedIcon/></IconButton></Tooltip>
             </Box>
             <div>
 

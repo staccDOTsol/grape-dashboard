@@ -238,6 +238,8 @@ function MoneyStreamsAccountsTable(props: MoneyStreamsAccountsTableProps) {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
+                                <>
+                                {console.log("streamList: "+JSON.stringify(streamList))}
                                 {streamList && streamList.length > 0 ? 
                                     
                                 (
@@ -371,14 +373,17 @@ function MoneyStreamsAccountsTable(props: MoneyStreamsAccountsTableProps) {
                                 ) : (
                                     <TableRow style={{ height: 53 }}>
                                         <TableCell colSpan={7} sx={{ borderBottom: 'none' }}>
+                                            <>
                                             {
                                                 streamList === undefined && loadingStreams
                                                     ? 'Loading your streams'
-                                                    : 'You have no streams'
+                                                    : 'You have no streams...'
                                             }
+                                            </>
                                         </TableCell>
                                     </TableRow>
                                 )}
+                                </>
                             </TableBody>
 
                         </Table>

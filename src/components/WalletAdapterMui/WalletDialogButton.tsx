@@ -3,7 +3,7 @@ import React, { FC, MouseEventHandler, useCallback } from 'react';
 import { useWalletDialog } from './useWalletDialog';
 
 export const WalletDialogButton: FC<ButtonProps> = ({
-    children = 'Select Wallet',
+    children = 'Connect',
     color = 'primary',
     variant = 'contained',
     type = 'button',
