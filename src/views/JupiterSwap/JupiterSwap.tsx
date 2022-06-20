@@ -106,16 +106,18 @@ interface JupiterProps {
     children?: ReactNode; // <- Add this here
 }*/
 
-//export default function JupiterSwap(props: any ){
-export const JupiterSwap = (props: any) => {
+export default function JupiterSwap(props: any ){
+//export const JupiterSwap = (props: any) => {
     const connection = useConnection();
-    const wallet = useWallet();
-    return(<JupiterProvider
-        connection={connection.connection}
-        cluster={WalletAdapterNetwork.Mainnet}
-        userPublicKey={wallet.publicKey}>
-            {props.children}</JupiterProvider>);
+    const {connected, wallet, publicKey} = useWallet();
 
+    return(
+        <JupiterProvider
+            connection={connection.connection}
+            cluster={WalletAdapterNetwork.Mainnet}
+            userPublicKey={connected ? publicKey : undefined}>
+                <JupiterForm {...props}/>
+        </JupiterProvider>);
 }
 
 
