@@ -2,7 +2,7 @@
 import React, {useEffect, useState} from 'react';
 import {WalletAdapterNetwork} from '@solana/wallet-adapter-base';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
-import { PublicKey } from '@solana/web3.js';
+import { Connection, PublicKey } from '@solana/web3.js';
 import { styled } from '@mui/material/styles';
 import { getPrices } from '../Meanfi/helpers/api'
 import {
@@ -24,6 +24,10 @@ import {
 } from '@mui/material';
 
 import { createFilterOptions} from '@mui/material/useAutocomplete'
+
+import { 
+    GRAPE_RPC_ENDPOINT, 
+} from '../../components/Tools/constants';
 
 import CircularProgress from '@mui/material/CircularProgress';
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
@@ -142,6 +146,7 @@ function JupiterForm(props: any) {
     const [ allAutoCompleteOptions, setAllAutoCompleteOptions ] = useState([]);
     const wallet = useWallet();
     const connection = useConnection();
+    const ggoconnection = new Connection(GRAPE_RPC_ENDPOINT);
 
     const getTokenList = async () => {
         const priceList = await getPrices();
@@ -216,7 +221,7 @@ function JupiterForm(props: any) {
                 <CircularProgress sx={{padding:'10px'}} />
             );
             const cnfrmkey = enqueueSnackbar(`Confirming transaction`,{ variant: 'info', action:snackprogress, persist: true });
-
+            
             const swapResult = await exchange({
                 wallet: {
                     sendTransaction: wallet.sendTransaction,
@@ -226,7 +231,16 @@ function JupiterForm(props: any) {
                 },
                 routeInfo: routes[0],
                 onTransaction: async (txid) => {
-                    await connection.connection.confirmTransaction(txid);
+
+                    const latestBlockHash = await ggoconnection.getLatestBlockhash();
+                    await ggoconnection.confirmTransaction({
+                        blockhash: latestBlockHash.blockhash,
+                        lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+                        signature: txid}, 
+                        'processed'
+                    );
+
+                    //await connection.connection.confirmTransaction(txid);
                     return await connection.connection.getTransaction(txid, {
                         commitment: "confirmed",
                     });
